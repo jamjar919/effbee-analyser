@@ -1,6 +1,10 @@
 // @flow
 import React, { Component } from 'react';
 import vis from 'vis';
+import FriendsApi from '../facebookapi/friends'
+import MessagesApi from '../facebookapi/messages'
+
+import styles from './css/Network.css'
 
 type Props = {};
 
@@ -8,40 +12,30 @@ export default class Home extends Component<Props> {
   props: Props;
 
   componentDidMount() {
-    var nodes = new vis.DataSet([
-        {id: 1, label: 'Node 1'},
-        {id: 2, label: 'Node 2'},
-        {id: 3, label: 'Node 3'},
-        {id: 4, label: 'Node 4'},
-        {id: 5, label: 'Node 5'}
-    ]);
+    const friendNodes = new FriendsApi()
+        .get()
+        .map(friend => friend.name)
+        .map(name => ({
+            label: name,
+            id: name
+        }));
+    const nodes = new vis.DataSet(friendNodes);
+    
+    const messageData = new MessagesApi()
+    const edges = new vis.DataSet()
 
-    // create an array with edges
-    var edges = new vis.DataSet([
-        {from: 1, to: 3},
-        {from: 1, to: 2},
-        {from: 2, to: 4},
-        {from: 2, to: 5}
-    ]);
-
-    // create a network
-    var container = document.getElementById('test');
-
-    // provide the data in the vis format
-    var data = {
-        nodes: nodes,
-        edges: edges
+    const container = document.getElementById('network');
+    const data = {
+        nodes,
+        edges
     };
-    var options = {};
 
-    // initialize your network!
-    var network = new vis.Network(container, data, options);
-
+    const network = new vis.Network(container, data, {});
   }
 
   render() {
     return (
-      <div id="test"></div>
+      <div id="network" className={styles.network}></div>
     );
   }
 }
