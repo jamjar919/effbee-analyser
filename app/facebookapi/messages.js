@@ -10,7 +10,7 @@ class MessagesApi extends FacebookApi {
         const getDirectories = source =>
             fs.readdirSync(source).map(name => join(source, name)).filter(isDirectory)
         this.messages = getDirectories(directories).map(directory => {
-            const file = `${directory}/message.json`;
+            const file = `${directory}/message_1.json`;
             const details = JSON.parse(fs.readFileSync(file, { encoding: "utf-8" }))
             return {
                 participants: details.participants.map(p => ({
@@ -26,18 +26,30 @@ class MessagesApi extends FacebookApi {
     chats(name) {
         return {
             chats: this.messages.filter(details => (details.participants.map(p => p.name).indexOf(name) >= 0)),
-            name: name
+            name
         }
     }
 
+    // Names is an array
     chatsBetween(names) {
+        const chats = this.messages.filter(details => {
+            const participants = details.participants.map(p => p.name);
+            return (
+                names.reduce((prev, current) => prev && (participants.indexOf(current) >= 0), true)
+            )
+        });
+        let count = 0;
+        chats.forEach(chat => {
+            chat.participants
+            .forEach(participant => {
+                if (names.indexOf(participant.name) >= 0) {
+                    count += participant.count
+                }
+            })
+        })
         return {
-            chats: this.messages.filter(details => {
-                const participants = details.participants.map(p => p.name);
-                return (
-                    names.reduce((prev, current) => prev && (participants.indexOf(current) >= 0), true)
-                )
-            }),
+            chats,
+            count,
             names
         }
     }
