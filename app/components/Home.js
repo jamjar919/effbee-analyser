@@ -1,12 +1,15 @@
 // @flow
 import React, { Component } from 'react';
-import routes from '../constants/routes';
 import Network from './Network';
+import TopMenuNetwork from './TopMenuNetwork';
 
 import styles from './css/Home.css';
 
 
-type Props = {};
+type Props = {
+  toggleShowRoot: () => void,
+  showRoot: boolean 
+};
 
 export default class Home extends Component<Props> {
   props: Props;
@@ -14,8 +17,10 @@ export default class Home extends Component<Props> {
   render() {
     return (
       <div className={styles.container}>
-        <h2>Home</h2>
-        <Network />
+        <TopMenuNetwork
+          toggleShowRoot={() => this.props.toggleShowRoot()}
+        />
+        <Network rootName="James Paterson" showRoot={this.props.showRoot} />
       </div>
     );
   }

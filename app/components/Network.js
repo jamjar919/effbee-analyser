@@ -1,7 +1,6 @@
 // @flow
 import React, { Component } from 'react';
 import vis from 'vis';
-import each from 'async/each';
 
 import FriendsApi from '../facebookapi/friends'
 import MessagesApi from '../facebookapi/messages'
@@ -26,10 +25,13 @@ function isConnectedToRoot(edge) {
     return (edge.from === 'root') || (edge.to === 'root')
 }
 
-type Props = {};
+type Props = {
+    showRoot: boolean,
+    rootName: string
+};
 
 export default class Home extends Component<Props> {
-  props: Props;
+    props: Props;
 
     constructor(props) {
         super(props)
@@ -41,14 +43,65 @@ export default class Home extends Component<Props> {
     }
 
     componentDidMount() {
+        this.renderGraph()
+    }
+
+    shouldComponentUpdate(nextProps) {
+        const {
+            showRoot,
+            rootName
+        } = this.props
+
+        if (showRoot !== nextProps.showRoot) {
+            const {
+                nodes,
+                edges
+            } = this.state
+            
+            if (nextProps.showRoot) {
+                // add root to graph
+                nodes.add({ label: rootName, id: 'root', physics: false })
+            } else {
+                // remove node from graph
+                nodes.remove({ id: 'root' })
+                
+                // reenable physics on edges
+                const edgesToUpdate = edges
+                    .get()
+                    .filter(edge => !isConnectedToRoot(edge))
+                    .map(edge => ({ id: edge.id, physics: true }))
+
+                edges.update(edgesToUpdate)
+            }
+        }
+        return false;
+    }
+    
+    componentWillUnmount() {
+        const {
+            network
+        } = this.state
+        network.destroy();
+        console.log("destroying network...")
+    }
+    
+    renderGraph() {
+        const {
+            showRoot,
+            rootName
+        } = this.props
+
         const friendNodes = new FriendsApi()
-            .get()
-            .map(friend => friend.name)
-            .map(name => ({
-                label: name,
-                id: name
-            }));
-        friendNodes.push({ label: 'James Paterson', id: 'root', physics: false })
+        .get()
+        .map(friend => friend.name)
+        .map(name => ({
+            label: name,
+            id: name
+        }));
+
+        if (showRoot) {
+            friendNodes.push({ label: rootName, id: 'root', physics: false })
+        }
 
         const nodes = new vis.DataSet(friendNodes);
         const messageData = new MessagesApi()
@@ -109,6 +162,8 @@ export default class Home extends Component<Props> {
         }, () => {
             // Bind any events relying on network here
             const {
+                nodes,
+                edges,    
                 network
             } = this.state
             
@@ -179,14 +234,6 @@ export default class Home extends Component<Props> {
                 nodes.update(nodesToUpdate)
             });
         })
-    }
-
-    componentWillUnmount() {
-        const {
-            network
-        } = this.state
-        network.destroy();
-        console.log("destroying network...")
     }
 
     render() {
