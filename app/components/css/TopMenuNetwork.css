@@ -1,0 +1,44 @@
+:root {
+    --topMenuHeight: 50px; 
+}
+  
+.container {
+    width: 100%;
+    height: var(--topMenuHeight);
+    background: #EDEDED;
+    border-bottom: 1px solid #D9DEE4;
+}
+
+.wrapper {
+    height: var(--topMenuHeight);
+    display: flex;
+    flex-direction: row;
+}
+
+.topMenuTitle {
+    margin: auto;
+}
+
+.topMenu {
+    display: flex;
+    flex: 1 1;
+    justify-content: flex-end;
+    list-style: none;
+    margin: auto;
+}
+
+.topMenu li {
+    height: var(--topMenuHeight);
+    width: 150px;
+    text-align: center;
+    display: flex;
+}
+
+.topMenu li:hover {
+    color: #515356;
+    background: #D9DEE4;
+}
+
+.topMenu li a {
+    margin: auto;
+}
