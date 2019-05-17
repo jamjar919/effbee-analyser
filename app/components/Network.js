@@ -26,6 +26,7 @@ function isConnectedToRoot(edge) {
 }
 
 type Props = {
+    selectFriend: (string) => void,
     showRoot: boolean,
     rootName: string
 };
@@ -178,6 +179,8 @@ export default class Home extends Component<Props> {
                 const nodesToUpdate = []
 
                 const nodeId = params.nodes[0]
+                // update redux state
+                this.props.selectFriend(nodeId)
                 const neighbours = getNeighbours(nodeId, params.edges.map(id => edges.get(id)));
 
                 neighbours.forEach(id => {

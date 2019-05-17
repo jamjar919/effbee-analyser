@@ -4,13 +4,19 @@ export type networkType = {
   showRoot: boolean
 }
 
+export type selectionType = {
+  type: string,
+  selection: object
+}
+
 export type stateType = {
   +counter: number,
   network: networkType
 };
 
 export type Action = {
-  +type: string
+  +type: string,
+  payload: object
 };
 
 export type GetState = () => stateType;

@@ -4,6 +4,7 @@ import Home from '../components/Home';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as NetworkActions from '../actions/network';
+import * as SelectionActions from '../actions/selection';
 
 function mapStateToProps(state) {
   return {
@@ -12,7 +13,10 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(NetworkActions, dispatch);
+  return {
+    ...bindActionCreators(NetworkActions, dispatch),
+    selectFriend: SelectionActions.selectFriendAction(dispatch)
+  };
 }
 
 export default connect(
