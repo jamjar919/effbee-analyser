@@ -4,6 +4,7 @@ import { AppContainer } from 'react-hot-loader';
 import Root from './containers/Root';
 import { configureStore, history } from './store/configureStore';
 import './app.global.css';
+import 'font-awesome-webpack!../configs/fontawesome.config.js'
 
 const store = configureStore();
 

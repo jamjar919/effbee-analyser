@@ -99,9 +99,7 @@ export default class Home extends Component<Props> {
             id: name
         }));
 
-        if (showRoot) {
-            friendNodes.push({ label: rootName, id: 'root', physics: false })
-        }
+        friendNodes.push({ label: rootName, id: 'root', physics: false })
 
         const nodes = new vis.DataSet(friendNodes);
         const messageData = new MessagesApi()
@@ -121,7 +119,7 @@ export default class Home extends Component<Props> {
                         to: f2.id,
                         numMessages,
                         numChats,
-                        value: numMessages,
+                        value: numChats,
                         length: 300,
                         physics: !isRoot,
                         dashed: isRoot,
@@ -167,6 +165,12 @@ export default class Home extends Component<Props> {
                 network
             } = this.state
             
+            // Respond to changestate
+            if (!showRoot) {
+                nodes.remove({ id: 'root' })
+            }
+
+
             // Events on selectnode, deselectnode for more in-depth graph inspection
             network.on("selectNode", params => {
                 // batching node/edge updates provides a massive performance gain

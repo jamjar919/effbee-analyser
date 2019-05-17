@@ -1,3 +1,5 @@
+/** this has to be here because of weird loading **/
+
 .appContainer {
     display: flex;
     flex-direction: row;

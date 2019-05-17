@@ -3,10 +3,13 @@
 }
   
 .container {
-    width: 100%;
+    width: calc(100vw - 230px);
     height: var(--topMenuHeight);
     background: #EDEDED;
     border-bottom: 1px solid #D9DEE4;
+    position: fixed;
+    top: 0;
+    z-index: 100;
 }
 
 .wrapper {

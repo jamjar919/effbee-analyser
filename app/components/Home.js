@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import Network from './Network';
 import TopMenuNetwork from './TopMenuNetwork';
+import RightPanel from '../containers/RightPanel';
 
 import styles from './css/Home.css';
 
@@ -21,6 +22,11 @@ export default class Home extends Component<Props> {
           toggleShowRoot={() => this.props.toggleShowRoot()}
         />
         <Network rootName="James Paterson" showRoot={this.props.showRoot} />
+        <RightPanel>
+          <div>
+            Hello!
+          </div>
+        </RightPanel>
       </div>
     );
   }
