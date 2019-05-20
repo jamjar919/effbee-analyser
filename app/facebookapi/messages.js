@@ -24,9 +24,42 @@ class MessagesApi extends FacebookApi {
     }
 
     chats(name) {
+        // filter to chats where this member is present
+        const chats = this.messages.filter(details => 
+            (details.participants.map(p => p.name).indexOf(name) >= 0)
+        );
+
+        // count message totals for all people in all the conversations
+        const peopleMap = {}
+        chats.forEach(chat => {
+            chat.participants.forEach(p => {
+                if (!(p.name in peopleMap)) {
+                    peopleMap[p.name] = {
+                        groups: 0,
+                        messages: 0
+                    }
+                }
+                peopleMap[p.name].messages += p.count
+                peopleMap[p.name].groups += 1
+            })
+        })
+
+        // remove self reference
+        delete peopleMap[name];
+
+        const peopleRanking = Object.keys(peopleMap).map(key => ({
+                name: key,
+                groups: peopleMap[key].groups,
+                messages: peopleMap[key].messages
+            })
+        ).sort((a, b) => (
+            b.messages - a.messages
+        ))
+
         return {
-            chats: this.messages.filter(details => (details.participants.map(p => p.name).indexOf(name) >= 0)),
-            name
+            chats,
+            name,
+            peopleRanking
         }
     }
 

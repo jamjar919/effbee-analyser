@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Header, Icon, Container, Segment, Grid, Divider, Statistic, Progress, Table, Transition, Button } from 'semantic-ui-react'
+import { Header, Icon, Container, Segment, Grid, Divider, Statistic, Progress, Table, Transition, Button, Item } from 'semantic-ui-react'
+import memoize from "memoize-one";
+import Identicon from './Identicon';
 
 import MessagesApi from '../facebookapi/messages'
 import ProfileApi from '../facebookapi/profile'
@@ -16,37 +18,46 @@ class FriendPreview extends React.Component<Props> {
 
     constructor(props) {
         super(props);
+
+        const messagesApi = new MessagesApi()
+
+        // Memoization to stop unnececcary calls to file system
+        // https://reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html#what-about-memoization
         this.state = {
             profileApi: new ProfileApi(),
-            messagesApi: new MessagesApi(),
+            memoizedChatsBetween: memoize(names => messagesApi.chatsBetween(names)),
+            memoizedChats: memoize(name => messagesApi.chats(name)),
             showDetails: false
         }
     }
 
     render() {
         const { name } = this.props;
-
         const {
             profileApi,
             messagesApi,
             showDetails,
+            memoizedChatsBetween,
+            memoizedChats
         } = this.state
+
+        const root = profileApi.getFullName()
 
         if (name === false) {
             // nothing selected
             return (
-                <Container className={styles.placeholderHeader}>
+                <div className={styles.placeholderHeader}>
                     <Header as='h2' icon>
                         <Icon name='sitemap' />
                         Nothing Selected
                         <Header.Subheader>Click on a friend or a connection in the network!</Header.Subheader>
                     </Header>
-                </Container>
+                </div>
             );
         }
-
-        const root = profileApi.getFullName()
-        const chatsBetweenRoot = messagesApi.chatsBetween([root, name])
+    
+        // Chat Details With You
+        const chatsBetweenRoot = memoizedChatsBetween([root, name])
         const numGroupsWithRoot = chatsBetweenRoot.chats.length
         const numMessagesWithRoot = chatsBetweenRoot.count
         const numYouSent = chatsBetweenRoot.countBreakdown[root]
@@ -54,8 +65,6 @@ class FriendPreview extends React.Component<Props> {
         const numYouSentPercent = Math.floor(
                 (numYouSent/numMessagesWithRoot) * 100
             )
-
-        console.log(chatsBetweenRoot)
 
         // sort chats in ascending order
         chatsBetweenRoot.chats = chatsBetweenRoot.chats.map(chat => ({
@@ -82,10 +91,45 @@ class FriendPreview extends React.Component<Props> {
             )
         })
 
+        // Chat Details With Others
+        const theirChats = memoizedChats(name)
+
+        console.log(theirChats)
+
+        const friendCards = theirChats.peopleRanking.map((person, i) => (
+            <Item key={i}>
+                <div className="ui small image">
+                    <Identicon size={150} value={person.name} />
+                </div>
+                <Item.Content>
+                    <Item.Header>{person.name}</Item.Header>
+                    <Item.Description>
+                        <Statistic>
+                            <Statistic.Value>{person.messages}</Statistic.Value>
+                            <Statistic.Label>Messages Shared</Statistic.Label>
+                        </Statistic>
+                    </Item.Description>
+                    <Item.Extra>
+                        <Icon name='users' />
+                        {person.groups} Shared Group Chats
+                    </Item.Extra>
+                </Item.Content>
+            </Item>
+        ))
+
+        if (friendCards.size === 0) {
+            friendCards.push(
+                <Header as='h2'>
+                    Nothing To Show
+                    <Header.Subheader>There's no group chats or messages shared between this person and any others. Lonely!</Header.Subheader>
+                </Header>
+            );
+        }
+
         return (
             <div>
                 <Header as='h2' icon textAlign='center'>
-                    <Icon name='user' circular />
+                    <Identicon size={100} value={name} />
                     <Header.Content>{name}</Header.Content>
                 </Header>
                 <Divider horizontal>
@@ -148,7 +192,18 @@ class FriendPreview extends React.Component<Props> {
                         </Table>
                     </div>
                 </Transition>
+                <Divider horizontal>
+                    <Header as='h4'>
+                        <Icon name='paper plane' />
+                        With Others
+                    </Header>
+                </Divider>
 
+                <Segment>
+                    <Item.Group>
+                        {friendCards}
+                    </Item.Group>
+                </Segment>
             </div>
         );
     }
