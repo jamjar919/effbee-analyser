@@ -117,7 +117,7 @@ class FriendPreview extends React.Component<Props> {
             </Item>
         ))
 
-        if (friendCards.size === 0) {
+        if (friendCards.length === 0) {
             friendCards.push(
                 <Header as='h1'>
                     Nothing To Show
