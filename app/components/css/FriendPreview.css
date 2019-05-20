@@ -6,3 +6,15 @@
 .placeholderHeader h2 {
     margin: auto !important;
 }
+
+.inlineProgress {
+    padding: 0 !important;
+}
+
+.inlineProgressBar {
+    margin: 0 !important;
+}
+
+.inlineProgressBar .bar {
+    border-radius: 0 !important;
+}
