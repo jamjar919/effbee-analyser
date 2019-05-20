@@ -1,0 +1,8 @@
+.placeholderHeader {
+    display: flex;
+    height: 100vh;
+}
+
+.placeholderHeader h2 {
+    margin: auto !important;
+}

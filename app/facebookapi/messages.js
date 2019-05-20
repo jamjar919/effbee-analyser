@@ -38,18 +38,27 @@ class MessagesApi extends FacebookApi {
                 names.reduce((prev, current) => prev && (participants.indexOf(current) >= 0), true)
             )
         });
+
+        // count total messages
         let count = 0;
+        const countBreakdown = {};
+        names.forEach(name => {
+            countBreakdown[name] = 0
+        })
+
         chats.forEach(chat => {
             chat.participants
             .forEach(participant => {
                 if (names.indexOf(participant.name) >= 0) {
                     count += participant.count
+                    countBreakdown[participant.name] += participant.count
                 }
             })
         })
         return {
             chats,
             count,
+            countBreakdown,
             names
         }
     }

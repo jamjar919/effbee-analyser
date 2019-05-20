@@ -1,5 +1,5 @@
 .container {
-    width: 320px;
+    width: 420px;
     position: fixed;
     right: 0;
     bottom: 0;
@@ -8,13 +8,13 @@
     background: rgb(237, 237, 237);
     display: flex;
     flex-direction: row;
-    transform: translateX(300px);
+    transform: translateX(400px);
     transition: transform 300ms linear;
     overflow: hidden
 }
 
 .content {
-    width: 300px
+    width: 400px
 }
 
 .controlContainer {

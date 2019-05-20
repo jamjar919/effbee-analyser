@@ -210,6 +210,7 @@ export default class Home extends Component<Props> {
             });
 
             network.on("deselectNode", params => {
+                this.props.selectFriend(false)
                 const edgesToUpdate = []
                 const nodesToUpdate = []
 
