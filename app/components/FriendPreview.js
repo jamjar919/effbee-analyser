@@ -119,7 +119,7 @@ class FriendPreview extends React.Component<Props> {
 
         if (friendCards.length === 0) {
             friendCards.push(
-                <Header as='h1'>
+                <Header as='h1' key="noMessages">
                     Nothing To Show
                     <Header.Subheader>There's no group chats or messages shared between this person and any others. Lonely!</Header.Subheader>
                 </Header>
