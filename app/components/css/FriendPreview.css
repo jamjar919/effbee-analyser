@@ -18,3 +18,12 @@
 .inlineProgressBar .bar {
     border-radius: 0 !important;
 }
+
+.divider { 
+    margin: 3em 0 1em 0!important;
+}
+
+.topIdenticon {
+    background: #FFF;
+    margin: auto;
+}

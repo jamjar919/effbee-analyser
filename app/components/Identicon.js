@@ -19,7 +19,11 @@ export default class Identicon extends Component<Props> {
 
         const svg = jdenticon.toSvg(value, size);
         return (
-            <div className={className} dangerouslySetInnerHTML={{__html: svg}} />
+            <div style={{
+                borderRadius: `${Math.floor(size/2)}px`,
+                width: `${size}px`,
+                height: `${size}px`
+            }} className={className} dangerouslySetInnerHTML={{__html: svg}} />
         );
     }
 

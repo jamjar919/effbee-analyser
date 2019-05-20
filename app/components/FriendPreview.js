@@ -119,7 +119,7 @@ class FriendPreview extends React.Component<Props> {
 
         if (friendCards.size === 0) {
             friendCards.push(
-                <Header as='h2'>
+                <Header as='h1'>
                     Nothing To Show
                     <Header.Subheader>There's no group chats or messages shared between this person and any others. Lonely!</Header.Subheader>
                 </Header>
@@ -128,11 +128,11 @@ class FriendPreview extends React.Component<Props> {
 
         return (
             <div>
-                <Header as='h2' icon textAlign='center'>
-                    <Identicon size={100} value={name} />
+                <Header as='h1' icon textAlign='center'>
+                    <Identicon size={200} value={name} className={styles.topIdenticon}/>
                     <Header.Content>{name}</Header.Content>
                 </Header>
-                <Divider horizontal>
+                <Divider className={styles.divider} horizontal>
                     <Header as='h4'>
                         <Icon name='paper plane' />
                         With You
@@ -192,8 +192,8 @@ class FriendPreview extends React.Component<Props> {
                         </Table>
                     </div>
                 </Transition>
-                <Divider horizontal>
-                    <Header as='h4'>
+                <Divider className={styles.divider} horizontal>
+                    <Header as='h3'>
                         <Icon name='paper plane' />
                         With Others
                     </Header>
