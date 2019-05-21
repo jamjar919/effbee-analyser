@@ -2,3 +2,12 @@
     width: 230px;
     background: #2A3F54;
 }
+
+.menuContainer h1 .title, .menuContainer h1 i {
+    color: #FFF;
+}
+
+.menu {
+    width: auto !important;
+    border-radius: 0 !important;
+}

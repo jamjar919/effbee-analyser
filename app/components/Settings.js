@@ -1,9 +1,12 @@
 // @flow
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { Form, Segment, Container, Header, Icon, Button } from 'semantic-ui-react';
 import SettingsFile from '../SettingsFile';
 import { app, BrowserWindow } from 'electron';
 import path from 'path';
+
+import styles from './css/Settings.css';
 
 type Props = {};
 
@@ -28,11 +31,28 @@ export default class Settings extends Component<Props> {
 
   render() {
     return (
-      <div>
-        <h2>Settings</h2>
-        <label>Select Facebook Data Directory: <input id="facebookDataDir" type="file" webkitdirectory="true" onChange={this.handleChangeDataDir.bind(this)}/></label>
-        <p>Current directory: {this.state.dataDir}</p>
-      </div>
+        <Container text>
+            <Header as='h2'>Settings</Header>
+            <Segment>
+                <p>Current directory: {this.state.dataDir}</p>
+            </Segment>
+            <Segment placeholder>
+                <Header icon>
+                    <Icon name='file outline' />
+                    Facebook Data Directory
+                </Header>
+                <label>
+                    <span className="ui primary button">Change</span>
+                    <input
+                        className={styles.facebookDataDir}
+                        id="facebookDataDir"
+                        type="file"
+                        webkitdirectory="true"
+                        onChange={this.handleChangeDataDir.bind(this)}
+                    />
+                </label>
+            </Segment>
+        </Container>
     );
   }
 }

@@ -14,8 +14,9 @@ class FriendsApi extends FacebookApi {
                     ).length < 2
                 )
                 
-        } catch {
-            return false;
+        } catch (e) {
+            console.error(e)
+            return undefined;
         }
     }
 }

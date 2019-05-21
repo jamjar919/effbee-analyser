@@ -1,0 +1,8 @@
+.facebookDataDir {
+    width: 0;
+    height: 0;
+}
+
+.facebookDataDir:focus {
+    outline: none;
+}
