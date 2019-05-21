@@ -22,11 +22,11 @@ class SettingsFile {
   }
 }
 
-function parseDataFile(filePath) {
+function parseDataFile(filePath, defaults) {
   try {
     return JSON.parse(fs.readFileSync(filePath));
   } catch(error) {
-    return this.defaults;
+    return defaults;
   }
 }
 
