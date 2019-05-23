@@ -2,7 +2,6 @@
 import React, { Component } from 'react';
 import { Header, Icon } from 'semantic-ui-react'
 
-
 import Network from './Network';
 import TopMenuNetwork from './TopMenuNetwork';
 import FriendPreview from './FriendPreview';

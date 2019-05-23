@@ -92,18 +92,25 @@ export default class Home extends Component<Props> {
             rootName
         } = this.props
 
-        const friendNodes = new FriendsApi()
-        .get()
+        const messageData = new MessagesApi()
+
+        const friendNodes = new FriendsApi().get()
         .map(friend => friend.name)
         .map(name => ({
             label: name,
-            id: name
-        }));
-
+            id: name,
+            shape: "dot"
+        }))
+        .map(node => {
+            const chatsBetweenRoot = messageData.chatsBetween([rootName, node.label])
+            return {
+                ...node,
+                value: chatsBetweenRoot.count
+            }
+        });
         friendNodes.push({ label: rootName, id: 'root', physics: false })
 
         const nodes = new vis.DataSet(friendNodes);
-        const messageData = new MessagesApi()
 
         const edgesChats = []
         for (let i = 0; i < friendNodes.length; i += 1) {

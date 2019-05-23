@@ -22,7 +22,7 @@ export default class Settings extends Component<Props> {
     }
   }
 
-  handleChangeDataDir(e) {
+  handleChangeDataDir() {
     let path = document.getElementById("facebookDataDir").files[0].path;
     path = path.replace(/\\/g , "/");
     this.state.store.set("facebookDataDir", path);
