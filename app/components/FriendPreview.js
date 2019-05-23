@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Header, Icon, Container, Segment, Grid, Divider, Statistic, Progress, Table, Transition, Button, Item } from 'semantic-ui-react'
+import { Link } from 'react-router-dom';
+import { Header, Icon, Segment, Grid, Divider, Statistic, Progress, Table, Transition, Button, Item } from 'semantic-ui-react'
 import memoize from "memoize-one";
 import Identicon from './Identicon';
+import routes from '../constants/routes'
 
 import MessagesApi from '../facebookapi/messages'
 import ProfileApi from '../facebookapi/profile'
@@ -35,7 +37,6 @@ class FriendPreview extends React.Component<Props> {
         const { name } = this.props;
         const {
             profileApi,
-            messagesApi,
             showDetails,
             memoizedChatsBetween,
             memoizedChats
@@ -94,8 +95,6 @@ class FriendPreview extends React.Component<Props> {
         // Chat Details With Others
         const theirChats = memoizedChats(name)
 
-        console.log(theirChats)
-
         const friendCards = theirChats.peopleRanking.map((person, i) => (
             <Item key={i}>
                 <div className="ui small image">
@@ -132,6 +131,7 @@ class FriendPreview extends React.Component<Props> {
                     <Identicon size={200} value={name} className={styles.topIdenticon}/>
                     <Header.Content>{name}</Header.Content>
                 </Header>
+                <Link to={routes.FRIEND}>Investigate</Link>
                 <Divider className={styles.divider} horizontal>
                     <Header as='h4'>
                         <Icon name='paper plane' />
