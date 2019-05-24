@@ -19,7 +19,8 @@ class MessagesApi extends FacebookApi {
                         count: details.messages.filter(message => message.sender_name == p.name).length
                     })),
                     title: details.title,
-                    file
+                    file,
+                    messages: details.messages
                 };
             })
         } catch (e) {
@@ -98,6 +99,73 @@ class MessagesApi extends FacebookApi {
             count,
             countBreakdown,
             names
+        }
+    }
+
+    // root is the name of your person
+    // to is the name of the messages 
+    // timeinterval is a number in seconds, the message counts will then be organised in portions this large 
+    chatsPerTimeInterval(root, to, timeInterval) {
+        // find chats between names
+        const names = [root, to]
+        const chats = this.messages.filter(details => {
+            const participants = details.participants.map(p => p.name);
+            return (
+                names.reduce((prev, current) => prev && (participants.indexOf(current) >= 0), true)
+            )
+        });
+
+        // find first message in the group 
+        let firstTimestamp = Math.floor((+ new Date()) / 1000) // current unix time in seconds
+        const lastTimestamp = firstTimestamp
+        chats.forEach(chat => {
+            chat.messages.forEach(message => {
+                if (Math.floor(message.timestamp_ms/1000) < firstTimestamp) {
+                    firstTimestamp = Math.floor(message.timestamp_ms/1000)
+                }
+            })
+        })
+
+        const messagesPerInterval = []
+        for(let time = firstTimestamp; time < lastTimestamp; time += timeInterval) {
+            let count = 0;
+            const messages = {}
+
+            chats.forEach(chat => {
+                chat.messages.forEach(message => {
+                    const timestamp = Math.floor(message.timestamp_ms / 1000);
+                    if (names.indexOf(message.sender_name) > -1) {
+                        if (
+                            (timestamp > time) &&
+                            (timestamp < (time + timeInterval))
+                        ) {
+                            if (!(Object.keys(messages).indexOf(message.sender_name) > -1)) {
+                                messages[message.sender_name] = []
+                            }
+                            messages[message.sender_name].push({
+                                chatName: chat.name,
+                                content: message.content,
+                                timestamp: Math.floor(message.timestamp_ms/1000)
+                            })
+                        }
+                    }
+                })
+            })
+
+            console.log(messages)
+
+            messagesPerInterval.push({
+                start: time,
+                end: time + timeInterval,
+                count: messages.length,
+                messages
+            })
+        }
+
+        return {
+            firstTimestamp,
+            lastTimestamp,
+            messagesPerInterval
         }
     }
 }
