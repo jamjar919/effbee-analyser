@@ -128,9 +128,16 @@ class MessagesApi extends FacebookApi {
 
         const messagesPerInterval = []
         for(let time = firstTimestamp; time < lastTimestamp; time += timeInterval) {
-            let count = 0;
-            const messages = {}
 
+            const messages = {}
+            chats.forEach(chat => {
+                messages[chat.title] = []
+            })
+
+
+            const count = {}
+            count[root] = 0;
+            count[to] = 0;
             chats.forEach(chat => {
                 chat.messages.forEach(message => {
                     const timestamp = Math.floor(message.timestamp_ms / 1000);
@@ -139,13 +146,11 @@ class MessagesApi extends FacebookApi {
                             (timestamp > time) &&
                             (timestamp < (time + timeInterval))
                         ) {
-                            if (!(Object.keys(messages).indexOf(message.sender_name) > -1)) {
-                                messages[message.sender_name] = []
-                            }
-                            messages[message.sender_name].push({
-                                chatName: chat.name,
+                            count[message.sender_name] += 1
+                            messages[chat.title].push({
                                 content: message.content,
-                                timestamp: Math.floor(message.timestamp_ms/1000)
+                                timestamp: Math.floor(message.timestamp_ms/1000),
+                                sender: message.sender_name
                             })
                         }
                     }
@@ -157,7 +162,7 @@ class MessagesApi extends FacebookApi {
             messagesPerInterval.push({
                 start: time,
                 end: time + timeInterval,
-                count: messages.length,
+                count,
                 messages
             })
         }
@@ -165,7 +170,9 @@ class MessagesApi extends FacebookApi {
         return {
             firstTimestamp,
             lastTimestamp,
-            messagesPerInterval
+            chatNames: chats.map(chat => chat.title),
+            messagesPerInterval,
+
         }
     }
 }

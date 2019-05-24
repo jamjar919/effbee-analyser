@@ -30,7 +30,7 @@ class Friend extends Component<Props> {
         return (
             <div>
                 {name}
-                {JSON.stringify(messageApi.chatsPerTimeInterval([root, name], 2678400))}
+                {JSON.stringify(messageApi.chatsPerTimeInterval(root, name, 2678400))}
             </div>
         );
     }
