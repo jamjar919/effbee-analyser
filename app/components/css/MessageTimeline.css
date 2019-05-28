@@ -1,0 +1,6 @@
+.timeline {
+    width: calc(100vw - 230px);
+    height: 500px;
+    margin: 0;
+    padding: 0;
+}

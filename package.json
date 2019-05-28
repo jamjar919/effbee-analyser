@@ -213,6 +213,7 @@
     "less": "^3.9.0",
     "less-loader": "^5.0.0",
     "memoize-one": "^5.0.4",
+    "moment": "^2.24.0",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
     "react-hot-loader": "^4.3.12",
@@ -224,6 +225,7 @@
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^0.87.1",
     "source-map-support": "^0.5.9",
+    "taucharts": "^2.7.2",
     "vis": "^4.21.0"
   },
   "devEngines": {

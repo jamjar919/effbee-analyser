@@ -117,11 +117,14 @@ class MessagesApi extends FacebookApi {
 
         // find first message in the group 
         let firstTimestamp = Math.floor((+ new Date()) / 1000) // current unix time in seconds
-        const lastTimestamp = firstTimestamp
+        let lastTimestamp = 0
         chats.forEach(chat => {
             chat.messages.forEach(message => {
                 if (Math.floor(message.timestamp_ms/1000) < firstTimestamp) {
                     firstTimestamp = Math.floor(message.timestamp_ms/1000)
+                }
+                if (Math.floor(message.timestamp_ms/1000) > lastTimestamp) {
+                    lastTimestamp = Math.floor(message.timestamp_ms/1000)
                 }
             })
         })
@@ -133,7 +136,6 @@ class MessagesApi extends FacebookApi {
             chats.forEach(chat => {
                 messages[chat.title] = []
             })
-
 
             const count = {}
             count[root] = 0;
@@ -156,8 +158,6 @@ class MessagesApi extends FacebookApi {
                     }
                 })
             })
-
-            console.log(messages)
 
             messagesPerInterval.push({
                 start: time,

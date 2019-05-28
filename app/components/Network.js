@@ -31,7 +31,7 @@ type Props = {
     rootName: string
 };
 
-export default class Home extends Component<Props> {
+export default class Network extends Component<Props> {
     props: Props;
 
     constructor(props) {

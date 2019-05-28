@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Header, Icon } from 'semantic-ui-react'
+
 import MessagesApi from '../facebookapi/messages'
 import ProfileApi from '../facebookapi/profile'
+import MessageTimeline from './MessageTimeline';
+import Identicon from './Identicon';
 
 type Props = {
     name: string,
@@ -26,11 +30,28 @@ class Friend extends Component<Props> {
         const messageApi = new MessagesApi();
         const profileApi = new ProfileApi();
         const root = profileApi.getFullName(); 
+        const chats = messageApi.chatsPerTimeInterval(root, name, 2678400);
+        console.log(chats)
 
         return (
             <div>
-                {name}
-                {JSON.stringify(messageApi.chatsPerTimeInterval(root, name, 2678400))}
+                <Header as='h2'>
+                    <Identicon size={75} value={name} className="ui circular image"/>
+                    <Header.Content>
+                        {name}
+                        <Header.Subheader>Awards here...</Header.Subheader>
+                    </Header.Content>
+                </Header>
+                <div>
+                    <Header as='h3'>
+                        <Icon name='facebook messenger' />
+                        <Header.Content>Message Frequency</Header.Content>
+                    </Header>
+                    <MessageTimeline 
+                        chats={chats}
+                        people={[ root, name ]}
+                    />
+                </div>
             </div>
         );
     }
