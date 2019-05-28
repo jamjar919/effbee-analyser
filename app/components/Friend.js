@@ -31,6 +31,7 @@ class Friend extends Component<Props> {
         const profileApi = new ProfileApi();
         const root = profileApi.getFullName(); 
         const chats = messageApi.chatsPerTimeInterval(root, name, 2678400);
+
         console.log(chats)
 
         return (

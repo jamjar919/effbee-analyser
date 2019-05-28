@@ -10,15 +10,29 @@ class MessagesApi extends FacebookApi {
             const isDirectory = source => fs.lstatSync(source).isDirectory()
             const getDirectories = source =>
                 fs.readdirSync(source).map(name => join(source, name)).filter(isDirectory)
+            const titleCount = {}
             this.messages = getDirectories(directories).map(directory => {
                 const file = `${directory}/message_1.json`;
                 const details = JSON.parse(fs.readFileSync(file, { encoding: "utf-8" }))
+
+                // duplicate renaming
+                const title = details.title
+                if (!(title in titleCount)) {
+                    titleCount[title] = 0;
+                }
+                titleCount[title] += 1
+
+                let modifiedTitle = title
+                if (titleCount[title] > 1) {
+                    modifiedTitle += ` (${titleCount[title] - 1})`
+                }
+
                 return {
                     participants: details.participants.map(p => ({
                         name: p.name,
                         count: details.messages.filter(message => message.sender_name == p.name).length
                     })),
-                    title: details.title,
+                    title: modifiedTitle,
                     file,
                     messages: details.messages
                 };
@@ -113,8 +127,8 @@ class MessagesApi extends FacebookApi {
             return (
                 names.reduce((prev, current) => prev && (participants.indexOf(current) >= 0), true)
             )
-        });
-
+        }).sort((a, b) => b.messages.length - a.messages.length);
+        
         // find first message in the group 
         let firstTimestamp = Math.floor((+ new Date()) / 1000) // current unix time in seconds
         let lastTimestamp = 0

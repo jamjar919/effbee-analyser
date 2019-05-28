@@ -39,8 +39,13 @@ export default class MessageTimeline extends Component<Props> {
         }
     }
 
-    componentDidUpdate(nextProps, nextState) {
-
+    componentDidUpdate(prevProps, prevState) {
+        if (
+            (prevState.mode !== this.state.mode) ||
+            this.props !== prevProps
+        ) {
+            this.renderGraph()
+        }
     }
 
     renderGraph() {
@@ -53,55 +58,102 @@ export default class MessageTimeline extends Component<Props> {
             mode
         } = this.state
 
+        const TimelineControlsPlugin = {
+            _containerTemplate: '<div id="tauchart-timeline-controls"></div>',
+            init: function (chart) {
+                this._chart = chart;
+                this._container = this._chart.insertToRightSidebar(this._containerTemplate);        
+            },
+            destroy: function () {},
+            onSpecReady: function () {},
+            onRender: function () {}
+        }
+
         const items = []
         const start = moment.unix(chats.firstTimestamp).toDate()
         const end = moment.unix(chats.lastTimestamp).toDate()
+        const chatNames = chats.chatNames
+        let chart;
+
         if (mode === "PERSON") {
-            chats.messagesPerInterval.forEach(chat => {
-                const midpoint = moment.unix(Math.floor((chat.start + chat.end) / 2)).toDate()
+            chats.messagesPerInterval.forEach(interval => {
+                const midpoint = moment.unix(Math.floor((interval.start + interval.end) / 2)).toDate()
                 people.forEach(person => {
                     items.push({
                         date: midpoint,
-                        messages: chat.count[person],
+                        messages: interval.count[person],
                         person
                     })
                 })
             })
+
+            chart = new Tau.Chart({
+                type: 'stacked-area',
+                x: 'date',
+                y: 'messages',
+                color: 'person',
+                guide: {
+                    interpolate: 'smooth-keep-extremum'
+                },
+                data: items,
+                plugins: [
+                    TimelineControlsPlugin,
+                    Tau.api.plugins.get('tooltip')(),
+                    Tau.api.plugins.get('legend')()
+                ]
+            })    
         }
 
         if (mode === "CHAT") {
+            // force display in the order we want
+            chatNames.forEach(name => {
+                items.push({
+                    date: start,
+                    messages: 0,
+                    group: name
+                })
+            })
 
+            chats.messagesPerInterval.forEach(interval => {
+                const midpoint = moment.unix(Math.floor((interval.start + interval.end) / 2)).toDate()
+                chatNames.forEach(name => {
+                    const messages = interval.messages[name].length
+                    if (messages > 0) {
+                        items.push({
+                            date: midpoint,
+                            messages,
+                            group: name
+                        })
+                    }
+                })
+            })
+
+            chart = new Tau.Chart({
+                type: 'stacked-area',
+                x: 'date',
+                y: 'messages',
+                color: 'group',
+                guide: {
+                    interpolate: 'smooth-keep-extremum'
+                },
+                data: items,
+                plugins: [
+                    TimelineControlsPlugin,
+                    Tau.api.plugins.get('tooltip')(),
+                    Tau.api.plugins.get('legend')()
+                ]
+            })   
         }
-        console.log(items)
-
-        const chart = new Tau.Chart({
-            type: 'stacked-area',
-            x: 'date',
-            y: 'messages',
-            color: 'person',
-            guide: {
-                interpolate: 'smooth-keep-extremum'
-            },
-            data: items,
-            plugins: [
-                Tau.api.plugins.get('tooltip')(),
-                Tau.api.plugins.get('legend')(),
-                {
-                    _containerTemplate: '<div id="tauchart-timeline-controls"></div>',
-                    init: function (chart) {
-                        this._chart = chart;
-                        this._container = this._chart.insertToRightSidebar(this._containerTemplate);        
-                    },
-                    destroy: function () {},
-                    onSpecReady: function () {},
-                    onRender: function () {}
-                }
-            ]
-        })
 
         this.setState({
             chart
         }, () => {
+            // remove old chart
+            if (document.getElementById("messageTimeline")) {
+                document.getElementById("messageTimeline").innerHTML = "";
+            }
+
+            // render new chart
             this.state.chart.renderTo('#messageTimeline');
 
             // render in the options
