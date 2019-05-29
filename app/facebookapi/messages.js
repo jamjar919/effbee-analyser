@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { join } from 'path';
 import FacebookApi from "./api";
+import moment from 'moment';
 
 class MessagesApi extends FacebookApi {
     constructor() {
@@ -128,7 +129,7 @@ class MessagesApi extends FacebookApi {
                 names.reduce((prev, current) => prev && (participants.indexOf(current) >= 0), true)
             )
         }).sort((a, b) => b.messages.length - a.messages.length);
-        
+
         // find first message in the group 
         let firstTimestamp = Math.floor((+ new Date()) / 1000) // current unix time in seconds
         let lastTimestamp = 0
@@ -188,6 +189,28 @@ class MessagesApi extends FacebookApi {
             messagesPerInterval,
 
         }
+    }
+
+    // take a object with chats in form
+    // [
+    //  { messages: Array(Object), participants: Array(Object), title: string }  
+    // ]
+    getTimeDetails(chats, locale = 'en-gb') {
+        moment.locale(locale)
+
+        // init hourmap
+        const hourMap = {}
+        const hourArray = [...Array(24).keys()]
+        hourArray.forEach(hour => {
+            hourMap[hour] = 0 
+        })
+
+        chats.forEach(chat => {
+            chat.messages.forEach(message => {
+                hourMap[moment(message.timestamp_ms).hour()] += 1
+            })
+        })
+        return hourMap;
     }
 }
 

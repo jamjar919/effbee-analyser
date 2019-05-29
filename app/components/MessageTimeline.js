@@ -158,8 +158,8 @@ export default class MessageTimeline extends Component<Props> {
 
             // render in the options
             ReactDOM.render((
-                    <div class="tau-chart__layout__sidebar-right__wrap">
-                        <div class="tau-chart__legend__title">
+                    <div className="tau-chart__layout__sidebar-right__wrap">
+                        <div className="tau-chart__legend__title">
                             Message Split
                         </div>
                         <Form.Group>

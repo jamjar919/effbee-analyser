@@ -30,9 +30,9 @@ class Friend extends Component<Props> {
         const messageApi = new MessagesApi();
         const profileApi = new ProfileApi();
         const root = profileApi.getFullName(); 
-        const chats = messageApi.chatsPerTimeInterval(root, name, 2678400);
-
-        console.log(chats)
+        const chatsInterval = messageApi.chatsPerTimeInterval(root, name, 2678400);
+        const chats = messageApi.chatsBetween([root, name])
+        console.log(messageApi.getTimeDetails(chats.chats))
 
         return (
             <div>
@@ -49,7 +49,7 @@ class Friend extends Component<Props> {
                         <Header.Content>Message Frequency</Header.Content>
                     </Header>
                     <MessageTimeline 
-                        chats={chats}
+                        chats={chatsInterval}
                         people={[ root, name ]}
                     />
                 </div>
