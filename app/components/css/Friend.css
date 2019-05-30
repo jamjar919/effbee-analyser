@@ -6,5 +6,26 @@
 }
 
 .hourRadar {
-    padding-top: 50px
+    margin: auto;
+}
+
+.gridColumnCenter {
+    display: flex !important;
+}
+
+.gridColumnCenterItem {
+    margin: auto !important;
+}
+
+.inlineProgress {
+    padding: 0 !important;
+}
+
+.inlineProgressBar {
+    margin: 0 !important;
+    border-radius: 0 !important;
+}
+
+.inlineProgressBar .bar {
+    border-radius: 0 !important;
 }

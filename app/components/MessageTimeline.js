@@ -20,7 +20,7 @@ export default class MessageTimeline extends Component<Props> {
         super(props)
         this.state = {
             mode: "PERSON",
-            graph: null,
+            chart: null,
             dataset: null
         }
     }
@@ -31,11 +31,11 @@ export default class MessageTimeline extends Component<Props> {
 
     componentWillUnmount() {
         const {
-            graph
+            chart
         } = this.state
-        if (graph !== null) {
-            graph.destroy();
-            console.log("destroying graph...")
+        if (chart !== null) {
+            chart.destroy();
+            console.log("destroying chart...")
         }
     }
 
@@ -58,7 +58,9 @@ export default class MessageTimeline extends Component<Props> {
             mode
         } = this.state
 
+        console.log(this.state.chart)
         if (this.state.chart) {
+            console.log("destroying chart...")
             this.state.chart.destroy();
         }
 

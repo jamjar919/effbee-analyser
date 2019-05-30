@@ -1,0 +1,19 @@
+.tip {
+    margin: auto;
+    background: rgba(0,0,0,.87);
+    font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
+    color: #FFF;
+    border-radius: 50px;
+    height: 100px;
+    width: 100px;
+    position: absolute;
+    text-align: center;
+    top: 75px;
+    left: 75px;
+    display: flex;
+    pointer-events: none;
+}
+
+.tipContent {
+    margin: auto;
+}

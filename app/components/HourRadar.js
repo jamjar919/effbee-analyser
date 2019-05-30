@@ -1,31 +1,14 @@
 import React, { Component } from 'react';
 import { RadialChart, Hint } from 'react-vis';
+import classNames from 'classnames';
+import { Icon } from 'semantic-ui-react';
+
+import styles from './css/HourRadar.css'
 
 type Props = {
     data: array,
     size:number,
     className: string
-}
-
-// https://jsfiddle.net/aymericbeaumet/zb5hqx83/
-function abbreviate(n) {
-    var exp = n
-        .toExponential()
-        .split('e+')
-        .map(function(el) { return +el; })
-    ;
-    var mod = exp[1] % 3;
-    exp[0] = Math.round(exp[0] * Math.pow(10, mod));
-    exp[1] = [
-        '',
-        'k',
-        'm',
-        'M',
-        'T',
-        'quad',
-        'quint'
-    ][(exp[1] - mod) / 3];
-    return exp[0] + exp[1];
 }
 
 export default class HourRadar extends Component<Props> {
@@ -82,17 +65,20 @@ export default class HourRadar extends Component<Props> {
 
         return (
             <RadialChart
+                className={classNames(className, styles.hourRadar)}
                 data={arcs}
                 width={size}
                 height={size}
                 colorType="literal"
-                onValueMouseOver={v => this.setState({value: { messages: v.value, time: v.label, x: 0, y: 0 }})}
+                onValueMouseOver={v => this.setState({value: { messages: v.value, time: v.label }})}
                 onSeriesMouseOut={v => this.setState({value: false})}
             >
-                {value !== false && <Hint value={value} format={v => [
-                    { title: "Messages", value: v.messages },
-                    { title: "Time", value: v.time }
-                ]} />}
+                {value !== false && <div className={styles.tip}>
+                    <span className={styles.tipContent}>
+                        <Icon name='facebook messenger'/> {value.messages}<br />
+                        <Icon name='clock outline'/>{value.time}
+                    </span>
+                </div>}
             </RadialChart>
         );
     }

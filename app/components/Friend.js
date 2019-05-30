@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Header, Icon, Segment, Container, Grid } from 'semantic-ui-react'
+import { Header, Icon, Segment, Container, Grid, Statistic, Divider, Progress } from 'semantic-ui-react'
 
 import MessagesApi from '../facebookapi/messages'
 import ProfileApi from '../facebookapi/profile'
@@ -33,14 +33,26 @@ class Friend extends Component<Props> {
         const messageApi = new MessagesApi();
         const profileApi = new ProfileApi();
         const root = profileApi.getFullName(); 
+
         const chatsInterval = messageApi.chatsPerTimeInterval(root, name, 1209600);
-        const chats = messageApi.chatsBetween([root, name], true)
-        const timeDetails = messageApi.getTimeDetails(chats.chats);
+        const chatsWithRoot = messageApi.chatsBetween([root, name], true)
+        const chats = messageApi.chats(name);
+
+        const timeDetails = messageApi.getTimeDetails(chatsWithRoot.chats);
+        const numGroupsWithRoot = chatsWithRoot.chats.length
+        const numMessagesWithRoot = chatsWithRoot.count
+        const numYouSent = chatsWithRoot.countBreakdown[root]
+        const numTheySent = chatsWithRoot.countBreakdown[name]
+        const numYouSentPercent = Math.floor(
+                (numYouSent/numMessagesWithRoot) * 100
+            )
+        
+        console.log(chats)
 
         return (
             <div className={styles.friendContainer}>
-                <Header as='h2'>
-                    <Identicon size={75} value={name} className="ui circular image"/>
+                <Header as='h1'>
+                    <Identicon size={100} value={name} className="ui circular image"/>
                     <Header.Content>
                         {name}
                         <Header.Subheader>Awards here...</Header.Subheader>
@@ -48,10 +60,54 @@ class Friend extends Component<Props> {
                 </Header>
                 <Grid>
                     <Grid.Row>
-                        <Grid.Column width={8}>
-                            <Segment>Left</Segment>
+                        <Grid.Column width={10}>
+                            <Segment.Group>
+                                <Segment>
+                                    <Header as='h3'>
+                                        <Icon name='area graph' />
+                                        <Header.Content>Basic Statistics</Header.Content>
+                                    </Header>
+                                </Segment>
+                                <Segment>
+                                    <Grid columns={2} centered>
+                                        <Grid.Column className={styles.gridColumnCenter}>
+                                            <Statistic className={styles.gridColumnCenterItem}>
+                                                <Statistic.Value>{numMessagesWithRoot}</Statistic.Value>
+                                                <Statistic.Label>Messages</Statistic.Label>
+                                            </Statistic>
+                                        </Grid.Column>
+                                        <Grid.Column className={styles.gridColumnCenter}>
+                                            <Statistic className={styles.gridColumnCenterItem}>
+                                                <Statistic.Value>{numGroupsWithRoot}</Statistic.Value>
+                                                <Statistic.Label>Groups</Statistic.Label>
+                                            </Statistic>
+                                        </Grid.Column>
+                                    </Grid>
+                                    <Divider vertical>In</Divider>
+                                </Segment>
+                                <Segment>
+                                    <Grid columns={2} relaxed='very'>
+                                        <Grid.Column className={styles.gridColumnCenter}>
+                                            <Statistic className={styles.gridColumnCenterItem}>
+                                                <Statistic.Label>You sent</Statistic.Label>
+                                                <Statistic.Value>{numYouSent}</Statistic.Value>
+                                            </Statistic>
+                                        </Grid.Column>
+                                        <Grid.Column className={styles.gridColumnCenter}>
+                                            <Statistic className={styles.gridColumnCenterItem}>
+                                                <Statistic.Label>They sent</Statistic.Label>
+                                                <Statistic.Value>{numTheySent}</Statistic.Value>
+                                            </Statistic>
+                                        </Grid.Column>
+                                    </Grid>
+                                    <Divider vertical><Icon name="sync" /></Divider>
+                                </Segment>
+                                <Segment attached="bottom" className={styles.inlineProgress}>
+                                    <Progress percent={numYouSentPercent} color="red" progress className={styles.inlineProgressBar} />
+                                </Segment>
+                            </Segment.Group>
                         </Grid.Column>
-                        <Grid.Column width={8}>
+                        <Grid.Column width={6}>
                             <Segment>
                                 <Header as='h3'>
                                     <Icon name='clock outline' />
@@ -61,7 +117,7 @@ class Friend extends Component<Props> {
                                 <HourRadar
                                     className={styles.hourRadar}
                                     data={timeDetails}
-                                    size={400}
+                                    size={250}
                                 />
                             </Segment>
                         </Grid.Column>
