@@ -58,7 +58,10 @@ export default class MessageTimeline extends Component<Props> {
             mode
         } = this.state
 
-        console.log(this.state.chart)
+        if (chats.chatNames.length < 1) {
+            return;
+        }
+
         if (this.state.chart) {
             console.log("destroying chart...")
             this.state.chart.destroy();
@@ -82,6 +85,14 @@ export default class MessageTimeline extends Component<Props> {
         let chart;
 
         if (mode === "PERSON") {
+            people.forEach(person => {
+                items.push({
+                    date: start,
+                    messages: 0,
+                    person
+                })
+            })
+
             chats.messagesPerInterval.forEach(interval => {
                 const midpoint = moment.unix(Math.floor((interval.start + interval.end) / 2)).toDate()
                 people.forEach(person => {
