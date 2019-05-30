@@ -1,7 +1,8 @@
+/* eslint-disable class-methods-use-this */
 import fs from 'fs';
 import { join } from 'path';
-import FacebookApi from "./api";
 import moment from 'moment';
+import FacebookApi from "./api";
 
 class MessagesApi extends FacebookApi {
     constructor() {
@@ -85,13 +86,21 @@ class MessagesApi extends FacebookApi {
     }
 
     // Names is an array
-    chatsBetween(names) {
-        const chats = this.messages.filter(details => {
+    chatsBetween(names, filterMessages = false) {
+        let chats = this.messages.filter(details => {
             const participants = details.participants.map(p => p.name);
             return (
                 names.reduce((prev, current) => prev && (participants.indexOf(current) >= 0), true)
             )
         });
+
+        // filter messages to only include those by the named participants
+        if (filterMessages) {
+            chats = chats.map(chat => ({
+                ...chat,
+                messages: chat.messages.filter(message => (names.indexOf(message.sender_name) > -1))
+            }))
+        }
 
         // count total messages
         let count = 0;

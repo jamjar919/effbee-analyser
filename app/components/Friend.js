@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Header, Icon } from 'semantic-ui-react'
+import { Header, Icon, Segment, Container, Grid } from 'semantic-ui-react'
 
 import MessagesApi from '../facebookapi/messages'
 import ProfileApi from '../facebookapi/profile'
 import MessageTimeline from './MessageTimeline';
 import Identicon from './Identicon';
+import HourRadar from './HourRadar';
+
+import styles from './css/Friend.css';
 
 type Props = {
-    name: string,
+    name: string
 };
 
 class Friend extends Component<Props> {
@@ -31,11 +34,11 @@ class Friend extends Component<Props> {
         const profileApi = new ProfileApi();
         const root = profileApi.getFullName(); 
         const chatsInterval = messageApi.chatsPerTimeInterval(root, name, 2678400);
-        const chats = messageApi.chatsBetween([root, name])
-        console.log(messageApi.getTimeDetails(chats.chats))
+        const chats = messageApi.chatsBetween([root, name], true)
+        const timeDetails = messageApi.getTimeDetails(chats.chats);
 
         return (
-            <div>
+            <div className={styles.friendContainer}>
                 <Header as='h2'>
                     <Identicon size={75} value={name} className="ui circular image"/>
                     <Header.Content>
@@ -43,7 +46,25 @@ class Friend extends Component<Props> {
                         <Header.Subheader>Awards here...</Header.Subheader>
                     </Header.Content>
                 </Header>
-                <div>
+                <Grid>
+                    <Grid.Row>
+                        <Grid.Column width={8}>
+                            <Segment>Left</Segment>
+                        </Grid.Column>
+                        <Grid.Column width={8}>
+                            <Segment>
+                                <div>
+                                    <HourRadar
+                                        className={styles.hourRadar}
+                                        data={timeDetails}
+                                        size={300}
+                                    />
+                                </div>
+                            </Segment>
+                        </Grid.Column>
+                    </Grid.Row>
+                </Grid>
+                <Segment>
                     <Header as='h3'>
                         <Icon name='facebook messenger' />
                         <Header.Content>Message Frequency</Header.Content>
@@ -52,7 +73,7 @@ class Friend extends Component<Props> {
                         chats={chatsInterval}
                         people={[ root, name ]}
                     />
-                </div>
+                </Segment>
             </div>
         );
     }

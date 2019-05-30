@@ -1,5 +1,5 @@
 .menuContainer {
-    width: 230px;
+    width: var(--menuWidth);
     background: #2A3F54;
 }
 

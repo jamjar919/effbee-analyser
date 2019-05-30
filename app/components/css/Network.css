@@ -1,4 +1,4 @@
 .network {
     height: 100vh;
-    width: calc(100vw - 230px)
+    width: var(--mainWidth)
 }

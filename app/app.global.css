@@ -4,6 +4,14 @@
 @import '~taucharts/dist/taucharts.min.css';
 @import "~react-vis/dist/style.css";
 
+/* vars */
+:root {
+  --containerPadding: 20px;
+  --menuWidth: 230px;
+  --mainWidth: calc(100vw - 230px);
+  --topMenuHeight: 50px; 
+}
+
 body {
   margin: 0;
   position: relative;
@@ -11,4 +19,8 @@ body {
   background-color: #232c39;
   font-family: Arial, Helvetica, Helvetica Neue, serif;
   overflow-y: hidden;
+}
+
+svg.rv-xy-plot__inner {
+  overflow: visible;
 }

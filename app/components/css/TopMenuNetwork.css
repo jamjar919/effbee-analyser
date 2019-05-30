@@ -1,7 +1,3 @@
-:root {
-    --topMenuHeight: 50px; 
-}
-  
 .container {
     width: calc(100vw - 230px);
     height: var(--topMenuHeight);

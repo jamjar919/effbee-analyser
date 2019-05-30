@@ -1,0 +1,10 @@
+.friendContainer {
+    padding: var(--containerPadding);
+    width: var(--mainWidth);
+    overflow-y: scroll;
+    height: 100vh
+}
+
+.hourRadar {
+    padding-top: 50px
+}
