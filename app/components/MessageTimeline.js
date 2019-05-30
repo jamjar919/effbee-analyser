@@ -58,6 +58,10 @@ export default class MessageTimeline extends Component<Props> {
             mode
         } = this.state
 
+        if (this.state.chart) {
+            this.state.chart.destroy();
+        }
+
         const TimelineControlsPlugin = {
             _containerTemplate: '<div id="tauchart-timeline-controls"></div>',
             init: function (chart) {

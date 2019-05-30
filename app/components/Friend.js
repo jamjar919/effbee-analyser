@@ -33,7 +33,7 @@ class Friend extends Component<Props> {
         const messageApi = new MessagesApi();
         const profileApi = new ProfileApi();
         const root = profileApi.getFullName(); 
-        const chatsInterval = messageApi.chatsPerTimeInterval(root, name, 2678400);
+        const chatsInterval = messageApi.chatsPerTimeInterval(root, name, 1209600);
         const chats = messageApi.chatsBetween([root, name], true)
         const timeDetails = messageApi.getTimeDetails(chats.chats);
 
@@ -53,13 +53,16 @@ class Friend extends Component<Props> {
                         </Grid.Column>
                         <Grid.Column width={8}>
                             <Segment>
-                                <div>
-                                    <HourRadar
-                                        className={styles.hourRadar}
-                                        data={timeDetails}
-                                        size={500}
-                                    />
-                                </div>
+                                <Header as='h3'>
+                                    <Icon name='clock outline' />
+                                    <Header.Content>Heatmap</Header.Content>
+                                    <Header.Subheader>Organised by hour of day</Header.Subheader>
+                                </Header>
+                                <HourRadar
+                                    className={styles.hourRadar}
+                                    data={timeDetails}
+                                    size={400}
+                                />
                             </Segment>
                         </Grid.Column>
                     </Grid.Row>

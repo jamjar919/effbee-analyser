@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ArcSeries, XYPlot } from 'react-vis';
+import { RadialChart, Hint } from 'react-vis';
 
 type Props = {
     data: array,
@@ -31,12 +31,23 @@ function abbreviate(n) {
 export default class HourRadar extends Component<Props> {
     props: Props;
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            value: false
+        }
+    }
+
     render() {
         const {
             data,
             size,
             className
         } = this.props
+
+        const {
+            value
+        } = this.state
 
         const hours = [...Array(24).keys()]
         const domains = []
@@ -49,38 +60,40 @@ export default class HourRadar extends Component<Props> {
             }
         })
 
-        // round to nearest hundred
-        max = Math.round(max / 100) * 100
+        // avoid divide by zero
+        max = Math.max(max, 1)
 
         // create arcs for the hours
         const arcs = []
-        let angle = 0
         const increment = (Math.PI / 12)
-        
+
         hours.forEach(hour => {
             arcs.push({
-                angle0: angle,
-                angle: angle + increment,
-                radius0: 0,
-                radius: data[hour],
+                angle: increment,
+                label: hour + ':00',
+                value: data[hour],
+                style: {
+                    fill: (value.time === hour + ':00') ? 
+                    `rgba(${Math.floor((data[hour] / max) * 200)}, 0, ${Math.floor(100 - (data[hour] / max) * 100)}, 0.7)` : 
+                    `rgb(${Math.floor((data[hour] / max) * 200)}, 0, ${Math.floor(100 - (data[hour] / max) * 100)})`
+                }
             })
-            angle = angle + increment
         })
 
         return (
-            <XYPlot
-                xDomain={[-5, 5]}
-                yDomain={[-5, 5]}
+            <RadialChart
+                data={arcs}
                 width={size}
                 height={size}
+                colorType="literal"
+                onValueMouseOver={v => this.setState({value: { messages: v.value, time: v.label, x: 0, y: 0 }})}
+                onSeriesMouseOut={v => this.setState({value: false})}
             >
-                <ArcSeries
-                    animation
-                    className={className}
-                    data={arcs}
-                    radiusDomain={[0, max]}
-                />
-            </XYPlot>
+                {value !== false && <Hint value={value} format={v => [
+                    { title: "Messages", value: v.messages },
+                    { title: "Time", value: v.time }
+                ]} />}
+            </RadialChart>
         );
     }
 }
