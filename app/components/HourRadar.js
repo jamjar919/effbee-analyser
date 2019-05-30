@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { RadarChart, CircularGridLines } from 'react-vis';
+import { ArcSeries, XYPlot } from 'react-vis';
 
 type Props = {
     data: array,
@@ -52,28 +52,35 @@ export default class HourRadar extends Component<Props> {
         // round to nearest hundred
         max = Math.round(max / 100) * 100
 
-        // create domains for the lines
+        // create arcs for the hours
+        const arcs = []
+        let angle = 0
+        const increment = (Math.PI / 12)
+        
         hours.forEach(hour => {
-            domains.push({
-                name: hour,
-                domain: [0, max]
+            arcs.push({
+                angle0: angle,
+                angle: angle + increment,
+                radius0: 0,
+                radius: data[hour],
             })
+            angle = angle + increment
         })
-        // renders in reverse order for some reason
-        domains.reverse()
 
-        console.log(data)
-        console.log(domains)
         return (
-            <RadarChart
-                className={className}
-                data={[data]}
-                height={size}
+            <XYPlot
+                xDomain={[-5, 5]}
+                yDomain={[-5, 5]}
                 width={size}
-                domains={domains}
-                tickFormat={tick => abbreviate(Math.round(tick))}
-                renderAxesOverPolygons={true}
-            />
+                height={size}
+            >
+                <ArcSeries
+                    animation
+                    className={className}
+                    data={arcs}
+                    radiusDomain={[0, max]}
+                />
+            </XYPlot>
         );
     }
 }

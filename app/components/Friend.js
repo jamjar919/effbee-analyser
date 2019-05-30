@@ -57,7 +57,7 @@ class Friend extends Component<Props> {
                                     <HourRadar
                                         className={styles.hourRadar}
                                         data={timeDetails}
-                                        size={300}
+                                        size={500}
                                     />
                                 </div>
                             </Segment>
