@@ -9,6 +9,7 @@ import Identicon from './Identicon';
 import HourRadar from './HourRadar';
 
 import styles from './css/Friend.css';
+import FriendList from './FriendList';
 
 type Props = {
     name: string
@@ -132,6 +133,9 @@ class Friend extends Component<Props> {
                         chats={chatsInterval}
                         people={[ root, name ]}
                     />
+                </Segment>
+                <Segment>
+                    <FriendList friends={chats.peopleRanking} />
                 </Segment>
             </div>
         );

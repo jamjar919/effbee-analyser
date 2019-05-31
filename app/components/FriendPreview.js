@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Header, Icon, Segment, Grid, Divider, Statistic, Progress, Table, Transition, Button, Item } from 'semantic-ui-react'
 import memoize from "memoize-one";
 import Identicon from './Identicon';
+import FriendList from './FriendList';
 import routes from '../constants/routes'
 
 import MessagesApi from '../facebookapi/messages'
@@ -95,36 +96,6 @@ class FriendPreview extends React.Component<Props> {
         // Chat Details With Others
         const theirChats = memoizedChats(name)
 
-        const friendCards = theirChats.peopleRanking.map((person, i) => (
-            <Item key={i}>
-                <div className="ui small image">
-                    <Identicon size={150} value={person.name} />
-                </div>
-                <Item.Content>
-                    <Item.Header>{person.name}</Item.Header>
-                    <Item.Description>
-                        <Statistic>
-                            <Statistic.Value>{person.messages}</Statistic.Value>
-                            <Statistic.Label>Messages Shared</Statistic.Label>
-                        </Statistic>
-                    </Item.Description>
-                    <Item.Extra>
-                        <Icon name='users' />
-                        {person.groups} Shared Group Chats
-                    </Item.Extra>
-                </Item.Content>
-            </Item>
-        ))
-
-        if (friendCards.length === 0) {
-            friendCards.push(
-                <Header as='h1' key="noMessages">
-                    Nothing To Show
-                    <Header.Subheader>There's no group chats or messages shared between this person and any others. Lonely!</Header.Subheader>
-                </Header>
-            );
-        }
-
         return (
             <div>
                 <Header as='h1' icon textAlign='center'>
@@ -200,9 +171,7 @@ class FriendPreview extends React.Component<Props> {
                 </Divider>
 
                 <Segment>
-                    <Item.Group>
-                        {friendCards}
-                    </Item.Group>
+                    <FriendList friends={theirChats.peopleRanking} />
                 </Segment>
             </div>
         );

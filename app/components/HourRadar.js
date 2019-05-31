@@ -73,12 +73,14 @@ export default class HourRadar extends Component<Props> {
                 onValueMouseOver={v => this.setState({value: { messages: v.value, time: v.label }})}
                 onSeriesMouseOut={v => this.setState({value: false})}
             >
-                {value !== false && <div className={styles.tip}>
-                    <span className={styles.tipContent}>
-                        <Icon name='facebook messenger'/> {value.messages}<br />
-                        <Icon name='clock outline'/>{value.time}
-                    </span>
-                </div>}
+                {value !== false && <React.Fragment>
+                    <div className={styles.tip}>
+                        <span className={styles.tipContent}>
+                            <Icon name='facebook messenger'/> {value.messages}<br />
+                            <Icon name='clock outline'/>{value.time}
+                        </span>
+                    </div>
+                </React.Fragment>}
             </RadialChart>
         );
     }
