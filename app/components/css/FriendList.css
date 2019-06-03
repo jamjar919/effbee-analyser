@@ -1,0 +1,12 @@
+.horizontalItemGroup {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-flow: row wrap;
+}
+
+.horizontalItem {
+    width: auto !important;
+    padding: 0 1em !important;
+}

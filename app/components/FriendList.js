@@ -2,8 +2,11 @@ import React, { Component } from 'react';
 import { Segment, Item, Card, Statistic, Icon, Header } from 'semantic-ui-react'
 import Identicon from './Identicon'
 
+import styles from './css/FriendList.css'
+
 type Props = {
-    friends: array
+    friends: array,
+    horizontal: boolean
 };
 
 export default class FriendList extends React.Component<Props> {
@@ -11,11 +14,12 @@ export default class FriendList extends React.Component<Props> {
 
     render() {
         const {
-            friends
+            friends,
+            horizontal
         } = this.props;
 
         const friendCards = friends.map((person, i) => (
-            <Item key={i}>
+            <Item key={i} className={horizontal ? styles.horizontalItem : ''}>
                 <div className="ui small image">
                     <Identicon size={150} value={person.name} />
                 </div>
@@ -44,8 +48,9 @@ export default class FriendList extends React.Component<Props> {
             );
         }
 
+
         return (
-            <Item.Group>
+            <Item.Group className={horizontal ? styles.horizontalItemGroup : ''}>
                 {friendCards}
             </Item.Group>
         )

@@ -135,7 +135,7 @@ class Friend extends Component<Props> {
                     />
                 </Segment>
                 <Segment>
-                    <FriendList friends={chats.peopleRanking} />
+                    <FriendList friends={chats.peopleRanking} horizontal={true} />
                 </Segment>
             </div>
         );
