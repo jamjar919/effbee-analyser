@@ -10,9 +10,7 @@ type Props = {
     history: object
 };
 
-
-
-class Home extends Component<Props> {
+class MainMenu extends Component<Props> {
   props: Props;
 
   render() {
@@ -20,7 +18,6 @@ class Home extends Component<Props> {
         history
     } = this.props;
 
-    const isActive = false
     return (
         <div className={styles.menuContainer}>
             <Header as='h1' icon textAlign='center'>
@@ -28,13 +25,16 @@ class Home extends Component<Props> {
                 <Header.Content className={styles.title}>EffBee Analyser</Header.Content>
             </Header>
             <Menu vertical className={styles.menu}>
-                <Menu.Item name="Home" active={isActive} onClick={() => { history.push(routes.HOME) }}>
-                    Home
+                <Menu.Item name="You" active={history.location.pathname === routes.YOU} onClick={() => { history.push(routes.YOU) }}>
+                    You
                 </Menu.Item>
-                <Menu.Item name="Counter" active={isActive} onClick={() => { history.push(routes.COUNTER) }}>
+                <Menu.Item name="Network" active={history.location.pathname === routes.NETWORK} onClick={() => { history.push(routes.NETWORK) }}>
+                    Network
+                </Menu.Item>
+                <Menu.Item name="Counter" active={history.location.pathname === routes.COUNTER} onClick={() => { history.push(routes.COUNTER) }}>
                     Counter
                 </Menu.Item>
-                <Menu.Item name="Settings" active={isActive} onClick={() => { history.push(routes.SETTINGS) }}>
+                <Menu.Item name="Settings" active={history.location.pathname === routes.SETTINGS} onClick={() => { history.push(routes.SETTINGS) }}>
                     Settings
                 </Menu.Item>
                 <Menu.Item key="search">
@@ -46,4 +46,4 @@ class Home extends Component<Props> {
   }
 }
 
-export default withRouter(Home)
+export default withRouter(MainMenu)

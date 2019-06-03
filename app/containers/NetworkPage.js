@@ -1,15 +1,20 @@
 // @flow
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Header, Icon } from 'semantic-ui-react'
+import { bindActionCreators } from 'redux';
 
-import Network from './Network';
-import TopMenuNetwork from './TopMenuNetwork';
-import FriendPreview from './FriendPreview';
-import RightPanel from '../containers/RightPanel';
+import Network from '../components/Network';
+import TopMenuNetwork from '../components/TopMenuNetwork';
+import FriendPreview from '../components/FriendPreview';
+import RightPanel from './RightPanel';
+
+import * as NetworkActions from '../actions/network';
+import * as SelectionActions from '../actions/selection';
+
 import ProfileApi from '../facebookapi/profile'
 
-import styles from './css/Home.css';
-
+import styles from './css/NetworkPage.css';
 
 type Props = {
   toggleShowRoot: () => void,
@@ -17,7 +22,7 @@ type Props = {
   showRoot: boolean 
 };
 
-export default class Home extends Component<Props> {
+class NetworkPage extends Component<Props> {
   props: Props;
 
   render() {
@@ -53,3 +58,22 @@ export default class Home extends Component<Props> {
     );
   }
 }
+
+
+function mapStateToProps(state) {
+  return {
+    showRoot: state.network.showRoot
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    ...bindActionCreators(NetworkActions, dispatch),
+    selectFriend: SelectionActions.selectFriendAction(dispatch)
+  };
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(NetworkPage);

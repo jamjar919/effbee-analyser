@@ -1,5 +1,6 @@
 {
-  "HOME": "/",
+  "YOU": "/",
+  "NETWORK": "/network",
   "COUNTER": "/counter",
   "SETTINGS": "/settings",
   "FRIEND": "/friend"
