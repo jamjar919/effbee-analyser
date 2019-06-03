@@ -3,5 +3,6 @@
   "NETWORK": "/network",
   "COUNTER": "/counter",
   "SETTINGS": "/settings",
-  "FRIEND": "/friend"
+  "FRIEND": "/friend",
+  "FRIENDS": "/friendslist"
 }

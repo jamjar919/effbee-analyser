@@ -28,11 +28,11 @@ class MainMenu extends Component<Props> {
                 <Menu.Item name="You" active={history.location.pathname === routes.YOU} onClick={() => { history.push(routes.YOU) }}>
                     You
                 </Menu.Item>
+                <Menu.Item name="Friends" active={history.location.pathname === routes.FRIENDS} onClick={() => { history.push(routes.FRIENDS) }}>
+                    Your Friends
+                </Menu.Item>
                 <Menu.Item name="Network" active={history.location.pathname === routes.NETWORK} onClick={() => { history.push(routes.NETWORK) }}>
                     Network
-                </Menu.Item>
-                <Menu.Item name="Counter" active={history.location.pathname === routes.COUNTER} onClick={() => { history.push(routes.COUNTER) }}>
-                    Counter
                 </Menu.Item>
                 <Menu.Item name="Settings" active={history.location.pathname === routes.SETTINGS} onClick={() => { history.push(routes.SETTINGS) }}>
                     Settings
