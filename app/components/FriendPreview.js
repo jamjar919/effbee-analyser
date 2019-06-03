@@ -3,17 +3,17 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Header, Icon, Segment, Grid, Divider, Statistic, Progress, Table, Transition, Button, Item } from 'semantic-ui-react'
 import memoize from "memoize-one";
+
 import Identicon from './Identicon';
 import FriendList from './FriendList';
 import routes from '../constants/routes'
-
-import MessagesApi from '../facebookapi/messages'
-import ProfileApi from '../facebookapi/profile'
+import type { defaultFacebookType } from '../reducers/defaultTypes'
 
 import styles from './css/FriendPreview.css';
 
 type Props = {
-    name: string
+    name: string,
+    api: defaultFacebookType
 };
 
 class FriendPreview extends React.Component<Props> {
@@ -21,29 +21,24 @@ class FriendPreview extends React.Component<Props> {
 
     constructor(props) {
         super(props);
-
-        const messagesApi = new MessagesApi()
-
-        // Memoization to stop unnececcary calls to file system
-        // https://reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html#what-about-memoization
         this.state = {
-            profileApi: new ProfileApi(),
-            memoizedChatsBetween: memoize(names => messagesApi.chatsBetween(names)),
-            memoizedChats: memoize(name => messagesApi.chats(name)),
             showDetails: false
         }
     }
 
     render() {
-        const { name } = this.props;
         const {
-            profileApi,
+            name,
+            api
+        } = this.props;
+
+        const {
             showDetails,
-            memoizedChatsBetween,
-            memoizedChats
+            memoizedChatsBetween
         } = this.state
 
-        const root = profileApi.getFullName()
+        const root = api.profileApi.getFullName()
+        const messageApi = api.messageApi;
 
         if (name === false) {
             // nothing selected
@@ -59,7 +54,7 @@ class FriendPreview extends React.Component<Props> {
         }
     
         // Chat Details With You
-        const chatsBetweenRoot = memoizedChatsBetween([root, name])
+        const chatsBetweenRoot = messageApi.chatsBetween([root, name])
         const numGroupsWithRoot = chatsBetweenRoot.chats.length
         const numMessagesWithRoot = chatsBetweenRoot.count
         const numYouSent = chatsBetweenRoot.countBreakdown[root]
@@ -94,7 +89,7 @@ class FriendPreview extends React.Component<Props> {
         })
 
         // Chat Details With Others
-        const theirChats = memoizedChats(name)
+        const theirChats = messageApi.chats(name)
 
         return (
             <div>
@@ -179,12 +174,17 @@ class FriendPreview extends React.Component<Props> {
   }
   
 function mapStateToProps(state) {
+    const api = state.facebook;
     if (state.selection.type === 'FRIEND') {
         return { 
-            name: state.selection.selection
+            name: state.selection.selection,
+            api
         };
     }
-    return { name: false }
+    return {
+        name: false,
+        api
+    }
 }
 
 function mapDispatchToProps() {

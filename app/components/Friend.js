@@ -2,17 +2,17 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Header, Icon, Segment, Container, Grid, Statistic, Divider, Progress } from 'semantic-ui-react'
 
-import MessagesApi from '../facebookapi/messages'
-import ProfileApi from '../facebookapi/profile'
 import MessageTimeline from './MessageTimeline';
 import Identicon from './Identicon';
 import HourRadar from './HourRadar';
+import type { defaultFacebookType } from '../reducers/defaultTypes'
 
 import styles from './css/Friend.css';
 import FriendList from './FriendList';
 
 type Props = {
-    name: string
+    name: string,
+    api: defaultFacebookType
 };
 
 class Friend extends Component<Props> {
@@ -20,7 +20,8 @@ class Friend extends Component<Props> {
 
     render() {
         const {
-            name
+            name,
+            api
         } = this.props;
 
         if (name === false) {
@@ -31,8 +32,8 @@ class Friend extends Component<Props> {
             )
         }
 
-        const messageApi = new MessagesApi();
-        const profileApi = new ProfileApi();
+        const messageApi = api.messageApi;
+        const profileApi = api.profileApi;
         const root = profileApi.getFullName(); 
 
         const chatsInterval = messageApi.chatsPerTimeInterval(root, name, 1209600);
@@ -144,12 +145,17 @@ class Friend extends Component<Props> {
 }
 
 function mapStateToProps(state) {
+    const api = state.facebook;
     if (state.selection.type === 'FRIEND') {
         return { 
-            name: state.selection.selection
+            name: state.selection.selection,
+            api
         };
     }
-    return { name: false }
+    return {
+        name: false,
+        api
+    }
 }
 
 function mapDispatchToProps() {

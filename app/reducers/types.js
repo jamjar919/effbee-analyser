@@ -1,7 +1,13 @@
-import type { Dispatch as ReduxDispatch, Store as ReduxStore } from 'redux';
+import type{ Dispatch as ReduxDispatch, Store as ReduxStore } from 'redux';
 
 export type networkType = {
   showRoot: boolean
+}
+
+export type facebookType = {
+  profileApi: object,
+  messageApi: object,
+  friendsApi: object
 }
 
 export type selectionType = {
@@ -11,7 +17,8 @@ export type selectionType = {
 
 export type stateType = {
   +counter: number,
-  network: networkType
+  network: networkType,
+  facebook: facebookType
 };
 
 export type Action = {

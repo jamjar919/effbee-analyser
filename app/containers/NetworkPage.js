@@ -12,8 +12,6 @@ import RightPanel from './RightPanel';
 import * as NetworkActions from '../actions/network';
 import * as SelectionActions from '../actions/selection';
 
-import ProfileApi from '../facebookapi/profile'
-
 import styles from './css/NetworkPage.css';
 
 type Props = {
@@ -26,8 +24,13 @@ class NetworkPage extends Component<Props> {
   props: Props;
 
   render() {
+    const {
+        api
+    } = this.props
+
+    let profileApi;
     try {
-        const profileApi = new ProfileApi();
+        profileApi = api.profileApi
     } catch (e) {
         // Failed to read files
         return (
@@ -39,7 +42,6 @@ class NetworkPage extends Component<Props> {
         );
     }
 
-    const profileApi = new ProfileApi();
     const rootName = profileApi.getFullName();
     return (
       <div className={styles.container}>
@@ -50,6 +52,7 @@ class NetworkPage extends Component<Props> {
           rootName={rootName}
           showRoot={this.props.showRoot}
           selectFriend={(name) => this.props.selectFriend(name)}
+          api={api}
         />
         <RightPanel>
           <FriendPreview />
@@ -62,7 +65,8 @@ class NetworkPage extends Component<Props> {
 
 function mapStateToProps(state) {
   return {
-    showRoot: state.network.showRoot
+    showRoot: state.network.showRoot,
+    api: state.facebook
   };
 }
 

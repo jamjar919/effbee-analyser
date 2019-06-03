@@ -2,8 +2,7 @@
 import React, { Component } from 'react';
 import vis from 'vis';
 
-import FriendsApi from '../facebookapi/friends'
-import MessagesApi from '../facebookapi/messages'
+import type { defaultFacebookType } from '../reducers/defaultTypes'
 
 import styles from './css/Network.css'
 
@@ -28,7 +27,8 @@ function isConnectedToRoot(edge) {
 type Props = {
     selectFriend: (string) => void,
     showRoot: boolean,
-    rootName: string
+    rootName: string,
+    api: defaultFacebookType
 };
 
 export default class Network extends Component<Props> {
@@ -89,12 +89,13 @@ export default class Network extends Component<Props> {
     renderGraph() {
         const {
             showRoot,
-            rootName
+            rootName,
+            api
         } = this.props
 
-        const messageData = new MessagesApi()
+        const messageApi = api.messageApi;
 
-        const friendNodes = new FriendsApi().get()
+        const friendNodes = api.friendsApi.get()
         .map(friend => friend.name)
         .map(name => ({
             label: name,
@@ -102,7 +103,7 @@ export default class Network extends Component<Props> {
             shape: "dot"
         }))
         .map(node => {
-            const chatsBetweenRoot = messageData.chatsBetween([rootName, node.label])
+            const chatsBetweenRoot = messageApi.chatsBetween([rootName, node.label])
             return {
                 ...node,
                 value: chatsBetweenRoot.count
@@ -117,7 +118,7 @@ export default class Network extends Component<Props> {
             for (let j = i + 1; j < friendNodes.length; j += 1) {
                 const f1 = friendNodes[i];
                 const f2 = friendNodes[j];
-                const chatsBetween = messageData.chatsBetween([f1.label, f2.label])
+                const chatsBetween = messageApi.chatsBetween([f1.label, f2.label])
                 const numMessages = chatsBetween.count
                 const numChats = chatsBetween.chats.length
                 const isRoot = isConnectedToRoot({from: f1.id, to: f2.id})
