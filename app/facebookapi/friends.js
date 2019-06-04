@@ -30,8 +30,6 @@ class FriendsApi extends FacebookApi {
     }
 
     getRanking(root, messageApi, afterTimestamp = false) {
-        console.log(afterTimestamp)
-
         // ranking doesn't change, so return local 
         if ((this.ranking.cached) && (this.ranking.afterTimestamp === afterTimestamp)) {
             return this.ranking.ranking

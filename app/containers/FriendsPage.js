@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Header, Icon, Segment, Menu } from 'semantic-ui-react'
+import { Header, Icon, Segment, Menu, Placeholder, Item } from 'semantic-ui-react'
 import moment from 'moment';
 import PageContainer from './PageContainer';
 import type { defaultFacebookType } from '../reducers/defaultTypes'
@@ -12,6 +12,21 @@ type Props = {
     api: defaultFacebookType
 };
 
+const PlaceholderFriends = [
+    <Placeholder key="placeholder">
+        <Placeholder.Header image>
+            <Placeholder.Line />
+            <Placeholder.Line />
+        </Placeholder.Header>
+        <Placeholder.Paragraph>
+            <Placeholder.Line />
+            <Placeholder.Line />
+            <Placeholder.Line />
+            <Placeholder.Line />
+        </Placeholder.Paragraph>
+    </Placeholder>
+]
+
 class FriendsPage extends React.Component<Props> {
     props: Props;
 
@@ -20,8 +35,9 @@ class FriendsPage extends React.Component<Props> {
         this.state = {
             ranking: false,
             loading: false,
-            filterMode: "NONE", // can be NONE, 5YEAR, YEAR, MONTH, WEEK
-            timeperiod: []
+            filterMode: "NONE", // can be NONE, 5YEAR, YEAR, 6MONTH, MONTH, WEEK
+            timeperiod: [],
+            content: ''
         }
     }
 
@@ -31,7 +47,6 @@ class FriendsPage extends React.Component<Props> {
 
     componentDidUpdate(prevProps, prevState) {
         if (prevState.filterMode !== this.state.filterMode) {
-            console.log("updating ranking")
             this.updateRanking()
         }
     }
@@ -61,6 +76,9 @@ class FriendsPage extends React.Component<Props> {
             case "YEAR":
                 afterTimestamp = lastTimestamp - 31557600
                 break;
+            case "6MONTH":
+                afterTimestamp = lastTimestamp - 6 * 2629800
+                break;
             case "MONTH":
                 afterTimestamp = lastTimestamp - 2629800
                 break;
@@ -79,13 +97,17 @@ class FriendsPage extends React.Component<Props> {
 
         this.setState({
             timePeriod,
-            loading: true
+            loading: true,
+            content: PlaceholderFriends
         }, () => {
-            const newRanking = api.friendsApi.getRanking(root, messageApi, afterTimestamp)
-            this.setState({
-                ranking: newRanking,
-                loading: false
-            })
+            setTimeout(() => {
+                const newRanking = api.friendsApi.getRanking(root, messageApi, afterTimestamp)
+                this.setState({
+                    ranking: newRanking,
+                    content: <FriendList friends={newRanking} horizontal={true}/>,
+                    loading: false
+                })
+            }, 100)
         })
     }
 
@@ -98,12 +120,8 @@ class FriendsPage extends React.Component<Props> {
             ranking,
             loading,
             filterMode,
+            content
         } = this.state
-
-        let content = '';
-        if (ranking) {
-            content = <FriendList friends={ranking} horizontal={true}/>
-        }
 
         return (
             <PageContainer>
@@ -127,6 +145,12 @@ class FriendsPage extends React.Component<Props> {
                         onClick={() => this.setState({ filterMode: "YEAR" })}
                     >
                         Last Year
+                    </Menu.Item>
+                    <Menu.Item
+                        active={filterMode === '6MONTH'}
+                        onClick={() => this.setState({ filterMode: "6MONTH" })}
+                    >
+                        Last 6 Months
                     </Menu.Item>
                     <Menu.Item
                         active={filterMode === 'MONTH'}
