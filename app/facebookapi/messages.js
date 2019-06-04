@@ -39,8 +39,20 @@ class MessagesApi extends FacebookApi {
                     messages: details.messages
                 };
             })
+
+            // identify last message sent, ever... 
+            this.lastTimestamp = this.messages.reduce((currentLastTimestamp, chat) => {
+                if (chat.messages.length < 1) {
+                    return currentLastTimestamp
+                }
+                if (Math.floor(chat.messages[0].timestamp_ms/1000) > currentLastTimestamp) {
+                    return Math.floor(chat.messages[0].timestamp_ms/1000)
+                }
+                return currentLastTimestamp;
+            }, 0)
         } catch (e) {
             console.error(e)
+            this.messages = []
             return undefined;
         }
     }
@@ -86,7 +98,9 @@ class MessagesApi extends FacebookApi {
     }
 
     // Names is an array
-    chatsBetween(names, filterMessages = false) {
+    // filterMessages = true => filter to only messages by named people
+    // afterTimestamp = 1000293 => filter to only messages after that unix time
+    chatsBetween(names, filterMessages = false, afterTimestamp = false) {
         let chats = this.messages.filter(details => {
             const participants = details.participants.map(p => p.name);
             return (
@@ -102,6 +116,15 @@ class MessagesApi extends FacebookApi {
             }))
         }
 
+        if (afterTimestamp !== false) {
+            chats = chats.map(chat => ({
+                ...chat,
+                messages: chat.messages.filter(message => 
+                    message.timestamp_ms > (afterTimestamp*1000)
+                )
+            }))
+        }
+
         // count total messages
         let count = 0;
         const countBreakdown = {};
@@ -113,8 +136,9 @@ class MessagesApi extends FacebookApi {
             chat.participants
             .forEach(participant => {
                 if (names.indexOf(participant.name) >= 0) {
-                    count += participant.count
-                    countBreakdown[participant.name] += participant.count
+                    const toAdd = chat.messages.filter(message => message.sender_name == participant.name).length
+                    count += toAdd
+                    countBreakdown[participant.name] += toAdd
                 }
             })
         })
@@ -196,7 +220,6 @@ class MessagesApi extends FacebookApi {
             lastTimestamp,
             chatNames: chats.map(chat => chat.title),
             messagesPerInterval,
-
         }
     }
 

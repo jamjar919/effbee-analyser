@@ -1,0 +1,6 @@
+.container {
+    padding: var(--containerPadding);
+    width: var(--mainWidth);
+    overflow-y: scroll;
+    height: 100vh
+}

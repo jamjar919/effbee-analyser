@@ -5,10 +5,11 @@ import { Header, Icon, Segment, Container, Grid, Statistic, Divider, Progress } 
 import MessageTimeline from './MessageTimeline';
 import Identicon from './Identicon';
 import HourRadar from './HourRadar';
+import FriendList from './FriendList';
+import PageContainer from '../containers/PageContainer';
 import type { defaultFacebookType } from '../reducers/defaultTypes'
 
 import styles from './css/Friend.css';
-import FriendList from './FriendList';
 
 type Props = {
     name: string,
@@ -49,10 +50,8 @@ class Friend extends Component<Props> {
                 (numYouSent/numMessagesWithRoot) * 100
             )
         
-        console.log(chats)
-
         return (
-            <div className={styles.friendContainer}>
+            <PageContainer>
                 <Header as='h1'>
                     <Identicon size={100} value={name} className="ui circular image"/>
                     <Header.Content>
@@ -136,9 +135,14 @@ class Friend extends Component<Props> {
                     />
                 </Segment>
                 <Segment>
+                    <Header as='h3'>
+                        <Icon name='users' />
+                        <Header.Content>Common connections</Header.Content>
+                        <Header.Subheader>Message totals shared between this person and your friends</Header.Subheader>
+                    </Header>
                     <FriendList friends={chats.peopleRanking} horizontal={true} />
                 </Segment>
-            </div>
+            </PageContainer>
         );
     }
 

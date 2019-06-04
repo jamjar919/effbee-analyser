@@ -1,32 +1,168 @@
 // @flow
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Header, Icon, Segment, Menu } from 'semantic-ui-react'
+import moment from 'moment';
+import PageContainer from './PageContainer';
+import type { defaultFacebookType } from '../reducers/defaultTypes'
+
+import FriendList from '../components/FriendList';
 
 type Props = {
-  children: React.Node
+    api: defaultFacebookType
 };
 
 class FriendsPage extends React.Component<Props> {
     props: Props;
 
     constructor(props) {
-        super(props)
+        super(props);
+        this.state = {
+            ranking: false,
+            loading: false,
+            filterMode: "NONE", // can be NONE, 5YEAR, YEAR, MONTH, WEEK
+            timeperiod: []
+        }
+    }
+
+    componentDidMount() {
+        this.updateRanking()
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.filterMode !== this.state.filterMode) {
+            console.log("updating ranking")
+            this.updateRanking()
+        }
+    }
+
+    updateRanking() {
+        const {
+            api
+        } = this.props
+
+        const {
+            ranking,
+            loading,
+            filterMode
+        } = this.state
+
+        const profileApi = api.profileApi;
+        const root = profileApi.getFullName()
+        const messageApi = api.messageApi;
+
+        // infer correct timestamp 
+        const lastTimestamp = messageApi.lastTimestamp
+        let afterTimestamp;
+        switch (filterMode) {
+            case "5YEAR":
+                afterTimestamp = lastTimestamp - 5 * 31557600
+                break;
+            case "YEAR":
+                afterTimestamp = lastTimestamp - 31557600
+                break;
+            case "MONTH":
+                afterTimestamp = lastTimestamp - 2629800
+                break;
+            case "WEEK":
+                afterTimestamp = lastTimestamp - 604800
+                break;
+            default:
+                afterTimestamp = false;
+                break;
+        }
+
+        let timePeriod = false
+        if (afterTimestamp) {
+            timePeriod = [afterTimestamp, lastTimestamp]
+        }
+
+        this.setState({
+            timePeriod,
+            loading: true
+        }, () => {
+            const newRanking = api.friendsApi.getRanking(root, messageApi, afterTimestamp)
+            this.setState({
+                ranking: newRanking,
+                loading: false
+            })
+        })
     }
 
     render() {
         const {
-            children
+            api
         } = this.props
 
+        const {
+            ranking,
+            loading,
+            filterMode,
+        } = this.state
+
+        let content = '';
+        if (ranking) {
+            content = <FriendList friends={ranking} horizontal={true}/>
+        }
+
         return (
-            <div>Some cool stuff{children}</div>
+            <PageContainer>
+                <Header as='h1'>
+                    <Icon name='users' />
+                    <Header.Content>
+                        Friends
+                    </Header.Content>
+                    <Header.Subheader>Below is a list of your friends, ordered by their shared history with you.</Header.Subheader>
+                </Header>
+                <Menu secondary>
+                    <Menu.Item>Filter to: </Menu.Item>
+                    <Menu.Item
+                        active={filterMode === '5YEAR'}
+                        onClick={() => this.setState({ filterMode: "5YEAR" })}
+                    >
+                        Last 5 Years                    
+                    </Menu.Item>
+                    <Menu.Item
+                        active={filterMode === 'YEAR'}
+                        onClick={() => this.setState({ filterMode: "YEAR" })}
+                    >
+                        Last Year
+                    </Menu.Item>
+                    <Menu.Item
+                        active={filterMode === 'MONTH'}
+                        onClick={() => this.setState({ filterMode: "MONTH" })}
+                    >
+                        Last Month
+                    </Menu.Item>
+                    <Menu.Item
+                        active={filterMode === 'WEEK'}
+                        onClick={() => this.setState({ filterMode: "WEEK" })}
+                    >
+                        Last Week
+                    </Menu.Item>
+                    <Menu.Menu position='right'>
+                        <Menu.Item
+                            active={filterMode === 'NONE'}
+                            onClick={() => this.setState({ filterMode: "NONE" })}
+                        >
+                            No Filter
+                        </Menu.Item>
+                    </Menu.Menu>
+                </Menu>
+                <Segment loading={loading}>
+                    {content}
+                </Segment>
+            </PageContainer>
         );
     }
 }
 
 
 function mapStateToProps(state) {
-    return {};
+    const api = state.facebook
+    return {
+        api
+    };
 }
   
 function mapDispatchToProps(dispatch) {
