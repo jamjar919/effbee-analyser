@@ -73,8 +73,7 @@ class FriendPreview extends React.Component<Props> {
             (b.usCount + b.themCount) - (a.usCount + a.themCount)
         )
 
-        const inDepthTableRows = sortedChats.map((chat, i) => {
-            return (
+        const inDepthTableRows = sortedChats.map((chat, i) => (
                 <React.Fragment key={i}>
                     <Table.Row>
                         <Table.Cell rowSpan={2}>{chat.title}</Table.Cell>
@@ -85,11 +84,10 @@ class FriendPreview extends React.Component<Props> {
                         <Table.Cell>Them: {chat.themCount}</Table.Cell>
                     </Table.Row>
                 </React.Fragment>
-            )
-        })
+            ));
 
         // Chat Details With Others
-        const theirChats = messageApi.chats(name)
+        const theirChats = messageApi.chats(name); 
 
         return (
             <div>

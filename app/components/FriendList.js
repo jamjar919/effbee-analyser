@@ -1,35 +1,16 @@
 import React, { Component } from 'react';
 import { Segment, Item, Card, Statistic, Icon, Header, Button, Label } from 'semantic-ui-react'
-import Identicon from './Identicon'
 import uuid from 'uuid/v4';
 
+import FriendItem from './FriendItem';
+
+import routes from '../constants/routes.json'
 import styles from './css/FriendList.css'
 
 type Props = {
     friends: array,
     horizontal: boolean
 };
-
-const FriendItem = (name, messages, groups, className='', key = uuid()) => (
-    <Item key={key} className={className}>
-        <div className="ui small image">
-            <Identicon size={150} value={name} />
-        </div>
-        <Item.Content>
-            <Item.Header>{name}</Item.Header>
-            <Item.Description>
-                <Statistic>
-                    <Statistic.Value>{messages}</Statistic.Value>
-                    <Statistic.Label>Messages Shared</Statistic.Label>
-                </Statistic>
-            </Item.Description>
-            <Item.Extra>
-                <Icon name='users' />
-                {groups} Shared Group Chats
-            </Item.Extra>
-        </Item.Content>
-    </Item>
-)
 
 export default class FriendList extends React.Component<Props> {
     props: Props;
@@ -54,22 +35,24 @@ export default class FriendList extends React.Component<Props> {
         const friendsToShow = friends.filter(f => f.messages > 0)
         const friendsToHide = friends.filter(f => f.messages <= 0)
 
-        let friendCards = friendsToShow.map((person, i) => FriendItem(
-                person.name,
-                person.messages,
-                person.groups,
-                (horizontal ? styles.horizontalItem : ''),
-                i
-            )
+        let friendCards = friendsToShow.map((person, i) => (
+            <FriendItem
+                name={person.name}
+                messages={person.messages}
+                groups={person.groups}
+                className={(horizontal ? styles.horizontalItem : '')}
+                key={i}
+            />)
         )
 
-        const hiddenFriendCards = friendsToHide.map((person, i) => FriendItem(
-                person.name,
-                person.messages,
-                person.groups,
-                (horizontal ? styles.horizontalItem : ''),
-                "h" + i
-            )
+        const hiddenFriendCards = friendsToHide.map((person, i) => (
+            <FriendItem
+                name={person.name}
+                messages={person.messages}
+                groups={person.groups}
+                className={(horizontal ? styles.horizontalItem : '')}
+                key={"h" + i}
+            />)
         )
 
         if (friendCards.length === 0) {

@@ -10,16 +10,20 @@ import Friend from './components/Friend';
 import Menu from './components/Menu';
 import styles from './app.global.css';
 
+const pages = [ 
+    <Route key="1" path={routes.FRIEND} component={Friend} />,
+    <Route key="2" path={routes.COUNTER} component={CounterPage} />,
+    <Route key="3" path={routes.NETWORK} component={NetworkPage} />,
+    <Route key="4" path={routes.FRIENDS} component={FriendsPage} />
+]
+
 export default () => (
   <App>
     <Menu />
     <div className={styles.container}>
       <Switch>
-        <Route path={routes.FRIEND} component={Friend} />
-        <Route path={routes.FRIENDS} component={FriendsPage} />
+        {pages}
         <Route path={routes.SETTINGS} component={SettingsPage} />
-        <Route path={routes.COUNTER} component={CounterPage} />
-        <Route path={routes.NETWORK} component={NetworkPage} />
       </Switch>
     </div>
   </App>
