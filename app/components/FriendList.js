@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-import { Segment, Item, Card, Statistic, Icon, Header, Button, Label } from 'semantic-ui-react'
-import uuid from 'uuid/v4';
+import { Item, Icon, Header, Button, Label } from 'semantic-ui-react'
 
 import FriendItem from './FriendItem';
 
-import routes from '../constants/routes.json'
 import styles from './css/FriendList.css'
 
 type Props = {
@@ -12,7 +10,7 @@ type Props = {
     horizontal: boolean
 };
 
-export default class FriendList extends React.Component<Props> {
+export default class FriendList extends Component<Props> {
     props: Props;
 
     constructor(props) {
