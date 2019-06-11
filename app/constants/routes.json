@@ -4,5 +4,6 @@
   "COUNTER": "/counter",
   "SETTINGS": "/settings",
   "FRIEND": "/friend",
-  "FRIENDS": "/friendslist"
+  "FRIENDS": "/friendslist",
+  "FRIENDSTIMELINE": "/friendstimeline"
 }

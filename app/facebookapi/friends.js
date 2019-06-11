@@ -62,6 +62,10 @@ class FriendsApi extends FacebookApi {
 
         return this.ranking.ranking;
     }
+
+    getRankingPerTimeInterval(root, messageApi, timeInterval) {
+        
+    }
 }
 
 export default FriendsApi

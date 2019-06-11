@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Form, Segment, Container, Header, Icon, Button } from 'semantic-ui-react';
 import SettingsFile from '../SettingsFile';
-import { app, BrowserWindow } from 'electron';
 import path from 'path';
 
 import styles from './css/Settings.css';

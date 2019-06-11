@@ -47,12 +47,29 @@ class MainMenu extends Component<Props> {
                     <Icon name='facebook' circular />
                     <Header.Content className={styles.title}>EffBee Analyser</Header.Content>
                 </Header>
-                <Menu vertical className={styles.menu}>
+                <Menu vertical pointing className={styles.menu}>
                     <Menu.Item name="You" active={history.location.pathname === routes.YOU} onClick={() => { history.push(routes.YOU) }}>
                         You
                     </Menu.Item>
-                    <Menu.Item name="Friends" active={history.location.pathname === routes.FRIENDS} onClick={() => { history.push(routes.FRIENDS) }}>
+                    <Menu.Item>
                         Your Friends
+                        <Menu.Menu>
+                            <Menu.Item
+                                name="Friends"
+                                active={history.location.pathname === routes.FRIENDS}
+                                onClick={() => { history.push(routes.FRIENDS) }}
+                            >
+                                List
+                            </Menu.Item>
+                            <Menu.Item 
+                                name="Friends"
+                                active={history.location.pathname === routes.FRIENDSTIMELINE}
+                                onClick={() => { history.push(routes.FRIENDSTIMELINE) }}
+                            >
+                                Timeline
+                            </Menu.Item>
+
+                        </Menu.Menu>
                     </Menu.Item>
                     <Menu.Item name="Network" active={history.location.pathname === routes.NETWORK} onClick={() => { history.push(routes.NETWORK) }}>
                         Network
