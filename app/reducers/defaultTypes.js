@@ -3,7 +3,8 @@ import FriendsApi from '../facebookapi/friends'
 import MessagesApi from '../facebookapi/messages'
 
 export const defaultNetworkType = {
-    showRoot: false
+    showRoot: false,
+    networkData: false
 }
 
 export const defaultSelectionType = {

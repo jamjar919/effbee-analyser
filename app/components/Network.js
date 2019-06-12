@@ -17,7 +17,7 @@ function getNeighbours(nodeId, edges) {
 }
 
 function getEdges(nodeId, edges) {
-    return edges.filter(edge => edge.from === nodeId || edge.to === nodeId);
+    return edges.filter(edge => edge.from === nodeId || edge.to === nodeId)
 }
 
 function isConnectedToRoot(edge) {
@@ -28,7 +28,8 @@ type Props = {
     selectFriend: (string) => void,
     showRoot: boolean,
     rootName: string,
-    api: defaultFacebookType
+    nodes: array,
+    edges: array,
 };
 
 export default class Network extends Component<Props> {
@@ -37,9 +38,9 @@ export default class Network extends Component<Props> {
     constructor(props) {
         super(props)
         this.state = {
-            network: false,
-            nodes: false,
-            edges: false
+            networkNodes: false,
+            networkEdges: false,
+            network: false
         }
     }
 
@@ -55,24 +56,23 @@ export default class Network extends Component<Props> {
 
         if (showRoot !== nextProps.showRoot) {
             const {
-                nodes,
-                edges
+                networkNodes,
+                networkEdges
             } = this.state
             
             if (nextProps.showRoot) {
                 // add root to graph
-                nodes.add({ label: rootName, id: 'root', physics: false })
+                networkNodes.add({ label: rootName, id: 'root', physics: false })
             } else {
                 // remove node from graph
-                nodes.remove({ id: 'root' })
+                networkNodes.remove({ id: 'root' })
                 
                 // reenable physics on edges
-                const edgesToUpdate = edges
-                    .get()
+                const edgesToUpdate = networkEdges.get()
                     .filter(edge => !isConnectedToRoot(edge))
                     .map(edge => ({ id: edge.id, physics: true }))
 
-                edges.update(edgesToUpdate)
+                    networkEdges.update(edgesToUpdate)
             }
         }
         return false;
@@ -90,132 +90,126 @@ export default class Network extends Component<Props> {
         const {
             showRoot,
             rootName,
-            api
+            nodes,
+            edges
         } = this.props
 
-        // delegate to web worker for performance
-        const worker = new Worker("./workers/NetworkWorker.js")
-        worker.onmessage = (e) => {
-            const {
-                friendNodes,
-                edgesChats
-            } = e.data
-            const nodes = new vis.DataSet(friendNodes);
-            const edges = new vis.DataSet(edgesChats)
+        const networkNodes = new vis.DataSet(nodes);
+        const networkEdges = new vis.DataSet(edges)
 
-            const container = document.getElementById('network');
-            const data = {
-                nodes,
-                edges
-            };
-            const options = {
-                edges: {
-                    smooth: false,
-                    color: {
-                        color: '#848484',
-                        highlight: '#FF0000'
-                    }
-                },
-                physics: {
-                    stabilization: false,
-                    barnesHut: {
-                        gravitationalConstant: -10000
-                    }
-                },
-                layout: {
-                    improvedLayout: false
+        const container = document.getElementById('network');
+        const data = {
+            nodes: networkNodes,
+            edges: networkEdges
+        };
+        const options = {
+            edges: {
+                smooth: false,
+                color: {
+                    color: '#848484',
+                    highlight: '#FF0000'
                 }
+            },
+            physics: {
+                stabilization: false,
+                barnesHut: {
+                    gravitationalConstant: -10000
+                }
+            },
+            layout: {
+                improvedLayout: false
             }
-            this.setState({
-                nodes,
-                edges,
-                network: new vis.Network(container, data, options)
-            }, () => {
-                // Bind any events relying on network here
-                const {
-                    nodes,
-                    edges,    
-                    network
-                } = this.state
-                
-                // Respond to changestate
-                if (!showRoot) {
-                    nodes.remove({ id: 'root' })
-                }
-
-
-                // Events on selectnode, deselectnode for more in-depth graph inspection
-                network.on("selectNode", params => {
-                    // batching node/edge updates provides a massive performance gain
-                    const edgesToUpdate = []
-                    const nodesToUpdate = []
-
-                    const nodeId = params.nodes[0]
-                    // update redux state
-                    this.props.selectFriend(nodeId)
-                    const neighbours = getNeighbours(nodeId, params.edges.map(id => edges.get(id)));
-
-                    neighbours.forEach(id => {
-                        getEdges(id, edges.get()).forEach(edge => {
-                            edgesToUpdate.push({
-                                id: edge.id,
-                                physics: false
-                            })
-                        })
-                    })
-                    nodesToUpdate.push({
-                        id: nodeId,
-                        mass: 5
-                    })
-
-                    params.edges.forEach(id => {
-                        const edge = edges.get(id);
-                        edgesToUpdate.push({
-                            id,
-                            label: `${edge.numMessages}/${edge.numChats}`,
-                            physics: (true && !isConnectedToRoot(edge))
-                        })
-                    })
-
-                    edges.update(edgesToUpdate)
-                    nodes.update(nodesToUpdate)
-                });
-
-                network.on("deselectNode", params => {
-                    this.props.selectFriend(false)
-                    const edgesToUpdate = []
-                    const nodesToUpdate = []
-
-                    const nodeId = params.previousSelection.nodes[0]
-                    const neighbours = getNeighbours(nodeId, params.previousSelection.edges.map(id => edges.get(id)));
-
-                    neighbours.forEach(id => {
-                        getEdges(id, edges.get()).forEach(edge => {
-                            edgesToUpdate.push({
-                                id: edge.id,
-                                physics: !isConnectedToRoot(edge)
-                            })
-                        })
-                    })
-
-                    nodesToUpdate.push({
-                        id: nodeId,
-                        mass: 1
-                    })
-
-                    params.previousSelection.edges.forEach(id => {
-                        edgesToUpdate.push({
-                            id,
-                            label: false,
-                        })
-                    })
-
-                    edges.update(edgesToUpdate)
-                    nodes.update(nodesToUpdate)
-                });
-            })
         }
-        worker.postMessage(api)
+        this.setState({
+            networkNodes,
+            networkEdges,
+            network: new vis.Network(container, data, options)
+        }, () => {
+            // Bind any events relying on network here
+            const {
+                networkNodes,
+                networkEdges,    
+                network
+            } = this.state
+            
+            // Respond to changestate
+            if (!showRoot) {
+                networkNodes.remove({ id: 'root' })
+            }
+
+
+            // Events on selectnode, deselectnode for more in-depth graph inspection
+            network.on("selectNode", params => {
+                // batching node/edge updates provides a massive performance gain
+                const edgesToUpdate = []
+                const nodesToUpdate = []
+
+                const nodeId = params.nodes[0]
+                // update redux state
+                this.props.selectFriend(nodeId)
+                const neighbours = getNeighbours(nodeId, params.edges.map(id => networkEdges.get(id)));
+
+                neighbours.forEach(id => {
+                    getEdges(id, networkEdges.get()).forEach(edge => {
+                        edgesToUpdate.push({
+                            id: edge.id,
+                            physics: false
+                        })
+                    })
+                })
+                nodesToUpdate.push({
+                    id: nodeId,
+                    fixed: true,
+                    mass: 5
+                })
+
+                params.edges.forEach(id => {
+                    const edge = networkEdges.get(id);
+                    edgesToUpdate.push({
+                        id,
+                        label: `${edge.numMessages}/${edge.numChats}`,
+                        physics: (true && !isConnectedToRoot(edge))
+                    })
+                })
+
+                networkEdges.update(edgesToUpdate)
+                networkNodes.update(nodesToUpdate)
+            });
+
+            network.on("deselectNode", params => {
+                this.props.selectFriend(false)
+                const edgesToUpdate = []
+                const nodesToUpdate = []
+
+                const nodeId = params.previousSelection.nodes[0]
+                const neighbours = getNeighbours(nodeId, params.previousSelection.edges.map(id => networkEdges.get(id)));
+
+                neighbours.forEach(id => {
+                    getEdges(id, networkEdges.get()).forEach(edge => {
+                        edgesToUpdate.push({
+                            id: edge.id,
+                            physics: !isConnectedToRoot(edge)
+                        })
+                    })
+                })
+
+                nodesToUpdate.push({
+                    id: nodeId,
+                    fixed: false,
+                    mass: 1
+                })
+
+                params.previousSelection.edges.forEach(id => {
+                    edgesToUpdate.push({
+                        id,
+                        label: false,
+                    })
+                })
+
+                networkEdges.update(edgesToUpdate)
+                networkNodes.update(nodesToUpdate)
+            });
+        })
     }
 
     render() {

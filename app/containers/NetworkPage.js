@@ -1,13 +1,14 @@
 // @flow
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Header, Icon } from 'semantic-ui-react'
+import { Dimmer, Icon, Loader, Header, Segment, Placeholder } from 'semantic-ui-react'
 import { bindActionCreators } from 'redux';
 
 import Network from '../components/Network';
 import TopMenuNetwork from '../components/TopMenuNetwork';
 import FriendPreview from '../components/FriendPreview';
 import RightPanel from './RightPanel';
+import PageContainer from './PageContainer';
 
 import * as NetworkActions from '../actions/network';
 import * as SelectionActions from '../actions/selection';
@@ -17,7 +18,9 @@ import styles from './css/NetworkPage.css';
 type Props = {
   toggleShowRoot: () => void,
   selectFriend: (string) => void,
-  showRoot: boolean 
+  saveNetworkData: (object) => void,
+  showRoot: boolean,
+  networkData: object
 };
 
 class NetworkPage extends Component<Props> {
@@ -25,24 +28,43 @@ class NetworkPage extends Component<Props> {
 
   render() {
     const {
-        api
+        api,
+        networkData,
+        saveNetworkData
     } = this.props
 
-    let profileApi;
-    try {
-        profileApi = api.profileApi
-    } catch (e) {
-        // Failed to read files
+    const rootName = api.profileApi.getFullName();
+
+    /** compute network data if we don't have it */
+    if (!networkData) {
+        setTimeout(() => {
+            saveNetworkData(api)
+        }, 100)
         return (
-            <Header as='h2' icon>
-                <Icon name='error' />
-                Error Reading Files
-                <Header.Subheader>Make sure you've set your Facebook Data Directory in the settings menu.</Header.Subheader>
-            </Header>
+            <PageContainer>
+                <Segment padded="very">
+                    <Dimmer active>
+                        <Loader indeterminate size="large">
+                            Loading! Depending on the number of friends you have, this might take a while. You'll only have to do this once.
+                        </Loader>
+                    </Dimmer>
+                    <Placeholder>
+                        <Placeholder.Line />
+                        <Placeholder.Line />
+                        <Placeholder.Line />
+                        <Placeholder.Line />
+                        <Placeholder.Line />
+                        <Placeholder.Line />
+                        <Placeholder.Line />
+                        <Placeholder.Line />
+                        <Placeholder.Line />
+                        <Placeholder.Line />
+                    </Placeholder>
+                </Segment>
+            </PageContainer>
         );
     }
 
-    const rootName = profileApi.getFullName();
     return (
       <div className={styles.container}>
         <TopMenuNetwork
@@ -52,7 +74,8 @@ class NetworkPage extends Component<Props> {
           rootName={rootName}
           showRoot={this.props.showRoot}
           selectFriend={(name) => this.props.selectFriend(name)}
-          api={api}
+          nodes={networkData.nodes}
+          edges={networkData.edges}
         />
         <RightPanel>
           <FriendPreview />
@@ -66,14 +89,16 @@ class NetworkPage extends Component<Props> {
 function mapStateToProps(state) {
   return {
     showRoot: state.network.showRoot,
+    networkData: state.network.networkData,
     api: state.facebook
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    ...bindActionCreators(NetworkActions, dispatch),
-    selectFriend: SelectionActions.selectFriendAction(dispatch)
+    selectFriend: SelectionActions.selectFriendAction(dispatch),
+    toggleShowRoot: NetworkActions.toggleShowRootAction(dispatch),
+    saveNetworkData: NetworkActions.saveNetworkDataAction(dispatch)
   };
 }
 
