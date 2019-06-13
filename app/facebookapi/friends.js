@@ -76,55 +76,25 @@ class FriendsApi extends FacebookApi {
         const firstTimestamp = messageApi.firstTimestamp 
         const lastTimestamp = messageApi.lastTimestamp
         
-        // bucket messages based on time interval
-        // calculate number of buckets 
-        console.log("aaaa")
-        const timespan = lastTimestamp - firstTimestamp;
-        const numBuckets = Math.ceil(timespan / timeInterval) + 1
-        const buckets = []
-        for (let i = 0; i < numBuckets; i += 1) {
-            buckets.push({
-                start: firstTimestamp + (timeInterval * i),
-                end: firstTimestamp + (timeInterval * (i + 1)),
-                messages: []
-            })
-        }
+        const buckets = messageApi.bucketMessagesByTimeInterval(messages, firstTimestamp, lastTimestamp, timeInterval)
 
-        console.log("span", timespan)
-        console.log("range", firstTimestamp, lastTimestamp)
-
-        messages.forEach(chat => {
-            chat.messages.forEach(message => {
-                
-                const messageTimestamp = Math.floor(message.timestamp_ms/1000);
-                let b = 0;
-                while (
-                    buckets[b].end < messageTimestamp
-                ) {
-                    b += 1;
-                }
-                
-                buckets[b].messages.push(message)
-            });
-        });
-
-        console.log(buckets)
-
-        let er = 0;
-        // sanity check 
-        buckets.forEach((bucket, b) => {
-            const s = bucket.start;
-            const e = bucket.end;
+        return buckets.map(bucket => {
+            const count = {}
             bucket.messages.forEach(message => {
-                const messageTimestamp = Math.floor(message.timestamp_ms/1000);
-                if (messageTimestamp < s ||
-                    messageTimestamp > e) {
-                        er += 1
-                    }
+                if (!count[message.sender_name]) {
+                    count[message.sender_name] = 0
+                }
+                count[message.sender_name] += 1
             })
+            return {
+                ranking: Object.keys(count).map(key => ({
+                            name: key,
+                            count: count[key]
+                        })).sort((a, b) =>  b.count - a.count),
+                start: bucket.start,
+                end: bucket.end
+            }
         })
-
-        return buckets;
     }
 }
 

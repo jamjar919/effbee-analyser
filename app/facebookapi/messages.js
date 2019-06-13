@@ -114,16 +114,21 @@ class MessagesApi extends FacebookApi {
         }
     }
 
-    // Names is an array
-    // filterMessages = true => filter to only messages by named people
-    // afterTimestamp = 1000293 => filter to only messages after that unix time
-    chatsBetween(names, filterMessages = false, afterTimestamp = false) {
-        let chats = this.messages.filter(details => {
+    // return only group chats with named participants in
+    groupsWith(names) {
+        return this.messages.filter(details => {
             const participants = details.participants.map(p => p.name);
             return (
                 names.reduce((prev, current) => prev && (participants.indexOf(current) >= 0), true)
             )
         });
+    }
+
+    // Names is an array
+    // filterMessages = true => filter to only messages by named people
+    // afterTimestamp = 1000293 => filter to only messages after that unix time
+    chatsBetween(names, filterMessages = false, afterTimestamp = false) {
+        let chats = this.groupsWith(names)
 
         // filter messages to only include those by the named participants
         if (filterMessages) {
@@ -170,15 +175,11 @@ class MessagesApi extends FacebookApi {
     // root is the name of your person
     // to is the name of the messages 
     // timeinterval is a number in seconds, the message counts will then be organised in portions this large 
+    // this can be improved performance wise 
     chatsPerTimeInterval(root, to, timeInterval) {
         // find chats between names
         const names = [root, to]
-        const chats = this.messages.filter(details => {
-            const participants = details.participants.map(p => p.name);
-            return (
-                names.reduce((prev, current) => prev && (participants.indexOf(current) >= 0), true)
-            )
-        }).sort((a, b) => b.messages.length - a.messages.length);
+        const chats = this.groupsWith(names).sort((a, b) => b.messages.length - a.messages.length);
 
         // find first message in the group 
         let firstTimestamp = Math.floor((+ new Date()) / 1000) // current unix time in seconds
@@ -260,6 +261,36 @@ class MessagesApi extends FacebookApi {
             })
         })
         return hourMap;
+    }
+
+    bucketMessagesByTimeInterval(messages, firstTimestamp, lastTimestamp, timeInterval) {
+        // bucket messages based on time interval
+        // calculate number of buckets 
+        const timespan = lastTimestamp - firstTimestamp;
+        const numBuckets = Math.ceil(timespan / timeInterval) + 1
+        const buckets = []
+        for (let i = 0; i < numBuckets; i += 1) {
+            buckets.push({
+                start: firstTimestamp + (timeInterval * i),
+                end: firstTimestamp + (timeInterval * (i + 1)),
+                messages: []
+            })
+        }
+
+        messages.forEach(chat => {
+            chat.messages.forEach(message => {
+                const messageTimestamp = Math.floor(message.timestamp_ms/1000);
+                let b = 0;
+                while (
+                    buckets[b].end < messageTimestamp
+                ) {
+                    b += 1;
+                }
+                buckets[b].messages.push(message)
+            });
+        });
+
+        return buckets;
     }
 }
 
