@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Dimmer, Icon, Loader, Header, Segment, Placeholder } from 'semantic-ui-react'
 import PageContainer from './PageContainer';
+import FriendRankingTimeline from '../components/FriendRankingTimeline'
 
 import * as SelectionActions from '../actions/selection';
 import type { defaultFacebookType } from '../reducers/defaultTypes'
@@ -19,11 +20,11 @@ class FriendTimelinePage extends Component<Props> {
             api
         } = this.props;
 
-        const root = api.profileApi.getRoot();
+        const root = api.profileApi.getFullName();
         const friendsApi = api.friendsApi;
         const messageApi = api.messageApi;
 
-        console.log(friendsApi.getRankingPerTimeInterval(root, messageApi, 31557600));
+        const ranking = friendsApi.getRankingPerTimeInterval(root, messageApi, 31557600);
 
         return (
             <PageContainer>
@@ -34,6 +35,11 @@ class FriendTimelinePage extends Component<Props> {
                     </Header.Content>
                     <Header.Subheader>See how your friend ranking changes over time.</Header.Subheader>
                 </Header>
+                <Segment>
+                    <FriendRankingTimeline
+                        rankingPerInterval={ranking}
+                    />
+                </Segment>
             </PageContainer>
         );
     }

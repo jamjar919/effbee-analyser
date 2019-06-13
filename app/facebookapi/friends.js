@@ -90,7 +90,9 @@ class FriendsApi extends FacebookApi {
                 ranking: Object.keys(count).map(key => ({
                             name: key,
                             count: count[key]
-                        })).sort((a, b) =>  b.count - a.count),
+                        }))
+                        .sort((a, b) =>  b.count - a.count)
+                        .filter(v => (v.name !== root)),
                 start: bucket.start,
                 end: bucket.end
             }
