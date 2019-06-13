@@ -12,6 +12,7 @@ import PageContainer from './PageContainer';
 
 import * as NetworkActions from '../actions/network';
 import * as SelectionActions from '../actions/selection';
+import type { defaultFacebookType } from '../reducers/defaultTypes'
 
 import styles from './css/NetworkPage.css';
 
@@ -20,7 +21,8 @@ type Props = {
   selectFriend: (string) => void,
   saveNetworkData: (object) => void,
   showRoot: boolean,
-  networkData: object
+  networkData: object,
+  api: defaultFacebookType
 };
 
 class NetworkPage extends Component<Props> {

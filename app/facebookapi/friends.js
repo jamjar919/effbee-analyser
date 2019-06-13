@@ -1,5 +1,6 @@
 import fs from 'fs';
 import FacebookApi from "./api";
+import moment from 'moment';
 
 class FriendsApi extends FacebookApi {
     constructor() {
@@ -64,7 +65,66 @@ class FriendsApi extends FacebookApi {
     }
 
     getRankingPerTimeInterval(root, messageApi, timeInterval) {
+        // need to query message data so an api object must be provided
+        if (!messageApi) {
+            return false;
+        }
+
+        const friends = this.get();
+        const messages = messageApi.getMessages();
+
+        const firstTimestamp = messageApi.firstTimestamp 
+        const lastTimestamp = messageApi.lastTimestamp
         
+        // bucket messages based on time interval
+        // calculate number of buckets 
+        console.log("aaaa")
+        const timespan = lastTimestamp - firstTimestamp;
+        const numBuckets = Math.ceil(timespan / timeInterval) + 1
+        const buckets = []
+        for (let i = 0; i < numBuckets; i += 1) {
+            buckets.push({
+                start: firstTimestamp + (timeInterval * i),
+                end: firstTimestamp + (timeInterval * (i + 1)),
+                messages: []
+            })
+        }
+
+        console.log("span", timespan)
+        console.log("range", firstTimestamp, lastTimestamp)
+
+        messages.forEach(chat => {
+            chat.messages.forEach(message => {
+                
+                const messageTimestamp = Math.floor(message.timestamp_ms/1000);
+                let b = 0;
+                while (
+                    buckets[b].end < messageTimestamp
+                ) {
+                    b += 1;
+                }
+                
+                buckets[b].messages.push(message)
+            });
+        });
+
+        console.log(buckets)
+
+        let er = 0;
+        // sanity check 
+        buckets.forEach((bucket, b) => {
+            const s = bucket.start;
+            const e = bucket.end;
+            bucket.messages.forEach(message => {
+                const messageTimestamp = Math.floor(message.timestamp_ms/1000);
+                if (messageTimestamp < s ||
+                    messageTimestamp > e) {
+                        er += 1
+                    }
+            })
+        })
+
+        return buckets;
     }
 }
 

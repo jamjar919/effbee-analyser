@@ -6,23 +6,21 @@ import NetworkPage from './containers/NetworkPage';
 import CounterPage from './containers/CounterPage';
 import SettingsPage from './containers/SettingsPage';
 import FriendsPage from './containers/FriendsPage';
+import FriendsTimelinePage from './containers/FriendTimelinePage';
 import Friend from './components/Friend';
 import Menu from './components/Menu';
 import styles from './app.global.css';
-
-const pages = [ 
-    <Route key="1" path={routes.FRIEND} component={Friend} />,
-    <Route key="2" path={routes.COUNTER} component={CounterPage} />,
-    <Route key="3" path={routes.NETWORK} component={NetworkPage} />,
-    <Route key="4" path={routes.FRIENDS} component={FriendsPage} />
-]
 
 export default () => (
   <App>
     <Menu />
     <div className={styles.container}>
       <Switch>
-        {pages}
+        <Route path={routes.FRIEND} component={Friend} />
+        <Route path={routes.COUNTER} component={CounterPage} />
+        <Route path={routes.NETWORK} component={NetworkPage} />
+        <Route path={routes.FRIENDS} component={FriendsPage} />
+        <Route path={routes.FRIENDSTIMELINE} component={FriendsTimelinePage} />
         <Route path={routes.SETTINGS} component={SettingsPage} />
       </Switch>
     </div>

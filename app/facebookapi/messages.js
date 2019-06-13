@@ -40,21 +40,38 @@ class MessagesApi extends FacebookApi {
                 };
             })
 
-            // identify last message sent, ever... 
+            // identify first and last message sent, ever... 
             this.lastTimestamp = this.messages.reduce((currentLastTimestamp, chat) => {
                 if (chat.messages.length < 1) {
                     return currentLastTimestamp
                 }
-                if (Math.floor(chat.messages[0].timestamp_ms/1000) > currentLastTimestamp) {
-                    return Math.floor(chat.messages[0].timestamp_ms/1000)
-                }
-                return currentLastTimestamp;
+                return chat.messages.reduce((currentLastTimestampTwo, message) => {
+                    if (Math.floor(message.timestamp_ms/1000) > currentLastTimestampTwo) {
+                        return Math.floor(message.timestamp_ms/1000);
+                    }
+                    return currentLastTimestampTwo;
+                }, currentLastTimestamp)
             }, 0)
+
+            this.firstTimestamp = this.messages.reduce((currentFirstTimestamp, chat) => {
+                if (chat.messages.length < 1) {
+                    return currentFirstTimestamp
+                }
+                if (Math.floor(chat.messages[chat.messages.length - 1].timestamp_ms/1000) < currentFirstTimestamp) {
+                    return Math.floor(chat.messages[chat.messages.length - 1].timestamp_ms/1000)
+                }
+                return currentFirstTimestamp;
+            }, moment().unix())
+
         } catch (e) {
             console.error(e)
             this.messages = []
             return undefined;
         }
+    }
+
+    getMessages() {
+        return this.messages;
     }
 
     chats(name) {
