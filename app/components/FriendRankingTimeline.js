@@ -13,39 +13,77 @@ const TimelineCircleColumn = props => {
     const {
         people, // [ {name: "whatever", count: 123 }, ... ] ...
         circleSize,
-        rowNumber
+        rowNumber,
+        lineLength
     } = props;
 
     const contents = []
+    const lines = []
     people.forEach((person, i) => {
-        const transformation = `translate(0, ${(circleSize * i)})`;
+        const yPos = (circleSize*1.25) * i;
+        const nextYPos = (circleSize*1.25) * person.nextRank; 
+        const transformation = `translate(0, ${(yPos)})`;
         const data = person.name
+
+        // draw marker
         if (
             (person.previousRank === -1) 
          ) {
             contents.push(
                 <g
-                    dangerouslySetInnerHTML={{ __html: person.svg }}
                     key={i}
                     transform={transformation}
                     data={data} 
-                />
+                >
+                    <rect height={circleSize} width={circleSize} style={{ fill: "#FFF" }} />
+                    <g dangerouslySetInnerHTML={{ __html: person.svg }} />
+                </g>
             )
         } else {
             contents.push(
                 <g>
-                    <circle cx={circleSize/2} cy={circleSize/2} r="5" stroke="gray" strokeWidth="3" fill="gray" key={i} transform={transformation} data={data} />
+                    <circle
+                        cx={circleSize/2}
+                        cy={circleSize/2}
+                        r="5"
+                        stroke="gray"
+                        strokeWidth="3"
+                        fill="gray"
+                        key={i}
+                        transform={transformation}
+                        data={data}
+                    />
                 </g>
+            )
+        }
+
+        if (person.nextRank > -1) {
+            // draw lines
+            lines.push(
+                <path
+                    d={`M ${circleSize/2} ${yPos + circleSize/2} L ${lineLength + circleSize/2} ${nextYPos + circleSize/2}`}
+                    strokeDasharray=""
+                    fill="transparent"
+                    style={{stroke: "gray", strokeWidth: 5}}
+                    data={data}
+                    datafrom={person.currentRank}
+                    datanext={person.nextRank}
+                />
             )
         }
     });
 
     return (
-        <g
-            transform={`translate(${rowNumber * circleSize}, 0)`}
-            margin={circleSize}
-        >
-            {contents}
+        <g>
+            <g transform={`translate(${rowNumber * (lineLength) }, 0)`}>
+                {lines}
+            </g>
+            <g
+                transform={`translate(${rowNumber * (lineLength) }, 0)`}
+                margin={circleSize}
+            >
+                {contents}
+            </g>
         </g>
     )
 }
@@ -53,7 +91,12 @@ const TimelineCircleColumn = props => {
 TimelineCircleColumn.propTypes = {
     people: PropTypes.arrayOf(Object).isRequired,
     circleSize: PropTypes.number.isRequired,
-    rowNumber: PropTypes.number.isRequired
+    rowNumber: PropTypes.number.isRequired,
+    lineLength: PropTypes.number
+}
+
+TimelineCircleColumn.defaultProps = {
+    lineLength: 110
 }
 
 export default class FriendRankingTimeline extends Component<Props> {
@@ -140,7 +183,7 @@ export default class FriendRankingTimeline extends Component<Props> {
         return (
             <svg
                 width={2 * circleSize * contents.length}
-                height={circleSize * numPeople}
+                height={circleSize * numPeople * 1.25}
             >
                 {contents}
             </svg>

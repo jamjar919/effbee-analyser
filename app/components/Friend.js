@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Header, Icon, Segment, Container, Grid, Statistic, Divider, Progress } from 'semantic-ui-react'
+import { Header, Icon, Segment, Grid, Statistic, Divider, Progress } from 'semantic-ui-react'
 
 import MessageTimeline from './MessageTimeline';
 import Identicon from './Identicon';
