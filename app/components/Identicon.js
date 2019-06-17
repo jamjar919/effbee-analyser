@@ -7,6 +7,10 @@ type Props = {
     className: string
 };
 
+export function getIdenticonSvg(value, size) {
+    return jdenticon.toSvg(value, size);
+}
+
 export default class Identicon extends Component<Props> {
     props: Props;
 
@@ -17,7 +21,7 @@ export default class Identicon extends Component<Props> {
             className
         } = this.props;
 
-        const svg = jdenticon.toSvg(value, size);
+        const svg = getIdenticonSvg(value, size);
         return (
             <div style={{
                 borderRadius: `${Math.floor(size/2)}px`,

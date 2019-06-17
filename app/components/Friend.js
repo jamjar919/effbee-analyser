@@ -140,7 +140,7 @@ class Friend extends Component<Props> {
                         <Header.Content>Common connections</Header.Content>
                         <Header.Subheader>Message totals shared between this person and your friends</Header.Subheader>
                     </Header>
-                    <FriendList friends={chats.peopleRanking} horizontal={true} />
+                    <FriendList friends={chats.peopleRanking} horizontal />
                 </Segment>
             </PageContainer>
         );
