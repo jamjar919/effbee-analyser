@@ -1,25 +1,28 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Popup } from 'semantic-ui-react'
 
 import { getIdenticonSvg } from './Identicon';
-
-type Props = {
-    rankingPerInterval: array,
-    circleSize: number,
-    numPeople: number
-}; 
 
 const TimelineCircleColumn = props => {
     const {
         people, // [ {name: "whatever", count: 123 }, ... ] ...
         circleSize,
         rowNumber,
-        lineLength
+        lineLength,
+        onClickPerson,
+        selectedFriends
     } = props;
 
     const contents = []
     const lines = []
     people.forEach((person, i) => {
+
+        const hasSelection = (selectedFriends.length > 0)
+        const isSelectedFriend = (hasSelection) && (selectedFriends.indexOf(person.name) > -1)
+        const opacity = (hasSelection) ? ( isSelectedFriend ? 1 : 0.2 ) : 1
+        const selectionTarget = (hasSelection) ? ( isSelectedFriend ? "" : person.name ) : (person.name);
+
         const yPos = (circleSize*1.25) * i;
         const nextYPos = (circleSize*1.25) * person.nextRank; 
         const transformation = `translate(0, ${(yPos)})`;
@@ -27,21 +30,35 @@ const TimelineCircleColumn = props => {
 
         // draw marker
         if (
-            (person.previousRank === -1) 
+            (person.previousRank === -1) ||
+            (isSelectedFriend)
          ) {
-            contents.push(
-                <g
-                    key={i}
-                    transform={transformation}
-                    data={data} 
-                >
-                    <rect height={circleSize} width={circleSize} style={{ fill: "#FFF" }} />
-                    <g dangerouslySetInnerHTML={{ __html: person.svg }} />
-                </g>
-            )
+            contents.push(<Popup
+                content={person.name}
+                key={i}
+                position='top center'
+                trigger={
+                    <g
+                        style={{
+                            opacity
+                        }}
+                        onClick={() => { onClickPerson(selectionTarget) }}
+                        transform={transformation}
+                        data={data} 
+                    >
+                        <circle cx={circleSize/2} cy={circleSize/2} r={circleSize*0.5} style={{ fill: "#FFF" }} stroke="black" strokeWidth="3" />
+                        <g dangerouslySetInnerHTML={{ __html: person.svg }} />
+                    </g>
+            } />)
         } else {
-            contents.push(
-                <g>
+            contents.push(<Popup content={person.name} key={i} position='top center'
+            trigger={
+                <g
+                    style={{
+                        opacity
+                    }}
+                    onClick={() => { onClickPerson(selectionTarget) }}
+                >
                     <circle
                         cx={circleSize/2}
                         cy={circleSize/2}
@@ -54,17 +71,23 @@ const TimelineCircleColumn = props => {
                         data={data}
                     />
                 </g>
-            )
+            } />)
         }
 
         if (person.nextRank > -1) {
             // draw lines
             lines.push(
                 <path
-                    d={`M ${circleSize/2} ${yPos + circleSize/2} L ${lineLength + circleSize/2} ${nextYPos + circleSize/2}`}
+                
+                    onClick={() => { onClickPerson(selectionTarget) }}
+                    d={`M ${circleSize/2} ${yPos + circleSize/2} L ${circleSize*1.25} ${yPos + circleSize/2} L ${lineLength-circleSize*0.25} ${nextYPos + circleSize/2} L ${lineLength + circleSize/2} ${nextYPos + circleSize/2}`}
                     strokeDasharray=""
                     fill="transparent"
-                    style={{stroke: "gray", strokeWidth: 5}}
+                    style={{
+                        stroke: "gray",
+                        strokeWidth: 5,
+                        opacity
+                    }}
                     data={data}
                     datafrom={person.currentRank}
                     datanext={person.nextRank}
@@ -92,25 +115,33 @@ TimelineCircleColumn.propTypes = {
     people: PropTypes.arrayOf(Object).isRequired,
     circleSize: PropTypes.number.isRequired,
     rowNumber: PropTypes.number.isRequired,
-    lineLength: PropTypes.number
+    lineLength: PropTypes.number,
+    onClickPerson: PropTypes.func,
+    selectedFriends: PropTypes.arrayOf(PropTypes.string)
 }
 
 TimelineCircleColumn.defaultProps = {
-    lineLength: 110
+    lineLength: 200,
+    onClickPerson: () => { },
+    selectedFriends: []
 }
 
 export default class FriendRankingTimeline extends Component<Props> {
     static defaultProps = {
         rankingPerInterval: [],
         circleSize: 50,
-        numPeople: 5
+        numPeople: 5,
+        selectedFriend: false,
+        onClick: () => {}
     }
 
     render() {
         const {
             rankingPerInterval,
             circleSize,
-            numPeople
+            numPeople,
+            onClick,
+            selectedFriend
         } = this.props;
         
 
@@ -167,6 +198,12 @@ export default class FriendRankingTimeline extends Component<Props> {
         })
 
         console.log(rankingWithChange)
+        const lineLength = 200;
+
+        const selectedFriends = []
+        if (selectedFriend) {
+            selectedFriends.push(selectedFriend)
+        }
 
         const contents = []
         rankingWithChange.forEach((interval, i) => {
@@ -176,13 +213,16 @@ export default class FriendRankingTimeline extends Component<Props> {
                     circleSize={circleSize}
                     people={interval.ranking}
                     rowNumber={i}
+                    lineLength={lineLength}
+                    onClickPerson={(friend) => { onClick(friend) }}
+                    selectedFriends={selectedFriends}
                 />
             )
         })
 
         return (
             <svg
-                width={2 * circleSize * contents.length}
+                width={lineLength * (contents.length - 1)}
                 height={circleSize * numPeople * 1.25}
             >
                 {contents}

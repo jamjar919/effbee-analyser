@@ -4,42 +4,24 @@ import { Link, withRouter } from 'react-router-dom';
 import { Menu, Input, Header, Icon, Search } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 
-import type { defaultFacebookType } from '../reducers/defaultTypes'
+import FriendSearchForm from './FriendSearchForm';
 import routes from '../constants/routes';
 import * as SelectionActions from '../actions/selection';
 import styles from './css/Menu.css';
 
 type Props = {
     history: object,
-    api: defaultFacebookType,
     selectFriend: (string) => void,
 };
 
 class MainMenu extends Component<Props> {
     props: Props;
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            isLoading: false,
-            results: [],
-            friends: props.api.friendsApi.get().map(f => ({ title: f.name }))
-        }
-    }
-
     render() {
         const {
             history,
-            api,
             selectFriend
         } = this.props;
-
-        const {
-            isLoading,
-            value,
-            results,
-            friends
-        } = this.state
 
         return (
             <div className={styles.menuContainer}>
@@ -78,22 +60,11 @@ class MainMenu extends Component<Props> {
                         Settings
                     </Menu.Item>
                     <Menu.Item key="search">
-                        <Search
-                            loading={isLoading}
-                            onResultSelect={(e, { result }) => {
-                                selectFriend(result.title)
+                        <FriendSearchForm
+                            onResultSelect={(name) => {
+                                selectFriend(name)
                                 history.push(routes.FRIEND)
                             }}
-                            onSearchChange={(e, { value }) => {
-                                this.setState({ isLoading: true }, () => {
-                                    const re = new RegExp(value, 'i')
-                                    this.setState({
-                                        results: friends.filter(f => re.test(f.title)),
-                                        isLoading: false
-                                    })
-                                })
-                            }}
-                            results={results}
                         />
                     </Menu.Item>
                 </Menu>
@@ -102,10 +73,8 @@ class MainMenu extends Component<Props> {
     }
 }
 
-function mapStateToProps(state) {
-    return {
-        api: state.facebook
-    };
+function mapStateToProps() {
+    return {};
 }
 
 function mapDispatchToProps(dispatch) {
