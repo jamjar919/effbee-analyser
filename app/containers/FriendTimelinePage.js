@@ -150,7 +150,7 @@ class FriendTimelinePage extends Component<Props> {
                         rankingPerInterval={ranking}
                         numPeople={numPeople}
                         selectedFriend={selectedFriend}
-                        onClick={(friend) => { selectFriend(friend) }}
+                        onSelectFriend={(friend) => { selectFriend(friend) }}
                     />
                 </Segment>
             </PageContainer>

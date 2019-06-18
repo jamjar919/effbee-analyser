@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Popup } from 'semantic-ui-react'
+import moment from 'moment';
+import flatMap from 'array.prototype.flatmap';
 
 import { getIdenticonSvg } from './Identicon';
 
@@ -132,7 +134,7 @@ export default class FriendRankingTimeline extends Component<Props> {
         circleSize: 50,
         numPeople: 5,
         selectedFriend: false,
-        onClick: () => {}
+        onSelectFriend: () => {}
     }
 
     render() {
@@ -140,7 +142,7 @@ export default class FriendRankingTimeline extends Component<Props> {
             rankingPerInterval,
             circleSize,
             numPeople,
-            onClick,
+            onSelectFriend,
             selectedFriend
         } = this.props;
         
@@ -213,18 +215,56 @@ export default class FriendRankingTimeline extends Component<Props> {
                     people={interval.ranking}
                     rowNumber={i}
                     lineLength={lineLength}
-                    onClickPerson={(friend) => { onClick(friend) }}
+                    onClickPerson={(friend) => { onSelectFriend(friend) }}
                     selectedFriends={selectedFriends}
                 />
             )
         })
 
+        const numbers = []
+        for (let i = 1; i < numPeople + 1; i += 1) {
+            numbers.push(
+                <text x="0" y="0" fontSize="20" transform={`translate(0, ${(circleSize*1.25) * i - (circleSize/2)})`}>{i}.</text>
+            )
+        }
+
+        const dates = flatMap(rankingWithChange.map(
+            interval => {
+                const midpoint = (interval.start + interval.end)/2;
+                if (midpoint < moment().unix()) {
+                    return moment.unix(midpoint)
+                }
+                return moment.unix(interval.start)
+            }
+        ), (date, i) => [
+            <text
+                x={(lineLength) * i + circleSize/2} y="40"
+                fontSize="15"
+                textAnchor="middle"
+            >{date.fromNow()}</text>,
+            <text
+                x={(lineLength) * i + circleSize/2} y="20"
+                fontSize="20"
+                textAnchor="middle"
+            >{date.format("LL")}</text>
+        ])
+
         return (
             <svg
                 width={lineLength * (contents.length - 1)}
-                height={circleSize * numPeople * 1.25}
+                height={circleSize * numPeople * 1.25 + 60}
             >
-                {contents}
+                <g transform="translate(50, 0)">
+                    {dates}
+                </g>
+                <g transform="translate(0, 60)">
+                    <g>
+                        {numbers}
+                    </g>
+                    <g transform="translate(50, 0)" >
+                        {contents}
+                    </g>
+                </g>
             </svg>
         );
     }
