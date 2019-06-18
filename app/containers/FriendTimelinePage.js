@@ -53,12 +53,14 @@ class FriendTimelinePage extends Component<Props> {
         } = this.state;
 
         const {
-            api,
-        } = this.props;
+            friendsApi,
+            messageApi,
+            profileApi
+        } = this.props.api
 
         // update ranking if interval has changed
         if (prevState.interval !== interval) {
-            const root = api.profileApi.getFullName();
+            const root = profileApi.getFullName();
             this.setState({ ranking: friendsApi.getRankingPerTimeInterval(root, messageApi, interval) })
             console.log("update ranking")
         }

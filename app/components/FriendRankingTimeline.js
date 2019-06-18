@@ -197,7 +197,6 @@ export default class FriendRankingTimeline extends Component<Props> {
             }
         })
 
-        console.log(rankingWithChange)
         const lineLength = 200;
 
         const selectedFriends = []
