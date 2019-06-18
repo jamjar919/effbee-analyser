@@ -21,9 +21,19 @@ class FriendTimelinePage extends Component<Props> {
 
     constructor(props) {
         super(props);
+
+        const {
+            friendsApi,
+            messageApi,
+            profileApi
+        } = props.api
+
+        const defaultInterval = 31557600; // one year
+
         this.state = {
-            interval: 31557600, // one year
-            numPeople: 5,
+            interval: defaultInterval,
+            numPeople: 10,
+            ranking: friendsApi.getRankingPerTimeInterval(profileApi.getFullName(), messageApi, defaultInterval)
         }
     }
 
@@ -34,6 +44,23 @@ class FriendTimelinePage extends Component<Props> {
 
         if (numPeople + num > 0) {
             this.setState({ numPeople: numPeople + num })
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        const {
+            interval
+        } = this.state;
+
+        const {
+            api,
+        } = this.props;
+
+        // update ranking if interval has changed
+        if (prevState.interval !== interval) {
+            const root = api.profileApi.getFullName();
+            this.setState({ ranking: friendsApi.getRankingPerTimeInterval(root, messageApi, interval) })
+            console.log("update ranking")
         }
     }
 
@@ -48,15 +75,8 @@ class FriendTimelinePage extends Component<Props> {
         const {
             interval,
             numPeople,
+            ranking
         } = this.state;
-
-        const root = api.profileApi.getFullName();
-        const {
-            friendsApi,
-            messageApi
-        } = api
-
-        const ranking = friendsApi.getRankingPerTimeInterval(root, messageApi, interval);
 
         return (
             <PageContainer>
