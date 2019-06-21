@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Tau from 'taucharts';
 import '../../node_modules/taucharts/dist/plugins/tooltip';
 import '../../node_modules/taucharts/dist/plugins/legend';
+import moment from 'moment';
 
 type Props = {
     ranking: object,
@@ -34,12 +35,30 @@ export default class SelectedRankingTimelineFriend extends Component<Props> {
             chart.destroy()
         }
 
-        const maxRanking = ranking.reduce((currentMax, val) => {
-            if (val.ranking.length > currentMax) {
-                return val.ranking.length;
+        const minMaxTime = ranking.reduce((current, interval) => {
+            let start = current.start;
+            let end = current.end;
+            if (interval.start < current.start) {
+                start = interval.start
             }
-            return currentMax
-        }, 0)
+            if (interval.end > current.end) {
+                end = interval.end
+            }
+            return {
+                start,
+                end
+            }
+        }, {
+            start: moment().unix(),
+            end: 0
+        })
+
+        console.log(minMaxTime)
+
+        const {
+            start,
+            end
+        } = minMaxTime
 
         // construct detailed rank history
         const rankingPerInterval = ranking.map(interval => ({
@@ -49,17 +68,7 @@ export default class SelectedRankingTimelineFriend extends Component<Props> {
                     ranking: index
                 })).find(v => v.name === friend)
             })
-        ).map(interval => {
-            if (interval.name == null) {
-                return {
-                    ...interval,
-                    name: friend,
-                    ranking: maxRanking,
-                    count: 0
-                }
-            }
-            return interval
-        })
+        ).filter(i => i.name != null)
         
         this.setState({ 
             chart: new Tau.Chart({
@@ -67,8 +76,13 @@ export default class SelectedRankingTimelineFriend extends Component<Props> {
                 x: 'date',
                 y: 'ranking',
                 color: 'group',
+                size: 'count',
                 guide: {
-                    interpolate: 'smooth-keep-extremum'
+                    interpolate: 'smooth-keep-extremum',
+                    x: {
+                        min: new Date(start * 1000),
+                        max: new Date(end * 1000)
+                    }
                 },
                 data: rankingPerInterval,
                 plugins: [
