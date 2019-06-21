@@ -3,6 +3,7 @@
 @import "~semantic-ui-css/semantic.min.css";
 @import '~taucharts/dist/taucharts.min.css';
 @import "~react-vis/dist/style.css";
+@import "~c3/c3.min.css";
 
 /* vars */
 :root {

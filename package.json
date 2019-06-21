@@ -202,6 +202,7 @@
     "@fortawesome/fontawesome-free": "^5.5.0",
     "array.prototype.flatmap": "^1.2.1",
     "async": "^2.6.2",
+    "c3": "^0.7.1",
     "classnames": "^2.2.6",
     "devtron": "^1.4.0",
     "electron-debug": "^2.0.0",

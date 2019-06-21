@@ -268,7 +268,7 @@ class MessagesApi extends FacebookApi {
         // calculate number of buckets 
         const timespan = lastTimestamp - firstTimestamp;
         const numBuckets = Math.ceil(timespan / timeInterval) + 1
-        const buckets = []
+        let buckets = []
         for (let i = 0; i < numBuckets; i += 1) {
             buckets.push({
                 start: firstTimestamp + (timeInterval * i),
@@ -289,6 +289,9 @@ class MessagesApi extends FacebookApi {
                 buckets[b].messages.push(message)
             });
         });
+
+        // for each bucket, if there's no messages, remove it
+        buckets = buckets.filter(bucket => bucket.messages.length > 0)
 
         return buckets;
     }

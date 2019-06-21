@@ -72,7 +72,8 @@ class FriendTimelinePage extends Component<Props> {
 
     render() {
         const {
-            api
+            api,
+            selectFriend
         } = this.props;
 
         const {
@@ -88,7 +89,7 @@ class FriendTimelinePage extends Component<Props> {
         if (selectedFriend !== "") {
             selectedFriendElement = (
                 <Segment>
-                    <Header as='h3'>
+                    <Header as='h2'>
                         <Icon name='user' />
                         <Header.Content>{selectedFriend}</Header.Content>
                     </Header>
@@ -96,6 +97,7 @@ class FriendTimelinePage extends Component<Props> {
                         ranking={ranking}
                         friend={selectedFriend}
                         numPeople={numPeople}
+                        selectFriend={selectFriend}
                     />
                 </Segment>
             )

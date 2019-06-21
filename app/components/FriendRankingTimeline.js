@@ -272,6 +272,7 @@ export default class FriendRankingTimeline extends Component<Props> {
         let selectionIndicator = ""
         if (selectedColumn !== false) {
             selectionIndicator = <rect
+                key="selection"
                 style={{
                     pointerEvents: "none",
                     opacity: 0.2,
@@ -286,7 +287,7 @@ export default class FriendRankingTimeline extends Component<Props> {
 
         return (
             <svg
-                width={lineLength * (contents.length - 1)}
+                width={(lineLength) * (contents.length)}
                 height={circleSize * numPeople * 1.25 + 60}
             >
                 <g>
