@@ -33,6 +33,9 @@ class FriendTimelinePage extends Component<Props> {
         this.state = {
             interval: defaultInterval,
             numPeople: 10,
+            selectedColumn: false,
+            selectedRow: false,
+            selectedFriend: false,
             ranking: friendsApi.getRankingPerTimeInterval(profileApi.getFullName(), messageApi, defaultInterval)
         }
     }
@@ -68,16 +71,16 @@ class FriendTimelinePage extends Component<Props> {
 
     render() {
         const {
-            api,
-            selectedFriend,
-            selectFriend
+            api
         } = this.props;
-
 
         const {
             interval,
             numPeople,
-            ranking
+            ranking,
+            selectedColumn,
+            selectedRow,
+            selectedFriend
         } = this.state;
 
         return (
@@ -140,7 +143,7 @@ class FriendTimelinePage extends Component<Props> {
                     <Menu.Menu position="right">
                         <FriendSearchForm
                             onResultSelect={(name) => {
-                                selectFriend(name)
+                                this.setState({ selectedFriend: name })
                             }}
                         />
                     </Menu.Menu>
@@ -150,7 +153,23 @@ class FriendTimelinePage extends Component<Props> {
                         rankingPerInterval={ranking}
                         numPeople={numPeople}
                         selectedFriend={selectedFriend}
-                        onSelectFriend={(friend) => { selectFriend(friend) }}
+                        selectedColumn={selectedColumn}
+                        selectedRow={selectedRow}
+                        onSelectFriend={(friend) => { this.setState({ selectedFriend: friend }) }}
+                        onSelectColumn={(col, index) => {
+                            let val = false;
+                            if (index !== selectedColumn) {
+                                val = index
+                            }
+                            this.setState({ selectedColumn: val }) 
+                        }}
+                        onSelectRow={(row, index) => {
+                            let val = false;
+                            if (index !== selectedRow) {
+                                val = index
+                            }
+                            this.setState({ selectedRow: val }) 
+                        }}
                     />
                 </Segment>
             </PageContainer>
@@ -160,13 +179,8 @@ class FriendTimelinePage extends Component<Props> {
 
 
 function mapStateToProps(state) {
-    let selectedFriend = false;
-    if (state.selection.type === "FRIEND") {
-        selectedFriend = state.selection.selection
-    }
     return {
         api: state.facebook,
-        selectedFriend,
     };
 }
   

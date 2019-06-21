@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Popup } from 'semantic-ui-react'
 import moment from 'moment';
 import flatMap from 'array.prototype.flatmap';
+import uuid from "uuid/v4"
 
 import { getIdenticonSvg } from './Identicon';
 
@@ -13,7 +14,8 @@ const TimelineCircleColumn = props => {
         rowNumber,
         lineLength,
         onClickPerson,
-        selectedFriends
+        selectedFriends,
+        isSelectedColumn
     } = props;
 
     const contents = []
@@ -33,7 +35,8 @@ const TimelineCircleColumn = props => {
         // draw marker
         if (
             (person.previousRank === -1) ||
-            (isSelectedFriend)
+            (isSelectedFriend) ||
+            (isSelectedColumn)
          ) {
             contents.push(<Popup
                 content={person.name}
@@ -80,7 +83,7 @@ const TimelineCircleColumn = props => {
             // draw lines
             lines.push(
                 <path
-                
+                    key={uuid()}
                     onClick={() => { onClickPerson(selectionTarget) }}
                     d={`M ${circleSize/2} ${yPos + circleSize/2} L ${circleSize*1.25} ${yPos + circleSize/2} L ${lineLength-circleSize*0.25} ${nextYPos + circleSize/2} L ${lineLength + circleSize/2} ${nextYPos + circleSize/2}`}
                     strokeDasharray=""
@@ -119,13 +122,15 @@ TimelineCircleColumn.propTypes = {
     rowNumber: PropTypes.number.isRequired,
     lineLength: PropTypes.number,
     onClickPerson: PropTypes.func,
-    selectedFriends: PropTypes.arrayOf(PropTypes.string)
+    selectedFriends: PropTypes.arrayOf(PropTypes.string),
+    isSelectedColumn: PropTypes.bool
 }
 
 TimelineCircleColumn.defaultProps = {
     lineLength: 200,
     onClickPerson: () => { },
-    selectedFriends: []
+    selectedFriends: [],
+    isSelectedColumn: false
 }
 
 export default class FriendRankingTimeline extends Component<Props> {
@@ -134,7 +139,10 @@ export default class FriendRankingTimeline extends Component<Props> {
         circleSize: 50,
         numPeople: 5,
         selectedFriend: false,
-        onSelectFriend: () => {}
+        selectedColumn: false,
+        onSelectFriend: () => {},
+        onSelectColumn: () => {},
+        onSelectRow: () => {}
     }
 
     render() {
@@ -143,7 +151,10 @@ export default class FriendRankingTimeline extends Component<Props> {
             circleSize,
             numPeople,
             onSelectFriend,
-            selectedFriend
+            onSelectColumn,
+            onSelectRow,
+            selectedFriend,
+            selectedColumn
         } = this.props;
         
 
@@ -217,6 +228,7 @@ export default class FriendRankingTimeline extends Component<Props> {
                     lineLength={lineLength}
                     onClickPerson={(friend) => { onSelectFriend(friend) }}
                     selectedFriends={selectedFriends}
+                    isSelectedColumn={selectedColumn === i}
                 />
             )
         })
@@ -237,23 +249,49 @@ export default class FriendRankingTimeline extends Component<Props> {
                 return moment.unix(interval.start)
             }
         ), (date, i) => [
-            <text
+            <text key={i * 2}
                 x={(lineLength) * i + circleSize/2} y="40"
                 fontSize="15"
                 textAnchor="middle"
-            >{date.fromNow()}</text>,
-            <text
+                onClick={() => { onSelectColumn(rankingWithChange[i], i) }}
+                style={{ cursor: "pointer" }}
+            >
+                {date.fromNow()}
+            </text>,
+            <text key={(i*2) -1}
                 x={(lineLength) * i + circleSize/2} y="20"
                 fontSize="20"
                 textAnchor="middle"
-            >{date.format("LL")}</text>
+                onClick={() => { onSelectColumn(rankingWithChange[i], i) }}
+                style={{ cursor: "pointer" }}
+            >
+                {date.format("LL")}
+            </text>
         ])
+
+        let selectionIndicator = ""
+        if (selectedColumn !== false) {
+            selectionIndicator = <rect
+                style={{
+                    pointerEvents: "none",
+                    opacity: 0.2,
+                    borderRadius: "30px"
+                }}
+                x="0" y="0"
+                width={lineLength}
+                height={circleSize * numPeople * 1.25 + 60}
+                transform={`translate(${selectedColumn * (lineLength) - (circleSize/2)}, 0)`}
+            />
+        }
 
         return (
             <svg
                 width={lineLength * (contents.length - 1)}
                 height={circleSize * numPeople * 1.25 + 60}
             >
+                <g>
+                    {selectionIndicator}
+                </g>
                 <g transform="translate(50, 0)">
                     {dates}
                 </g>
