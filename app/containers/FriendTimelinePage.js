@@ -5,6 +5,7 @@ import { Icon, Header, Segment, Menu, Dropdown, Button, Search } from 'semantic-
 import PageContainer from './PageContainer';
 import FriendRankingTimeline from '../components/FriendRankingTimeline'
 import FriendSearchForm from '../components/FriendSearchForm'
+import SelectedRankingTimelineFriend from '../components/SelectedRankingTimelineFriend'
 
 import * as SelectionActions from '../actions/selection';
 import type { defaultFacebookType } from '../reducers/defaultTypes'
@@ -33,9 +34,9 @@ class FriendTimelinePage extends Component<Props> {
         this.state = {
             interval: defaultInterval,
             numPeople: 10,
-            selectedColumn: false,
+            selectedColumn: { data: false, index: false },
             selectedRow: false,
-            selectedFriend: false,
+            selectedFriend: "",
             ranking: friendsApi.getRankingPerTimeInterval(profileApi.getFullName(), messageApi, defaultInterval)
         }
     }
@@ -82,6 +83,23 @@ class FriendTimelinePage extends Component<Props> {
             selectedRow,
             selectedFriend
         } = this.state;
+
+        let selectedFriendElement = ""
+        if (selectedFriend !== "") {
+            selectedFriendElement = (
+                <Segment>
+                    <Header as='h3'>
+                        <Icon name='user' />
+                        <Header.Content>{selectedFriend}</Header.Content>
+                    </Header>
+                    <SelectedRankingTimelineFriend
+                        ranking={ranking}
+                        friend={selectedFriend}
+                        numPeople={numPeople}
+                    />
+                </Segment>
+            )
+        }
 
         return (
             <PageContainer>
@@ -153,15 +171,21 @@ class FriendTimelinePage extends Component<Props> {
                         rankingPerInterval={ranking}
                         numPeople={numPeople}
                         selectedFriend={selectedFriend}
-                        selectedColumn={selectedColumn}
+                        selectedColumn={selectedColumn.index}
                         selectedRow={selectedRow}
-                        onSelectFriend={(friend) => { this.setState({ selectedFriend: friend }) }}
+                        onSelectFriend={(friend) => {
+                            let val = false;
+                            if (selectedFriend !== friend) {
+                                val = friend
+                            }
+                            this.setState({ selectedFriend: val }) 
+                        }}
                         onSelectColumn={(col, index) => {
                             let val = false;
-                            if (index !== selectedColumn) {
+                            if (index !== selectedColumn.index) {
                                 val = index
                             }
-                            this.setState({ selectedColumn: val }) 
+                            this.setState({ selectedColumn: { index: val, data: col } }) 
                         }}
                         onSelectRow={(row, index) => {
                             let val = false;
@@ -172,6 +196,7 @@ class FriendTimelinePage extends Component<Props> {
                         }}
                     />
                 </Segment>
+                { selectedFriendElement }
             </PageContainer>
         );
     }
