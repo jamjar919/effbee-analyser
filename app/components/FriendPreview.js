@@ -95,7 +95,14 @@ class FriendPreview extends React.Component<Props> {
                     <Identicon size={200} value={name} className={styles.topIdenticon}/>
                     <Header.Content>{name}</Header.Content>
                 </Header>
-                <Link to={routes.FRIEND}>Investigate</Link>
+                <div className={styles.moreDetailsButtonContainer}>
+                    <Link
+                        to={routes.FRIEND}
+                        className={styles.moreDetailsButton}
+                    >
+                        More Details
+                    </Link>
+                </div>
                 <Divider className={styles.divider} horizontal>
                     <Header as='h4'>
                         <Icon name='paper plane' />
