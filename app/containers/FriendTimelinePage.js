@@ -7,6 +7,8 @@ import FriendRankingTimeline from '../components/FriendRankingTimeline'
 import FriendSearchForm from '../components/FriendSearchForm'
 import SelectedRankingTimelineFriend from '../components/SelectedRankingTimelineFriend'
 
+import { withRouter } from 'react-router-dom';
+import routes from '../constants/routes';
 import * as SelectionActions from '../actions/selection';
 import type { defaultFacebookType } from '../reducers/defaultTypes'
 import styles from './css/FriendTimelinePage.css'
@@ -14,7 +16,8 @@ import styles from './css/FriendTimelinePage.css'
 type Props = {
     api: defaultFacebookType,
     selectedFriend: string,
-    selectFriend: (string) => void
+    selectFriend: (string) => void,
+    history: object,
 };
 
 class FriendTimelinePage extends Component<Props> {
@@ -73,7 +76,8 @@ class FriendTimelinePage extends Component<Props> {
     render() {
         const {
             api,
-            selectFriend
+            selectFriend,
+            history
         } = this.props;
 
         const {
@@ -89,7 +93,14 @@ class FriendTimelinePage extends Component<Props> {
         if (selectedFriend !== "") {
             selectedFriendElement = (
                 <Segment>
-                    <Header as='h2'>
+                    <Header 
+                        as='h2'
+                        className={styles.selectedFriendHeader}
+                        onClick={() => {
+                            selectFriend(selectedFriend)
+                            history.push(routes.FRIEND);
+                        }}
+                    >
                         <Icon name='user' />
                         <Header.Content>{selectedFriend}</Header.Content>
                     </Header>
@@ -97,7 +108,6 @@ class FriendTimelinePage extends Component<Props> {
                         ranking={ranking}
                         friend={selectedFriend}
                         numPeople={numPeople}
-                        selectFriend={selectFriend}
                     />
                 </Segment>
             )
@@ -105,7 +115,7 @@ class FriendTimelinePage extends Component<Props> {
 
         return (
             <PageContainer>
-                <Header as='h1'>
+                <Header as='h1' >
                     <Icon name='users' />
                     <Header.Content>
                         Friend Timeline
@@ -217,8 +227,10 @@ function mapStateToProps(state) {
     };
   }
   
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(FriendTimelinePage);
+export default withRouter(
+    connect(
+        mapStateToProps,
+        mapDispatchToProps
+    )(FriendTimelinePage)
+);
   

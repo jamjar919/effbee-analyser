@@ -2,3 +2,11 @@
     overflow-x: scroll;
     overflow-y: hidden;
 }
+
+.selectedFriendHeader {
+    cursor: pointer;
+}
+
+.selectedFriendHeader:hover {
+    text-decoration: underline;
+}

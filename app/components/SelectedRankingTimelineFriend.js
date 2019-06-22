@@ -10,8 +10,7 @@ import RankingBreakdownPie from './RankingBreakdownPie'
 type Props = {
     ranking: object,
     friend: string,
-    numPeople: number,
-    selectFriend: (string) => void 
+    numPeople: number
 }
 
 export default class SelectedRankingTimelineFriend extends Component<Props> {

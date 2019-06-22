@@ -52,7 +52,12 @@ const TimelineCircleColumn = props => {
                         data={data} 
                     >
                         <circle cx={circleSize/2} cy={circleSize/2} r={circleSize*0.5} style={{ fill: "#FFF" }} stroke="black" strokeWidth="3" />
-                        <g dangerouslySetInnerHTML={{ __html: person.svg }} />
+                        <g 
+                            dangerouslySetInnerHTML={{ __html: person.svg }}
+                            style={{
+                                cursor: "pointer"
+                            }}
+                        />
                     </g>
             } />)
         } else {
@@ -74,6 +79,9 @@ const TimelineCircleColumn = props => {
                         key={i}
                         transform={transformation}
                         data={data}
+                        style={{
+                            cursor: "pointer"
+                        }}
                     />
                 </g>
             } />)
@@ -236,7 +244,7 @@ export default class FriendRankingTimeline extends Component<Props> {
         const numbers = []
         for (let i = 1; i < numPeople + 1; i += 1) {
             numbers.push(
-                <text x="0" y="0" fontSize="20" transform={`translate(0, ${(circleSize*1.25) * i - (circleSize/2)})`}>{i}.</text>
+                <text key={i} x="0" y="0" fontSize="20" transform={`translate(0, ${(circleSize*1.25) * i - (circleSize/2)})`}>{i}.</text>
             )
         }
 
