@@ -31,7 +31,10 @@ export default class Settings extends Component<Props> {
   render() {
     return (
         <Container text>
-            <Header as='h2'>Settings</Header>
+            <Header as='h1'>
+                <Icon name="settings" />
+                <Header.Content>Settings</Header.Content>
+            </Header>
             <Segment>
                 <p>Current directory: {this.state.dataDir}</p>
             </Segment>
