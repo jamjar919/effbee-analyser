@@ -31,6 +31,7 @@ const TimelineCircleColumn = props => {
         const nextYPos = (circleSize*1.25) * person.nextRank; 
         const transformation = `translate(0, ${(yPos)})`;
         const data = person.name
+        const popupContent = <div style={{ textAlign: "center" }}>{person.name} <br /> {person.count} messages</div>
 
         // draw marker
         if (
@@ -39,7 +40,7 @@ const TimelineCircleColumn = props => {
             (isSelectedColumn)
          ) {
             contents.push(<Popup
-                content={person.name}
+                content={popupContent}
                 key={i}
                 position='top center'
                 trigger={
@@ -61,7 +62,7 @@ const TimelineCircleColumn = props => {
                     </g>
             } />)
         } else {
-            contents.push(<Popup content={person.name} key={i} position='top center'
+            contents.push(<Popup content={popupContent} key={i} position='top center'
             trigger={
                 <g
                     style={{

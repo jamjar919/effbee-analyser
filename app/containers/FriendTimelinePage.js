@@ -2,12 +2,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Icon, Header, Segment, Menu, Dropdown, Button, Search } from 'semantic-ui-react'
+import { withRouter } from 'react-router-dom';
+import moment from 'moment';
+
 import PageContainer from './PageContainer';
 import FriendRankingTimeline from '../components/FriendRankingTimeline'
 import FriendSearchForm from '../components/FriendSearchForm'
+import FriendList from '../components/FriendList'
 import SelectedRankingTimelineFriend from '../components/SelectedRankingTimelineFriend'
 
-import { withRouter } from 'react-router-dom';
 import routes from '../constants/routes';
 import * as SelectionActions from '../actions/selection';
 import type { defaultFacebookType } from '../reducers/defaultTypes'
@@ -69,7 +72,6 @@ class FriendTimelinePage extends Component<Props> {
         if (prevState.interval !== interval) {
             const root = profileApi.getFullName();
             this.setState({ ranking: friendsApi.getRankingPerTimeInterval(root, messageApi, interval) })
-            console.log("update ranking")
         }
     }
 
@@ -90,7 +92,7 @@ class FriendTimelinePage extends Component<Props> {
         } = this.state;
 
         let selectedFriendElement = ""
-        if (selectedFriend !== "") {
+        if (selectedFriend !== "" && ranking) {
             selectedFriendElement = (
                 <Segment>
                     <Header 
@@ -111,6 +113,33 @@ class FriendTimelinePage extends Component<Props> {
                     />
                 </Segment>
             )
+        }
+
+        let selectedColumnElement = ""
+        if (selectedColumn.index !== false) {
+            const data = selectedColumn.data;
+            const start = moment.unix(data.start).format("MMMM Do YYYY");
+            const end = moment.unix(data.end).format("MMMM Do YYYY");
+            if (data.ranking) {
+                selectedColumnElement = (
+                    <Segment>
+                        <Header as='h1' >
+                            <Icon name='clock' />
+                            <Header.Content>
+                                {start} - {end}
+                            </Header.Content>
+                            <Header.Subheader>Ranking during selected time period</Header.Subheader>
+                        </Header>
+                        <FriendList 
+                            friends={data.ranking.map(f => ({
+                                name: f.name,
+                                messages: f.count,
+                            }))}
+                            horizontal
+                        />
+                    </Segment>
+                )
+            }
         }
 
         return (
@@ -170,6 +199,24 @@ class FriendTimelinePage extends Component<Props> {
                             <Button onClick={() => { this.changeNumPeople(5) }}>More</Button>
                         </Button.Group>
                     </Menu.Item>
+                    {   (selectedFriendElement || selectedColumnElement) && (
+                        <Menu.Item>
+                            <Button
+                                onClick={() => {
+                                    this.setState({
+                                        selectedFriend: "",
+                                        selectedColumn: {
+                                            ...selectedColumn,
+                                            index: false   
+                                        }
+                                    })
+                                }}
+                                color='red'
+                            >
+                                Clear Selection
+                            </Button>
+                        </Menu.Item>
+                    )}
                     <Menu.Menu position="right">
                         <FriendSearchForm
                             onResultSelect={(name) => {
@@ -209,6 +256,7 @@ class FriendTimelinePage extends Component<Props> {
                     />
                 </Segment>
                 { selectedFriendElement }
+                { selectedColumnElement }
             </PageContainer>
         );
     }

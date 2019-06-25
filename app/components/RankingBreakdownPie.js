@@ -30,8 +30,6 @@ export default class SelectedRankingTimelineFriend extends Component<Props> {
             id
         } = this.state
 
-        console.log(ranking)
-
         let columns = {
             1: 0,
             2: 0,

@@ -66,10 +66,10 @@ class FriendItem extends React.Component<Props> {
                             <Statistic.Label>Messages Shared</Statistic.Label>
                         </Statistic>
                     </Item.Description>
-                    <Item.Extra>
+                    {groups ? <Item.Extra>
                         <Icon name='users' />
                         {groups} Shared Group Chats
-                    </Item.Extra>
+                    </Item.Extra> : ''}
                 </Item.Content>
                 {loading ? (
                     <Dimmer active={true} page>

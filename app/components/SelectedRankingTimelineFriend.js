@@ -127,6 +127,10 @@ export default class SelectedRankingTimelineFriend extends Component<Props> {
 
         const rankDetails = this.getRankDetails();
 
+        if (rankDetails.length === 0 ) {
+            return ''
+        }
+
         const topRank = rankDetails.reduce((currentMax, interval) => {
             if (typeof currentMax == "undefined" || interval.ranking < currentMax.ranking) {
                 return interval
