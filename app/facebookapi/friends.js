@@ -14,10 +14,10 @@ class FriendsApi extends FacebookApi {
                         friend2 => friend2.name === friend.name
                     ).length < 2
                 )
-                
+            this.loaded = true;
         } catch (e) {
-            console.error(e)
-            return undefined;
+            console.log("couldn't load friends api")
+            this.loaded = false;
         } finally {
             this.ranking = {
                 cached: false,

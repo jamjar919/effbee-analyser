@@ -25,3 +25,7 @@ body {
 svg.rv-xy-plot__inner {
   overflow: visible;
 }
+
+a {
+  cursor: pointer;
+}

@@ -1,9 +1,19 @@
 import type { Action, facebookType } from './types';
-import { defaultFacebookType } from './defaultTypes'
+import { defaultFacebookType } from './defaultTypes';
+import ProfileApi from '../facebookapi/profile'
+import FriendsApi from '../facebookapi/friends'
+import MessagesApi from '../facebookapi/messages'
+import { REFRESH_API } from '../actions/facebook';
 
 export default function facebook(state: facebookType = defaultFacebookType, action: Action) {
-  switch (action.type) {
-    default:
-      return state;
-  }
+    switch (action.type) {
+        case REFRESH_API:
+            return {
+                profileApi: new ProfileApi(),
+                friendsApi: new FriendsApi(),
+                messageApi: new MessagesApi()            
+            }
+        default:
+            return state;
+    }
 }

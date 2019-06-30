@@ -8,9 +8,15 @@ class FriendSearchForm extends Component<Props> {
 
     constructor(props) {
         super(props);
+        
+        let friends = []
+        if (typeof props.friendsApi.get() !== "undefined") {
+            friends = props.friendsApi.get().map(f => ({ title: f.name }))
+        }
+
         this.state = {
             isSearchLoading: false,
-            friends: props.friendsApi.get().map(f => ({ title: f.name })),
+            friends,
             searchResults: []
         }
     }

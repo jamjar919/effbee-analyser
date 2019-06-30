@@ -63,10 +63,11 @@ class MessagesApi extends FacebookApi {
                 return currentFirstTimestamp;
             }, moment().unix())
 
+            this.loaded = true;
         } catch (e) {
-            console.error(e)
+            console.log("couldn't load messages api")
             this.messages = []
-            return undefined;
+            this.loaded = false;
         }
     }
 
