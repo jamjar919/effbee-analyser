@@ -45,11 +45,9 @@ class NetworkPage extends Component<Props> {
         return (
             <PageContainer>
                 <Segment padded="very">
-                    <Dimmer active>
-                        <Loader indeterminate size="large">
-                            Loading! Depending on the number of friends you have, this might take a while. You'll only have to do this once.
-                        </Loader>
-                    </Dimmer>
+                    <Loader indeterminate size="large">
+                        Loading! Depending on the number of friends you have, this might take a while. You'll only have to do this once.
+                    </Loader>
                     <Placeholder>
                         <Placeholder.Line />
                         <Placeholder.Line />

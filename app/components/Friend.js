@@ -149,6 +149,13 @@ class Friend extends Component<Props> {
                     </Segment>
                     <Segment>
                         <Header as='h3'>
+                            <Icon name='envelope' />
+                            <Header.Content>Group Chats</Header.Content>
+                            <Header.Subheader>Shared group chats</Header.Subheader>
+                        </Header>
+                    </Segment>
+                    <Segment>
+                        <Header as='h3'>
                             <Icon name='users' />
                             <Header.Content>Common connections</Header.Content>
                             <Header.Subheader>Message totals shared between this person and your friends</Header.Subheader>
@@ -164,16 +171,10 @@ class Friend extends Component<Props> {
 
 function mapStateToProps(state) {
     const api = state.facebook;
-    if (state.selection.type === 'FRIEND') {
-        return { 
-            name: state.selection.selection,
-            api
-        };
-    }
-    return {
-        name: false,
+    return { 
+        name: state.selection.friend,
         api
-    }
+    };
 }
 
 function mapDispatchToProps() {

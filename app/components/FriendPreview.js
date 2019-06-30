@@ -180,16 +180,10 @@ class FriendPreview extends React.Component<Props> {
   
 function mapStateToProps(state) {
     const api = state.facebook;
-    if (state.selection.type === 'FRIEND') {
-        return { 
-            name: state.selection.selection,
-            api
-        };
-    }
-    return {
-        name: false,
+    return { 
+        name: state.selection.friend,
         api
-    }
+    };
 }
 
 function mapDispatchToProps() {

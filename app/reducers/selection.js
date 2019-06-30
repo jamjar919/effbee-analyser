@@ -1,5 +1,5 @@
 // @flow
-import { SELECT_FRIEND } from '../actions/selection';
+import { SELECT_FRIEND, SELECT_CHAT } from '../actions/selection';
 import type { selectionType, Action } from './types';
 import { defaultSelectionType } from './defaultTypes';
 
@@ -7,8 +7,13 @@ export default function selectFriend(state: selectionType = defaultSelectionType
   switch (action.type) {
     case SELECT_FRIEND:
       return {
-        type: 'FRIEND',
-        selection: action.payload
+        ...state,
+        friend: action.payload
+      }
+    case SELECT_CHAT: 
+      return {
+        ...state,
+        chat: action.payload
       }
     default:
       return state;

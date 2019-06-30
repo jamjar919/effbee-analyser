@@ -8,8 +8,8 @@ export const defaultNetworkType = {
 }
 
 export const defaultSelectionType = {
-    type: '',
-    selection: false
+    friend: false,
+    chat: false,
 }
 
 export const defaultFacebookType = {

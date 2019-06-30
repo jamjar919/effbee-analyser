@@ -17,28 +17,31 @@ class ChatPage extends Component<Props> {
     render() {
         const {
             history,
-            api
+            api,
+            chat
         } = this.props;
 
         return (
-            <Menu>
-                <Menu.Item 
-                    onClick={() => {
-                        history.goBack()
-                    }}
-                >
-                    <Icon name="chevron left" />
-                </Menu.Item>
-            </Menu>
-            <PageContainer>
-                <Header as='h1'>
-                    <Icon name='users' />
-                    <Header.Content>
-                        Friends
-                    </Header.Content>
-                    <Header.Subheader>Below is a list of your friends, ordered by their shared history with you.</Header.Subheader>
-                </Header>
-            </PageContainer>
+            <React.Fragment>
+                <Menu>
+                    <Menu.Item 
+                        onClick={() => {
+                            history.goBack()
+                        }}
+                    >
+                        <Icon name="chevron left" />
+                    </Menu.Item>
+                </Menu>
+                <PageContainer>
+                    <Header as='h1'>
+                        <Icon name='envelope' />
+                        <Header.Content>
+                            {chat}
+                        </Header.Content>
+                        <Header.Subheader>idk maybe more stuff here</Header.Subheader>
+                    </Header>
+                </PageContainer>
+            </React.Fragment>
         );
     }
 }
@@ -47,7 +50,8 @@ class ChatPage extends Component<Props> {
 function mapStateToProps(state) {
     const api = state.facebook
     return {
-        api
+        api,
+        chat: state.selection.chat
     };
 }
   
