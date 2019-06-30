@@ -7,6 +7,7 @@ import MessageTimeline from './MessageTimeline';
 import Identicon from './Identicon';
 import HourRadar from './HourRadar';
 import FriendList from './FriendList';
+import ChatList from './ChatList';
 import PageContainer from '../containers/PageContainer';
 import type { defaultFacebookType } from '../reducers/defaultTypes'
 
@@ -153,6 +154,7 @@ class Friend extends Component<Props> {
                             <Header.Content>Group Chats</Header.Content>
                             <Header.Subheader>Shared group chats</Header.Subheader>
                         </Header>
+                        <ChatList chats={chatsWithRoot.chats} />
                     </Segment>
                     <Segment>
                         <Header as='h3'>

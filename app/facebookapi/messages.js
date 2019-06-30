@@ -164,6 +164,9 @@ class MessagesApi extends FacebookApi {
                 }
             })
         })
+
+        chats.sort((a, b) => b.messages.length - a.messages.length)
+
         return {
             chats,
             count,

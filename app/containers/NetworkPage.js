@@ -45,7 +45,7 @@ class NetworkPage extends Component<Props> {
         return (
             <PageContainer>
                 <Segment padded="very">
-                    <Loader indeterminate size="large">
+                    <Loader active indeterminate size="large">
                         Loading! Depending on the number of friends you have, this might take a while. You'll only have to do this once.
                     </Loader>
                     <Placeholder>
