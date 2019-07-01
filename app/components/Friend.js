@@ -12,6 +12,7 @@ import PageContainer from '../containers/PageContainer';
 import type { defaultFacebookType } from '../reducers/defaultTypes'
 
 import styles from './css/Friend.css';
+import menuStyles from './css/Menu.css';
 
 type Props = {
     name: string,
@@ -56,7 +57,7 @@ class Friend extends Component<Props> {
         
         return (
             <React.Fragment>
-                <Menu>
+                <Menu className={menuStyles.topMenu}>
                     <Menu.Item 
                         onClick={() => {
                             history.goBack()
@@ -154,7 +155,7 @@ class Friend extends Component<Props> {
                             <Header.Content>Group Chats</Header.Content>
                             <Header.Subheader>Shared group chats</Header.Subheader>
                         </Header>
-                        <ChatList chats={chatsWithRoot.chats} />
+                        <ChatList chats={chats.chats} />
                     </Segment>
                     <Segment>
                         <Header as='h3'>

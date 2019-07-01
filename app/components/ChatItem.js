@@ -5,6 +5,7 @@ import { Card } from 'semantic-ui-react'
 
 import * as SelectionActions from '../actions/selection';
 import routes from '../constants/routes';
+import styles from './css/ChatItem.css'
 
 type Props = {
     chat: object,
@@ -31,7 +32,7 @@ class ChatItem extends React.Component<Props> {
 
         this.setState({ loading: true }, () => {
             setTimeout(() => {
-                selectChat(chat.title);
+                selectChat(chat);
                 history.push(routes.CHAT);
                 this.setState({ loading: false })
             }, 10)
@@ -52,6 +53,7 @@ class ChatItem extends React.Component<Props> {
             <Card color={isPrivateChat && 'red'}>
                 <Card.Content>
                     <Card.Header
+                        className={styles.chatItemHeader}
                         onClick={() => { this.toChat() }}
                         content={chat.title}
                     />

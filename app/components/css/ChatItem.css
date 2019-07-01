@@ -1,0 +1,12 @@
+.chatItemHeader:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.moreContent {
+    box-shadow: none !important;
+}
+
+.moreContent {
+    text-align: center;
+}

@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Header, Icon, Segment, Menu, Placeholder, Item } from 'semantic-ui-react'
+import { Header, Icon, Segment, Menu, Placeholder, Item, Grid } from 'semantic-ui-react'
 
+import FriendBreakdownPie from '../components/FriendBreakdownPie';
 import PageContainer from './PageContainer';
 import type { defaultFacebookType } from '../reducers/defaultTypes'
+import menuStyles from '../components/css/Menu.css';
 
 type Props = {
     history: object,
@@ -21,9 +23,17 @@ class ChatPage extends Component<Props> {
             chat
         } = this.props;
 
+        if (chat === false) {
+            return 'Nothing selected!';
+        }
+
+        const isPrivateChat = (chat.participants.length === 2)
+
+        console.log(chat)
+
         return (
             <React.Fragment>
-                <Menu>
+                <Menu className={menuStyles.topMenu}>
                     <Menu.Item 
                         onClick={() => {
                             history.goBack()
@@ -36,10 +46,37 @@ class ChatPage extends Component<Props> {
                     <Header as='h1'>
                         <Icon name='envelope' />
                         <Header.Content>
-                            {chat}
+                            {chat.title}
                         </Header.Content>
-                        <Header.Subheader>idk maybe more stuff here</Header.Subheader>
+                        <Header.Subheader>{isPrivateChat ? 'Private Chat' : `Group Chat (x${chat.participants.length})` }</Header.Subheader>
                     </Header>
+                    <Grid>
+                        <Grid.Row>
+                            <Grid.Column width={10}>
+                            <Segment.Group>
+                                <Segment>
+                                    <Header as='h3'>
+                                        <Icon name='area graph' />
+                                        <Header.Content>Basic Statistics</Header.Content>
+                                    </Header>
+                                </Segment>
+                                <Segment>
+                                    <Grid columns={2} centered>
+                                        <Grid.Column>
+                                        </Grid.Column>
+                                        <Grid.Column>
+                                        </Grid.Column>
+                                    </Grid>
+                                </Segment>
+                            </Segment.Group>
+                            </Grid.Column>
+                            <Grid.Column width={6}>
+                                <Segment>
+                                    <FriendBreakdownPie friends={chat.participants} />
+                                </Segment>
+                            </Grid.Column>
+                        </Grid.Row>
+                    </Grid>
                 </PageContainer>
             </React.Fragment>
         );

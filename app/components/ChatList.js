@@ -3,6 +3,7 @@ import { Card, Button } from 'semantic-ui-react'
 import ChatItem from './ChatItem'
 
 import uuid from 'uuid/v4';
+import chatItemStyles from './css/ChatItem.css'
 
 type Props = {
     chats: array
@@ -27,8 +28,6 @@ export default class ChatList extends Component<Props> {
             numToShow
         } = this.state;
 
-        console.log(chats)
-
         const chatItems = chats.map((chat, i) => {
             if (i < numToShow) {
                 return (
@@ -43,7 +42,7 @@ export default class ChatList extends Component<Props> {
 
         if (numToShow <= chats.length) {
             chatItems.push(
-                <Card key="more">
+                <Card key="more" className={chatItemStyles.moreContent}>
                     <Card.Content>
                         <Button onClick={() => {
                             this.setState({ numToShow: numToShow + 10 })
@@ -54,7 +53,7 @@ export default class ChatList extends Component<Props> {
         }
         
         return (
-            <Card.Group>
+            <Card.Group centered>
                 {chatItems}
             </Card.Group>
         );

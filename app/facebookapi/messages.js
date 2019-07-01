@@ -81,6 +81,8 @@ class MessagesApi extends FacebookApi {
             (details.participants.map(p => p.name).indexOf(name) >= 0)
         );
 
+        chats.sort((a, b) => b.messages.length - a.messages.length)
+
         // count message totals for all people in all the conversations
         const peopleMap = {}
         chats.forEach(chat => {
