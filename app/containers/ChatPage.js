@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Header, Icon, Segment, Menu, Placeholder, Item, Grid } from 'semantic-ui-react'
+import { Header, Icon, Segment, Menu, Placeholder, Item, Grid, Statistic } from 'semantic-ui-react'
 
 import FriendBreakdownPie from '../components/FriendBreakdownPie';
 import PageContainer from './PageContainer';
+import FriendTimeline from '../components/FriendTimeline';
 import type { defaultFacebookType } from '../reducers/defaultTypes'
+
 import menuStyles from '../components/css/Menu.css';
+import styles from './css/ChatPage.css';
 
 type Props = {
     history: object,
@@ -23,6 +26,10 @@ class ChatPage extends Component<Props> {
             chat
         } = this.props;
 
+        const {
+            messageApi
+        } = api
+
         if (chat === false) {
             return 'Nothing selected!';
         }
@@ -30,6 +37,26 @@ class ChatPage extends Component<Props> {
         const isPrivateChat = (chat.participants.length === 2)
 
         console.log(chat)
+
+        const maxPerson = chat.participants.reduce((max, current) => {
+            if (max.count < current.count) {
+                return current;
+            }
+            return max;
+        })
+
+        const minPerson = chat.participants.reduce((min, current) => {
+            if (min.count > current.count) {
+                return current;
+            }
+            return min;
+        })
+
+        const firstMessage = chat.messages[chat.messages.length - 1];
+        const lastMessage = chat.messages[0]
+        const firstTimestamp = Math.floor(firstMessage.timestamp_ms / 1000)
+        const lastTimestamp = Math.floor(lastMessage.timestamp_ms / 1000)
+        const messagesByInterval = messageApi.bucketMessagesByTimeInterval([chat], firstTimestamp, lastTimestamp, 1209600)
 
         return (
             <React.Fragment>
@@ -48,7 +75,7 @@ class ChatPage extends Component<Props> {
                         <Header.Content>
                             {chat.title}
                         </Header.Content>
-                        <Header.Subheader>{isPrivateChat ? 'Private Chat' : `Group Chat (x${chat.participants.length})` }</Header.Subheader>
+                        <Header.Subheader>{isPrivateChat ? 'Private Chat' : 'Group Chat' }</Header.Subheader>
                     </Header>
                     <Grid>
                         <Grid.Row>
@@ -61,18 +88,51 @@ class ChatPage extends Component<Props> {
                                     </Header>
                                 </Segment>
                                 <Segment>
-                                    <Grid columns={2} centered>
-                                        <Grid.Column>
-                                        </Grid.Column>
-                                        <Grid.Column>
-                                        </Grid.Column>
-                                    </Grid>
+                                    <Statistic.Group widths="two">
+                                        <Statistic>
+                                            <Statistic.Value>{chat.messages.length}</Statistic.Value>
+                                            <Statistic.Label>Total Messages</Statistic.Label>
+                                        </Statistic>
+                                        <Statistic>
+                                        <Statistic.Value>
+                                            <Icon name='user' />
+                                            {chat.participants.length}
+                                            </Statistic.Value>
+                                            <Statistic.Label>Participants</Statistic.Label>
+                                        </Statistic>
+                                        <Statistic>
+                                            <Statistic.Label>Top Contributor</Statistic.Label>
+                                            <Statistic.Value text>{maxPerson.name}</Statistic.Value>
+                                            <Statistic.Label>{maxPerson.count} Messages</Statistic.Label>
+                                        </Statistic>
+                                        <Statistic>
+                                            <Statistic.Label>Bottom Contributor</Statistic.Label>
+                                            <Statistic.Value text>{minPerson.name}</Statistic.Value>
+                                            <Statistic.Label>{minPerson.count} Messages</Statistic.Label>
+                                        </Statistic>
+                                    </Statistic.Group>
                                 </Segment>
                             </Segment.Group>
                             </Grid.Column>
                             <Grid.Column width={6}>
                                 <Segment>
                                     <FriendBreakdownPie friends={chat.participants} />
+                                </Segment>
+                            </Grid.Column>
+                        </Grid.Row>
+                        <Grid.Row>
+                            <Grid.Column width={16}>
+                                <Segment>
+                                    <Header as='h3'>
+                                        <Icon name='users' />
+                                        <Header.Content>Friends Area Chart</Header.Content>
+                                    </Header>
+                                    <FriendTimeline 
+                                        messages={messagesByInterval}
+                                        participants={chat.participants}
+                                        firstTimestamp={firstTimestamp}
+                                        lastTimestamp={lastTimestamp}
+                                    />
                                 </Segment>
                             </Grid.Column>
                         </Grid.Row>

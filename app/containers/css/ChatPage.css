@@ -1,0 +1,7 @@
+.gridColumnCenter {
+    display: flex !important;
+}
+
+.gridColumnCenterItem {
+    margin: auto !important;
+}
