@@ -27,11 +27,8 @@ export default class FacebookDataDirectoryControl extends Component<Props> {
     }
 
     render() {
-        let error = ''
-
         return (
             <React.Fragment>
-                {error}
                 <Segment>
                     <p>Current directory: {this.state.dataDir}</p>
                 </Segment>
