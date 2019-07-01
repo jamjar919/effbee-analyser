@@ -269,7 +269,7 @@ class MessagesApi extends FacebookApi {
         return hourMap;
     }
 
-    bucketMessagesByTimeInterval(messages, firstTimestamp, lastTimestamp, timeInterval) {
+    bucketMessagesByTimeInterval(messages, firstTimestamp, lastTimestamp, timeInterval, filterBuckets = true) {
         // bucket messages based on time interval
         // calculate number of buckets 
         const timespan = lastTimestamp - firstTimestamp;
@@ -299,7 +299,9 @@ class MessagesApi extends FacebookApi {
         });
 
         // for each bucket, if there's no messages, remove it
-        buckets = buckets.filter(bucket => bucket.messages.length > 0)
+        if (filterBuckets) {
+            buckets = buckets.filter(bucket => bucket.messages.length > 0)
+        }
 
         return buckets;
     }

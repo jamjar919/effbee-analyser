@@ -56,7 +56,7 @@ class ChatPage extends Component<Props> {
         const lastMessage = chat.messages[0]
         const firstTimestamp = Math.floor(firstMessage.timestamp_ms / 1000)
         const lastTimestamp = Math.floor(lastMessage.timestamp_ms / 1000)
-        const messagesByInterval = messageApi.bucketMessagesByTimeInterval([chat], firstTimestamp, lastTimestamp, 1209600)
+        const messagesByInterval = messageApi.bucketMessagesByTimeInterval([chat], firstTimestamp, lastTimestamp, 1209600, false)
 
         return (
             <React.Fragment>
