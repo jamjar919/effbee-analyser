@@ -17,80 +17,86 @@ import type { defaultFacebookType } from '../reducers/defaultTypes'
 import styles from './css/NetworkPage.css';
 
 type Props = {
-  toggleShowRoot: () => void,
-  selectFriend: (string) => void,
-  saveNetworkData: (object) => void,
-  nextNetworkEdgeOption: () => void,
-  showRoot: boolean,
-  networkData: object,
-  api: defaultFacebookType,
-  edgeType: string
+    toggleShowRoot: () => void,
+    selectFriend: (string) => void,
+    saveNetworkData: (object) => void,
+    nextNetworkEdgeOption: () => void,
+    fitColors: () => void,
+    colors: array,
+    showRoot: boolean,
+    networkData: object,
+    api: defaultFacebookType,
+    edgeType: string
 };
 
 class NetworkPage extends Component<Props> {
-  props: Props;
+    props: Props;
 
-  render() {
-    const {
-        api,
-        networkData,
-        saveNetworkData,
-        nextNetworkEdgeOption,
-        toggleShowRoot,
-        edgeType
-    } = this.props
+    render() {
+        const {
+            api,
+            networkData,
+            saveNetworkData,
+            nextNetworkEdgeOption,
+            toggleShowRoot,
+            edgeType,
+            fitColors,
+            colors
+        } = this.props
 
-    const rootName = api.profileApi.getFullName();
+        const rootName = api.profileApi.getFullName();
 
-    /** compute network data if we don't have it */
-    if (!networkData) {
-        setTimeout(() => {
-            saveNetworkData(api)
-        }, 100)
+        /** compute network data if we don't have it */
+        if (!networkData) {
+            setTimeout(() => {
+                saveNetworkData(api)
+            }, 100)
+            return (
+                <PageContainer>
+                    <Segment padded="very">
+                        <Loader active indeterminate size="large">
+                            Loading! Depending on the number of friends you have, this might take a while. You'll only have to do this once.
+                        </Loader>
+                        <Placeholder>
+                            <Placeholder.Line />
+                            <Placeholder.Line />
+                            <Placeholder.Line />
+                            <Placeholder.Line />
+                            <Placeholder.Line />
+                            <Placeholder.Line />
+                            <Placeholder.Line />
+                            <Placeholder.Line />
+                            <Placeholder.Line />
+                            <Placeholder.Line />
+                        </Placeholder>
+                    </Segment>
+                </PageContainer>
+            );
+        }
+
         return (
-            <PageContainer>
-                <Segment padded="very">
-                    <Loader active indeterminate size="large">
-                        Loading! Depending on the number of friends you have, this might take a while. You'll only have to do this once.
-                    </Loader>
-                    <Placeholder>
-                        <Placeholder.Line />
-                        <Placeholder.Line />
-                        <Placeholder.Line />
-                        <Placeholder.Line />
-                        <Placeholder.Line />
-                        <Placeholder.Line />
-                        <Placeholder.Line />
-                        <Placeholder.Line />
-                        <Placeholder.Line />
-                        <Placeholder.Line />
-                    </Placeholder>
-                </Segment>
-            </PageContainer>
+            <div className={styles.container}>
+                <TopMenuNetwork
+                    toggleShowRoot={() => { toggleShowRoot() }}
+                    nextNetworkEdgeOption={() => { nextNetworkEdgeOption() }}
+                    fitColors={() => { fitColors(api) }}
+                    edgeType={edgeType}
+                />
+                <Network
+                    rootName={rootName}
+                    showRoot={this.props.showRoot}
+                    selectFriend={(name) => this.props.selectFriend(name)}
+                    nodes={networkData.nodes}
+                    edges={networkData.edges}
+                    colors={colors}
+                    edgeType={edgeType}
+                />
+                <RightPanel>
+                    <FriendPreview />
+                </RightPanel>
+            </div>
         );
     }
-
-    return (
-      <div className={styles.container}>
-        <TopMenuNetwork
-          toggleShowRoot={() => { toggleShowRoot() }}
-          nextNetworkEdgeOption={() => { nextNetworkEdgeOption() }}
-          edgeType={edgeType}
-        />
-        <Network
-          rootName={rootName}
-          showRoot={this.props.showRoot}
-          selectFriend={(name) => this.props.selectFriend(name)}
-          nodes={networkData.nodes}
-          edges={networkData.edges}
-          edgeType={edgeType}
-        />
-        <RightPanel>
-          <FriendPreview />
-        </RightPanel>
-      </div>
-    );
-  }
 }
 
 
@@ -99,6 +105,7 @@ function mapStateToProps(state) {
         showRoot: state.network.showRoot,
         networkData: state.network.networkData,
         edgeType: state.network.edgeType,
+        colors: state.network.colors,
         api: state.facebook
     };
 }
@@ -108,7 +115,8 @@ function mapDispatchToProps(dispatch) {
         selectFriend: SelectionActions.selectFriendAction(dispatch),
         toggleShowRoot: NetworkActions.toggleShowRootAction(dispatch),
         saveNetworkData: NetworkActions.saveNetworkDataAction(dispatch),
-        nextNetworkEdgeOption: NetworkActions.nextNetworkEdgeOptionAction(dispatch)
+        nextNetworkEdgeOption: NetworkActions.nextNetworkEdgeOptionAction(dispatch),
+        fitColors: NetworkActions.fitColorsAction(dispatch)
     };
 }
 

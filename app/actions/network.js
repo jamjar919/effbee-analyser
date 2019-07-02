@@ -21,7 +21,16 @@ export function saveNetworkDataAction(dispatch) {
 export const NEXT_NETWORK_EDGE_OPTION = 'NEXT_NETWORK_EDGE_OPTION';
 
 export function nextNetworkEdgeOptionAction(dispatch) {
-  return api => dispatch({
+  return () => dispatch({
     type: NEXT_NETWORK_EDGE_OPTION,
+  });
+}
+
+export const FIT_COLORS = 'FIT_COLORS';
+
+export function fitColorsAction(dispatch) {
+  return api => dispatch({
+    type: FIT_COLORS,
+    payload: api
   });
 }

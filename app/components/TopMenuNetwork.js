@@ -6,6 +6,7 @@ import styles from './css/TopMenuNetwork.css';
 type Props = {
     toggleShowRoot: () => void,
     nextNetworkEdgeOption: () => void,
+    fitColors: () => void,
     showRoot: boolean,
     edgeType: string
 };
@@ -17,6 +18,7 @@ export default class TopMenuNetwork extends Component<Props> {
         const {
             toggleShowRoot,
             nextNetworkEdgeOption,
+            fitColors,
             edgeType
         } = this.props
 
@@ -36,6 +38,9 @@ export default class TopMenuNetwork extends Component<Props> {
                     </Menu.Item>
                     <Menu.Item onClick={() => { nextNetworkEdgeOption() }}>
                         Next Edge Type
+                    </Menu.Item>
+                    <Menu.Item onClick={() => { fitColors() }}>
+                        Fit Colors
                     </Menu.Item>
                 </Menu.Menu>
             </Menu>

@@ -57,9 +57,9 @@ class ChatItem extends React.Component<Props> {
         }
 
         chat.participants.sort((a, b) => b.count - a.count)
-        const participantLabels = chat.participants.map(participant => {
+        const participantLabels = chat.participants.map((participant, i) => {
             return (
-                <Label as='a'>
+                <Label as='a' key={i}>
                     <Identicon value={participant.name} size={25} className={styles.labelImage} />
                     { participant.name }
                 </Label>

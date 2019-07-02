@@ -30,6 +30,7 @@ type Props = {
     rootName: string,
     nodes: array,
     edges: array,
+    colors: array,
     edgeType: string
 };
 
@@ -57,11 +58,13 @@ export default class Network extends Component<Props> {
         const {
             showRoot,
             rootName,
-            edgeType
+            edgeType,
+            colors
         } = this.props
 
         const {
-            network
+            network,
+            networkNodes
         } = this.state
 
         if (showRoot !== nextProps.showRoot) {
@@ -87,7 +90,19 @@ export default class Network extends Component<Props> {
         }
 
         if (edgeType !== nextProps.edgeType) {
-            network.setOptions({ edges: { smooth: { type: edgeType } } })
+            network.setOptions({ edges: { smooth: { type: nextProps.edgeType } } })
+        }
+
+        if (colors !== nextProps.colors) {
+            const nodesToUpdate = networkNodes.get().map(node => ({
+                ...node,
+                color: {
+                    border: nextProps.colors[node.id] || "#000",
+                    background: nextProps.colors[node.id] || "#000"
+                }
+            }))
+            networkNodes.update(nodesToUpdate)
+            console.log(nodesToUpdate)
         }
         return false;
     }
