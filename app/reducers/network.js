@@ -147,11 +147,11 @@ export default function toggleShowRoot(state: networkType = defaultNetworkType, 
                     })
                     currentColor += 1
                 })
-                // Object.keys(colors).forEach(person => {
-                //     if (colors[person] === false) {
-                //         colors[person] = 0
-                //     }
-                // })
+                Object.keys(colors).forEach(person => {
+                    if (colors[person] === false) {
+                        colors[person] = 0
+                    }
+                })
 
                 const actualColors = {}
                 for (let i = 0; i < currentColor; i += 1) {
