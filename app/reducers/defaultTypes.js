@@ -4,7 +4,8 @@ import MessagesApi from '../facebookapi/messages'
 
 export const defaultNetworkType = {
     showRoot: false,
-    networkData: false
+    networkData: false,
+    edgeType: 'continuous'
 }
 
 export const defaultSelectionType = {

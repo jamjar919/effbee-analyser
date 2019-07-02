@@ -20,9 +20,11 @@ type Props = {
   toggleShowRoot: () => void,
   selectFriend: (string) => void,
   saveNetworkData: (object) => void,
+  nextNetworkEdgeOption: () => void,
   showRoot: boolean,
   networkData: object,
-  api: defaultFacebookType
+  api: defaultFacebookType,
+  edgeType: string
 };
 
 class NetworkPage extends Component<Props> {
@@ -32,7 +34,10 @@ class NetworkPage extends Component<Props> {
     const {
         api,
         networkData,
-        saveNetworkData
+        saveNetworkData,
+        nextNetworkEdgeOption,
+        toggleShowRoot,
+        edgeType
     } = this.props
 
     const rootName = api.profileApi.getFullName();
@@ -68,7 +73,9 @@ class NetworkPage extends Component<Props> {
     return (
       <div className={styles.container}>
         <TopMenuNetwork
-          toggleShowRoot={() => this.props.toggleShowRoot()}
+          toggleShowRoot={() => { toggleShowRoot() }}
+          nextNetworkEdgeOption={() => { nextNetworkEdgeOption() }}
+          edgeType={edgeType}
         />
         <Network
           rootName={rootName}
@@ -76,6 +83,7 @@ class NetworkPage extends Component<Props> {
           selectFriend={(name) => this.props.selectFriend(name)}
           nodes={networkData.nodes}
           edges={networkData.edges}
+          edgeType={edgeType}
         />
         <RightPanel>
           <FriendPreview />
@@ -87,22 +95,24 @@ class NetworkPage extends Component<Props> {
 
 
 function mapStateToProps(state) {
-  return {
-    showRoot: state.network.showRoot,
-    networkData: state.network.networkData,
-    api: state.facebook
-  };
+    return {
+        showRoot: state.network.showRoot,
+        networkData: state.network.networkData,
+        edgeType: state.network.edgeType,
+        api: state.facebook
+    };
 }
 
 function mapDispatchToProps(dispatch) {
-  return {
-    selectFriend: SelectionActions.selectFriendAction(dispatch),
-    toggleShowRoot: NetworkActions.toggleShowRootAction(dispatch),
-    saveNetworkData: NetworkActions.saveNetworkDataAction(dispatch)
-  };
+    return {
+        selectFriend: SelectionActions.selectFriendAction(dispatch),
+        toggleShowRoot: NetworkActions.toggleShowRootAction(dispatch),
+        saveNetworkData: NetworkActions.saveNetworkDataAction(dispatch),
+        nextNetworkEdgeOption: NetworkActions.nextNetworkEdgeOptionAction(dispatch)
+    };
 }
 
 export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+    mapStateToProps,
+    mapDispatchToProps
 )(NetworkPage);

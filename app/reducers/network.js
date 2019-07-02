@@ -1,7 +1,9 @@
 // @flow
-import { TOGGLE_SHOWROOT, SAVE_NETWORK_DATA } from '../actions/network';
+import { TOGGLE_SHOWROOT, SAVE_NETWORK_DATA, NEXT_NETWORK_EDGE_OPTION } from '../actions/network';
 import type { networkType, Action } from './types';
 import { defaultNetworkType } from './defaultTypes';
+
+const allEdgeTypes = ['continuous', 'dynamic']
 
 function isConnectedToRoot(edge) {
     return (edge.from === 'root') || (edge.to === 'root')
@@ -13,6 +15,16 @@ export default function toggleShowRoot(state: networkType = defaultNetworkType, 
         return {
             ...state,
             showRoot: !state.showRoot
+        }
+    case NEXT_NETWORK_EDGE_OPTION:
+        const currentEdgeType = state.edgeType;
+        let nextIndex = allEdgeTypes.indexOf(currentEdgeType) + 1
+        if (nextIndex > allEdgeTypes.length - 1) {
+            nextIndex = 0; 
+        }
+        return {
+            ...state,
+            edgeType: allEdgeTypes[nextIndex]
         }
     case SAVE_NETWORK_DATA:
         console.log("computing network data...")

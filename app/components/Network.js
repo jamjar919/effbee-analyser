@@ -30,10 +30,15 @@ type Props = {
     rootName: string,
     nodes: array,
     edges: array,
+    edgeType: string
 };
 
 export default class Network extends Component<Props> {
     props: Props;
+
+    static defaultProps = {
+        edgeType: 'continuous'
+    }
 
     constructor(props) {
         super(props)
@@ -51,8 +56,13 @@ export default class Network extends Component<Props> {
     shouldComponentUpdate(nextProps) {
         const {
             showRoot,
-            rootName
+            rootName,
+            edgeType
         } = this.props
+
+        const {
+            network
+        } = this.state
 
         if (showRoot !== nextProps.showRoot) {
             const {
@@ -72,8 +82,12 @@ export default class Network extends Component<Props> {
                     .filter(edge => !isConnectedToRoot(edge))
                     .map(edge => ({ id: edge.id, physics: true }))
 
-                    networkEdges.update(edgesToUpdate)
+                networkEdges.update(edgesToUpdate)
             }
+        }
+
+        if (edgeType !== nextProps.edgeType) {
+            network.setOptions({ edges: { smooth: { type: edgeType } } })
         }
         return false;
     }
@@ -91,7 +105,8 @@ export default class Network extends Component<Props> {
             showRoot,
             rootName,
             nodes,
-            edges
+            edges,
+            edgeType
         } = this.props
 
         const networkNodes = new vis.DataSet(nodes);
@@ -104,7 +119,9 @@ export default class Network extends Component<Props> {
         };
         const options = {
             edges: {
-                smooth: false,
+                smooth: {
+                    type: edgeType
+                },
                 color: {
                     color: '#848484',
                     highlight: '#FF0000'

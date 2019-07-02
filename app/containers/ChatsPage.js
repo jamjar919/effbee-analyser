@@ -4,6 +4,8 @@ import { Header, Icon, Segment, Menu, Placeholder, Item } from 'semantic-ui-reac
 import PageContainer from './PageContainer';
 import ChatList from '../components/ChatList';
 
+import styles from './css/ChatsPage.css'
+
 class ChatsPage extends React.Component<Props> {
     props: Props;
 
@@ -45,7 +47,7 @@ class ChatsPage extends React.Component<Props> {
                     </Header.Content>
                     <Header.Subheader>Below is a list of group chats that you are in.</Header.Subheader>
                 </Header>
-                <Segment loading={loading}>
+                <Segment loading={loading} className={styles.chatListContainer}>
                     <ChatList
                         chats={chats}
                         defaultNumToShow={50}

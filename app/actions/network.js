@@ -17,3 +17,11 @@ export function saveNetworkDataAction(dispatch) {
     payload: api
   });
 }
+
+export const NEXT_NETWORK_EDGE_OPTION = 'NEXT_NETWORK_EDGE_OPTION';
+
+export function nextNetworkEdgeOptionAction(dispatch) {
+  return api => dispatch({
+    type: NEXT_NETWORK_EDGE_OPTION,
+  });
+}
