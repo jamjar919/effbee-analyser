@@ -75,13 +75,17 @@ class ChatItem extends React.Component<Props> {
         }
 
         return (
-            <Card color={isPrivateChat && 'red'}>
+            <Card color={isPrivateChat ? 'red' : 'blue'} className={styles.chatItem}>
                 <Card.Content>
+                    <Label as='a' color={isPrivateChat ? 'red' : 'blue'} ribbon='right' className={styles.chatTypeLabel}>
+                        {isPrivateChat ? 'Private' : 'Group'}
+                    </Label>
                     <Card.Header
                         className={styles.chatItemHeader}
                         onClick={() => { this.toChat() }}
-                        content={chat.title}
-                    />
+                    >
+                        {chat.title}
+                    </Card.Header>
                     <Card.Description>
                         {chat.messages.length} messages in chat
                     </Card.Description>

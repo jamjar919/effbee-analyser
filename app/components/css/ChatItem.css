@@ -1,3 +1,7 @@
+.chatItemHeader {
+    padding-right: 50px;
+}
+
 .chatItemHeader:hover {
     text-decoration: underline;
     cursor: pointer;
@@ -18,4 +22,14 @@
     margin: -.5833em .5em -.5833em -.5em;
     border-radius: .28571429rem 0 0 .28571429rem;
     width: auto!important;
+}
+
+.chatItem {
+    width: 350px !important;
+    margin-right: 20px !important;
+}
+
+.chatTypeLabel {
+    position: absolute !important;
+    left: 365px !important;
 }
