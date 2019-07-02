@@ -1,13 +1,19 @@
 import React, { Component } from 'react';
-import SettingsFile from '../SettingsFile';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import path from 'path';
 import { Container, Header, Icon, Segment } from 'semantic-ui-react';
 
+import SettingsFile from '../SettingsFile';
+
 import styles from './css/FacebookDataDirectoryControl.css';
+import { refreshFacebookApiAction } from '../actions/facebook';
 
-type Props = {};
+type Props = {
+    refreshFacebookApi: () => void
+};
 
-export default class FacebookDataDirectoryControl extends Component<Props> {
+class FacebookDataDirectoryControl extends Component<Props> {
     props: Props;
 
     constructor(props) {
@@ -20,10 +26,16 @@ export default class FacebookDataDirectoryControl extends Component<Props> {
     }
 
     handleChangeDataDir() {
+        const {
+            refreshFacebookApi
+        } = this.props;
+
         let path = document.getElementById("facebookDataDir").files[0].path;
         path = path.replace(/\\/g , "/");
         this.state.store.set("facebookDataDir", path);
-        this.setState({ dataDir: path });
+        this.setState({ dataDir: path }, () => {
+            refreshFacebookApi()
+        });
     }
 
     render() {
@@ -52,3 +64,19 @@ export default class FacebookDataDirectoryControl extends Component<Props> {
         );
     }
 }
+
+function mapStateToProps() {
+    return {}
+}
+  
+function mapDispatchToProps(dispatch) {
+    return {
+        refreshFacebookApi: refreshFacebookApiAction(dispatch)
+    }
+}
+  
+export default withRouter(connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(FacebookDataDirectoryControl));
+  

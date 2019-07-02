@@ -11,6 +11,7 @@ import FriendsPage from './containers/FriendsPage';
 import SettingsPage from './containers/SettingsPage';
 import FriendsTimelinePage from './containers/FriendTimelinePage';
 import ChatPage from './containers/ChatPage';
+import ChatsPage from './containers/ChatsPage';
 import Friend from './components/Friend';
 import Menu from './components/Menu';
 import styles from './app.global.css';
@@ -39,6 +40,7 @@ export default props => {
                 <Menu />
                 <div className={styles.container}>
                     <Switch>
+                        <Route path={routes.CHATS} component={ChatsPage} />
                         <Route path={routes.CHAT} component={ChatPage} />
                         <Route path={routes.FRIEND} component={Friend} />
                         <Route path={routes.COUNTER} component={CounterPage} />

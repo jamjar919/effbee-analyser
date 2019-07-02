@@ -53,6 +53,9 @@ class MainMenu extends Component<Props> {
 
                         </Menu.Menu>
                     </Menu.Item>
+                    <Menu.Item name="Chats" active={history.location.pathname === routes.CHATS} onClick={() => { history.push(routes.CHATS) }}>
+                        Your Chats
+                    </Menu.Item>
                     <Menu.Item name="Network" active={history.location.pathname === routes.NETWORK} onClick={() => { history.push(routes.NETWORK) }}>
                         Network
                     </Menu.Item>

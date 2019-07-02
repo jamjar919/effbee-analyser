@@ -143,7 +143,6 @@ class ChatPage extends Component<Props> {
     }
 }
 
-
 function mapStateToProps(state) {
     const api = state.facebook
     return {

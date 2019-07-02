@@ -6,5 +6,6 @@
   "FRIEND": "/friend",
   "FRIENDS": "/friendslist",
   "FRIENDSTIMELINE": "/friendstimeline",
-  "CHAT": "/chat"
+  "CHAT": "/chat",
+  "CHATS": "/chats"
 }

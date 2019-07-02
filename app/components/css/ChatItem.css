@@ -10,3 +10,12 @@
 .moreContent {
     text-align: center;
 }
+
+.labelImage {
+    display: inline-block;
+    vertical-align: top;
+    height: 2.1666em !important;
+    margin: -.5833em .5em -.5833em -.5em;
+    border-radius: .28571429rem 0 0 .28571429rem;
+    width: auto!important;
+}

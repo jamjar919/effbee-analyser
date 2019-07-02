@@ -283,8 +283,6 @@ class MessagesApi extends FacebookApi {
             })
         }
 
-        console.log(buckets)
-
         messages.forEach(chat => {
             chat.messages.forEach(message => {
                 const messageTimestamp = Math.floor(message.timestamp_ms/1000);

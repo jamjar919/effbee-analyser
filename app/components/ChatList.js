@@ -6,16 +6,19 @@ import uuid from 'uuid/v4';
 import chatItemStyles from './css/ChatItem.css'
 
 type Props = {
-    chats: array
+    chats: array,
+    defaultNumToShow: number
 };
 
 export default class ChatList extends Component<Props> {
-    props: Props;
+    static defaultProps = {
+        defaultNumToShow: 10
+    };
 
     constructor(props) {
         super(props)
         this.state = {
-            numToShow: 10,
+            numToShow: props.defaultNumToShow,
         }
     }
 

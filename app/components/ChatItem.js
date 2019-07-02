@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Card } from 'semantic-ui-react'
+import { Card, Label } from 'semantic-ui-react'
 
+import Identicon from './Identicon';
 import * as SelectionActions from '../actions/selection';
 import routes from '../constants/routes';
 import styles from './css/ChatItem.css'
@@ -44,9 +45,33 @@ class ChatItem extends React.Component<Props> {
             chat
         } = this.props;
 
+        const labelMax = 5;
+
         let isPrivateChat = false;
         if (chat.participants.length === 2) {
             isPrivateChat = true
+        }
+
+        if (chat.title === '') {
+            chat.title = 'Unnamed Chat'
+        }
+
+        chat.participants.sort((a, b) => b.count - a.count)
+        const participantLabels = chat.participants.map(participant => {
+            return (
+                <Label as='a'>
+                    <Identicon value={participant.name} size={25} className={styles.labelImage} />
+                    { participant.name }
+                </Label>
+            )
+        }).filter((l, i) => (i < labelMax))
+
+        if (chat.participants.length > labelMax) {
+            participantLabels.push(
+                <Label as='a'>
+                    And {chat.participants.length - labelMax} More
+                </Label>
+            )
         }
 
         return (
@@ -60,6 +85,11 @@ class ChatItem extends React.Component<Props> {
                     <Card.Description>
                         {chat.messages.length} messages in chat
                     </Card.Description>
+                </Card.Content>
+                <Card.Content extra>
+                    <Label.Group>
+                        {participantLabels}
+                    </Label.Group>
                 </Card.Content>
             </Card>
         )
