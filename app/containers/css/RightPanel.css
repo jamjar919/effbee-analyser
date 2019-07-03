@@ -30,7 +30,6 @@
     z-index: 101;
 }
 
-
 .open {
     transform: none;
     transition: transform 300ms ease;

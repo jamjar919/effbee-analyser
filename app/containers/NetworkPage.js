@@ -91,13 +91,13 @@ class NetworkPage extends Component<Props> {
                         </Menu.Item>
                         <Dropdown item text='Advanced' className={styles.dropdownMenu}>
                             <Dropdown.Menu>
-                                <Dropdown.Item onClick={() => toggleShowRoot()}>
-                                    <Label><Icon name={showRoot ? "eye" : "eye slash"} className={styles.dropdownIcon} /></Label>
+                                <Dropdown.Item onClick={() => toggleShowRoot()} className={styles.dropdownItem}>
                                     Show/Hide Root 
+                                    <Label><Icon name={showRoot ? "eye" : "eye slash"} className={styles.dropdownIcon} /></Label>
                                 </Dropdown.Item>
-                                <Dropdown.Item onClick={() => { nextNetworkEdgeOption() }}>
-                                    <Label>{ edgeType }</Label>
+                                <Dropdown.Item onClick={() => { nextNetworkEdgeOption() }} className={styles.dropdownItem}>        
                                     Edge Rendering Mode
+                                    <Label>{ edgeType }</Label>
                                 </Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
