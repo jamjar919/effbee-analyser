@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Menu, Icon, Loader, Header, Segment, Placeholder } from 'semantic-ui-react'
+import { Menu, Icon, Loader, Header, Segment, Placeholder, Dropdown, Label } from 'semantic-ui-react'
 import { bindActionCreators } from 'redux';
 
 import Network from '../components/Network';
@@ -20,7 +20,7 @@ type Props = {
     selectFriend: (string) => void,
     saveNetworkData: (object) => void,
     nextNetworkEdgeOption: () => void,
-    fitColors: () => void,
+    fitGroups: () => void,
     colors: array,
     showRoot: boolean,
     networkData: object,
@@ -38,9 +38,10 @@ class NetworkPage extends Component<Props> {
             saveNetworkData,
             nextNetworkEdgeOption,
             toggleShowRoot,
+            showRoot,
             edgeType,
-            fitColors,
-            colors
+            fitGroups,
+            groups
         } = this.props
 
         const rootName = api.profileApi.getFullName();
@@ -85,15 +86,21 @@ class NetworkPage extends Component<Props> {
                         </Header>
                     </Menu.Item>
                     <Menu.Menu position="right">
-                        <Menu.Item onClick={() => toggleShowRoot()}>
-                            Show/Hide Root
+                        <Menu.Item onClick={() => { fitGroups(api) }}>
+                            Group
                         </Menu.Item>
-                        <Menu.Item onClick={() => { nextNetworkEdgeOption() }}>
-                            Next Edge Type
-                        </Menu.Item>
-                        <Menu.Item onClick={() => { fitColors(api) }}>
-                            Fit Colors
-                        </Menu.Item>
+                        <Dropdown item text='Advanced' className={styles.dropdownMenu}>
+                            <Dropdown.Menu>
+                                <Dropdown.Item onClick={() => toggleShowRoot()}>
+                                    <Label><Icon name={showRoot ? "eye" : "eye slash"} className={styles.dropdownIcon} /></Label>
+                                    Show/Hide Root 
+                                </Dropdown.Item>
+                                <Dropdown.Item onClick={() => { nextNetworkEdgeOption() }}>
+                                    <Label>{ edgeType }</Label>
+                                    Edge Rendering Mode
+                                </Dropdown.Item>
+                            </Dropdown.Menu>
+                        </Dropdown>
                     </Menu.Menu>
                 </Menu>
                 <Network
@@ -102,7 +109,7 @@ class NetworkPage extends Component<Props> {
                     selectFriend={(name) => this.props.selectFriend(name)}
                     nodes={networkData.nodes}
                     edges={networkData.edges}
-                    colors={colors}
+                    groups={groups}
                     edgeType={edgeType}
                 />
                 <RightPanel>
@@ -119,7 +126,7 @@ function mapStateToProps(state) {
         showRoot: state.network.showRoot,
         networkData: state.network.networkData,
         edgeType: state.network.edgeType,
-        colors: state.network.colors,
+        groups: state.network.groups,
         api: state.facebook
     };
 }
@@ -130,7 +137,7 @@ function mapDispatchToProps(dispatch) {
         toggleShowRoot: NetworkActions.toggleShowRootAction(dispatch),
         saveNetworkData: NetworkActions.saveNetworkDataAction(dispatch),
         nextNetworkEdgeOption: NetworkActions.nextNetworkEdgeOptionAction(dispatch),
-        fitColors: NetworkActions.fitColorsAction(dispatch)
+        fitGroups: NetworkActions.fitGroupsAction(dispatch)
     };
 }
 

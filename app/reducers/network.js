@@ -1,5 +1,5 @@
 // @flow
-import { TOGGLE_SHOWROOT, SAVE_NETWORK_DATA, NEXT_NETWORK_EDGE_OPTION, FIT_COLORS } from '../actions/network';
+import { TOGGLE_SHOWROOT, SAVE_NETWORK_DATA, NEXT_NETWORK_EDGE_OPTION, FIT_GROUPS } from '../actions/network';
 import type { networkType, Action } from './types';
 import { defaultNetworkType } from './defaultTypes';
 
@@ -99,8 +99,8 @@ export default function toggleShowRoot(state: networkType = defaultNetworkType, 
                 networkData
             }
         }
-        case FIT_COLORS: {
-            const api = action.payload;
+        case FIT_GROUPS: {
+            const api = action.payload.api;
             const {
                 messageApi
             } = api
@@ -110,14 +110,14 @@ export default function toggleShowRoot(state: networkType = defaultNetworkType, 
                 edges
             } = state.networkData
 
-            const GROUP_MAX = 3
+            const GROUP_MAX = action.payload.maxGroupSize
 
-            let currentColor = 1;
-            const colors = {};
+            let currentGroup = 1;
+            const groups = {};
             if (state.networkData) {
-                // colors start at nil
+                // groups start at nil
                 nodes.forEach(node => {
-                    colors[node.id] = false
+                    groups[node.id] = false
                 });
 
                 // rank group chats
@@ -146,40 +146,38 @@ export default function toggleShowRoot(state: networkType = defaultNetworkType, 
                     })
                 }
 
-                // color bottom up
+                // assign groups bottom up
                 chats.reverse()
                 chats.forEach(chat => {
                     chat.participants.forEach(person => {
-                        colors[person.name] = currentColor
+                        groups[person.name] = currentGroup
                     })
-                    currentColor += 1
+                    currentGroup += 1
                 })
 
                 const hasBeenSwapped = {}
-                Object.keys(colors).forEach(person => {
+                Object.keys(groups).forEach(person => {
                     hasBeenSwapped[person] = false;
                 })
 
                 let madeSwap = true;
                 while (madeSwap) {
                     madeSwap = false
-                    // count number of colors
-                    const countColors = {}
-                    for (let i = 0; i < currentColor; i += 1) {
-                        countColors[i] = 0;
+                    // count number of groups
+                    const countGroups = {}
+                    for (let i = 0; i < currentGroup; i += 1) {
+                        countGroups[i] = 0;
                     }
-                    Object.keys(colors).forEach(person => {
-                        countColors[colors[person]] += 1
+                    Object.keys(groups).forEach(person => {
+                        countGroups[groups[person]] += 1
                     })
-
-                    console.log(countColors)
 
                     // merge smaller groups into larger ones 
                     // eslint-disable-next-line no-loop-func
-                    Object.keys(colors).forEach(person => {
-                        const color = colors[person]
+                    Object.keys(groups).forEach(person => {
+                        const group = groups[person]
                         if (
-                            (countColors[color] <= GROUP_MAX) &&
+                            (countGroups[group] <= GROUP_MAX) &&
                             (hasBeenSwapped[person] === false)
                         ) {
                             // reassign to highest weighted group
@@ -190,11 +188,11 @@ export default function toggleShowRoot(state: networkType = defaultNetworkType, 
                                 if (otherPerson === person) {
                                     otherPerson = edge.from
                                 }
-                                const potentialColor = colors[otherPerson]
-                                if (typeof edgeCount[potentialColor] === "undefined") {
-                                    edgeCount[potentialColor] = 0
+                                const potentialGroup = groups[otherPerson]
+                                if (typeof edgeCount[potentialGroup] === "undefined") {
+                                    edgeCount[potentialGroup] = 0
                                 }
-                                edgeCount[potentialColor] += edge.numMessages
+                                edgeCount[potentialGroup] += edge.numMessages
                             })
                             delete edgeCount.false;
 
@@ -209,34 +207,29 @@ export default function toggleShowRoot(state: networkType = defaultNetworkType, 
                                 return currentMaxGroup;
                             }, false)
 
-                            // reassign the color
-                            console.log("merging", person, "into group", maxGroup, "from group", colors[person])
-                            colors[person] = maxGroup;
+                            // reassign the group
+                            groups[person] = maxGroup;
                             madeSwap = true
                             hasBeenSwapped[person] = true
                         }
                     })
                 }
 
-                // assign false (ungrouped) to a color
-                Object.keys(colors).forEach(person => {
-                    if (colors[person] === false) {
-                        colors[person] = 0
+                // reassign numbers to a sensible range
+                let newCurrentGroup = 1;
+                const mapping = {}
+                Object.keys(groups).forEach(person => {
+                    const currentGroup = groups[person]
+                    if (typeof mapping[currentGroup] === "undefined") {
+                        mapping[currentGroup] = newCurrentGroup
+                        newCurrentGroup += 1
                     }
-                })
-
-                // actually generate random colors
-                const actualColors = {}
-                for (let i = 0; i < currentColor; i += 1) {
-                    actualColors[i] = `#${(0x1000000+(Math.random())*0xffffff).toString(16).substr(1,6)}`
-                }
-                Object.keys(colors).forEach(person => {
-                    colors[person] = actualColors[colors[person]]
-                })
+                    groups[person] = mapping[currentGroup]
+                }) 
             }
             return {
                 ...state,
-                colors
+                groups
             }
         }
         default:

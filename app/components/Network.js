@@ -30,7 +30,7 @@ type Props = {
     rootName: string,
     nodes: array,
     edges: array,
-    colors: array,
+    groups: array,
     edgeType: string
 };
 
@@ -46,7 +46,8 @@ export default class Network extends Component<Props> {
         this.state = {
             networkNodes: false,
             networkEdges: false,
-            network: false
+            network: false,
+            networkGroups: {}
         }
     }
 
@@ -59,7 +60,7 @@ export default class Network extends Component<Props> {
             showRoot,
             rootName,
             edgeType,
-            colors
+            groups
         } = this.props
 
         const {
@@ -89,22 +90,44 @@ export default class Network extends Component<Props> {
             network.setOptions({ edges: { smooth: { type: nextProps.edgeType } } })
         }
 
-        if (colors !== nextProps.colors) {
+        if (groups !== nextProps.groups) {
+            
             const nodesToUpdate = networkNodes.get().map(node => ({
                 ...node,
-                color: {
-                    border: nextProps.colors[node.id] || "#000",
-                    background: nextProps.colors[node.id] || "#000"
-                }
+                group: nextProps.groups[node.id]
             }))
+            networkNodes.update(nodesToUpdate)
+
+            const maxGroup = Object.keys(nextProps.groups).reduce((max, current) => {
+                if (nextProps.groups[current] > max) {
+                    return nextProps.groups[current];
+                }
+                return max
+            }, 0)
+            // construct group colors
+            const groups = {}
+            for (let i = 0; i <= maxGroup; i += 1) {
+                const color = `#${(0x1000000+(Math.random())*0xffffff).toString(16).substr(1,6)}`
+                groups[i] = {
+                    color: {
+                        border: color,
+                        background: color,
+                        highlight: {
+                            border: "#000000",
+                            background: color,
+                        }
+                    }
+                }
+            }
+            network.setOptions({ groups })
 
             const edgesToUpdate = networkEdges.get().map(edge => ({
                 ...edge,
-                length: (nextProps.colors[edge.to] === nextProps.colors[edge.from]) ? 300 : 500
+                length: (nextProps.groups[edge.to] === nextProps.groups[edge.from]) ? 300 : 500
             }))
-
             networkEdges.update(edgesToUpdate)
-            networkNodes.update(nodesToUpdate)
+
+            this.setState({ networkGroups: groups })
         }
         return false;
     }

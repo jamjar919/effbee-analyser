@@ -6,7 +6,7 @@ export const defaultNetworkType = {
     showRoot: false,
     networkData: false,
     edgeType: 'continuous',
-    colors: {}
+    groups: {}
 }
 
 export const defaultSelectionType = {

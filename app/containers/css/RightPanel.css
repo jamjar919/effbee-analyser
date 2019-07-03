@@ -3,7 +3,7 @@
     position: fixed;
     right: 0;
     bottom: 0;
-    z-index: 100;
+    z-index: 1;
     height: calc(100vh - 50px);
     background: #F7F7F7;
     display: flex;
