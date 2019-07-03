@@ -1,11 +1,10 @@
 // @flow
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Dimmer, Icon, Loader, Header, Segment, Placeholder } from 'semantic-ui-react'
+import { Menu, Icon, Loader, Header, Segment, Placeholder } from 'semantic-ui-react'
 import { bindActionCreators } from 'redux';
 
 import Network from '../components/Network';
-import TopMenuNetwork from '../components/TopMenuNetwork';
 import FriendPreview from '../components/FriendPreview';
 import RightPanel from './RightPanel';
 import PageContainer from './PageContainer';
@@ -76,12 +75,27 @@ class NetworkPage extends Component<Props> {
 
         return (
             <div className={styles.container}>
-                <TopMenuNetwork
-                    toggleShowRoot={() => { toggleShowRoot() }}
-                    nextNetworkEdgeOption={() => { nextNetworkEdgeOption() }}
-                    fitColors={() => { fitColors(api) }}
-                    edgeType={edgeType}
-                />
+                <Menu className={styles.menuContainer}>
+                    <Menu.Item>
+                        <Header as='h3'>
+                            <Icon name='sitemap' /> 
+                            <Header.Content>
+                                Network
+                            </Header.Content>
+                        </Header>
+                    </Menu.Item>
+                    <Menu.Menu position="right">
+                        <Menu.Item onClick={() => toggleShowRoot()}>
+                            Show/Hide Root
+                        </Menu.Item>
+                        <Menu.Item onClick={() => { nextNetworkEdgeOption() }}>
+                            Next Edge Type
+                        </Menu.Item>
+                        <Menu.Item onClick={() => { fitColors(api) }}>
+                            Fit Colors
+                        </Menu.Item>
+                    </Menu.Menu>
+                </Menu>
                 <Network
                     rootName={rootName}
                     showRoot={this.props.showRoot}

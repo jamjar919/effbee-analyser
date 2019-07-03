@@ -26,11 +26,14 @@ export function nextNetworkEdgeOptionAction(dispatch) {
   });
 }
 
-export const FIT_COLORS = 'FIT_COLORS';
+export const FIT_GROUPS = 'FIT_GROUPS';
 
-export function fitColorsAction(dispatch) {
-  return api => dispatch({
-    type: FIT_COLORS,
-    payload: api
-  });
+export function fitGroupsAction(dispatch) {
+    return (api, maxGroupSize) => dispatch({
+        type: FIT_GROUPS,
+        payload: {
+            api,
+            maxGroupSize: maxGroupSize || 2
+        }
+    });
 }

@@ -5,3 +5,47 @@
     width: var(--mainWidth);
     overflow: hidden;
 }
+
+.menuContainer {
+    width: calc(100vw - 230px);
+    height: var(--topMenuHeight);
+    background: #EDEDED;
+    border-bottom: 1px solid #D9DEE4;
+    position: fixed;
+    top: 0;
+    z-index: 100;
+}
+
+.wrapper {
+    height: var(--topMenuHeight);
+    display: flex;
+    flex-direction: row;
+}
+
+.topMenuTitle {
+    margin: auto;
+}
+
+.topMenu {
+    display: flex;
+    flex: 1 1;
+    justify-content: flex-end;
+    list-style: none;
+    margin: auto;
+}
+
+.topMenu li {
+    height: var(--topMenuHeight);
+    width: 150px;
+    text-align: center;
+    display: flex;
+}
+
+.topMenu li:hover {
+    color: #515356;
+    background: #D9DEE4;
+}
+
+.topMenu li a {
+    margin: auto;
+}

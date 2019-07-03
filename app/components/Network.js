@@ -64,15 +64,11 @@ export default class Network extends Component<Props> {
 
         const {
             network,
-            networkNodes
+            networkNodes,
+            networkEdges
         } = this.state
 
-        if (showRoot !== nextProps.showRoot) {
-            const {
-                networkNodes,
-                networkEdges
-            } = this.state
-            
+        if (showRoot !== nextProps.showRoot) {            
             if (nextProps.showRoot) {
                 // add root to graph
                 networkNodes.add({ label: rootName, id: 'root', physics: false })
@@ -101,8 +97,14 @@ export default class Network extends Component<Props> {
                     background: nextProps.colors[node.id] || "#000"
                 }
             }))
+
+            const edgesToUpdate = networkEdges.get().map(edge => ({
+                ...edge,
+                length: (nextProps.colors[edge.to] === nextProps.colors[edge.from]) ? 300 : 500
+            }))
+
+            networkEdges.update(edgesToUpdate)
             networkNodes.update(nodesToUpdate)
-            console.log(nodesToUpdate)
         }
         return false;
     }
@@ -149,6 +151,11 @@ export default class Network extends Component<Props> {
             },
             layout: {
                 improvedLayout: false
+            },
+            nodes: {
+                font: {
+                    // color: '#B8B8B8',
+                }
             }
         }
         this.setState({

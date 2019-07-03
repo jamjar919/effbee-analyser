@@ -1,4 +1,5 @@
 .network {
     height: 100vh;
-    width: var(--mainWidth)
+    width: var(--mainWidth);
+    /* background-color: #121212; */
 }
