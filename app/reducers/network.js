@@ -30,7 +30,7 @@ export default function toggleShowRoot(state: networkType = defaultNetworkType, 
                 ...state,
                 showRoot: !state.showRoot
             }
-        case NEXT_NETWORK_EDGE_OPTION:
+        case NEXT_NETWORK_EDGE_OPTION: {
             const currentEdgeType = state.edgeType;
             let nextIndex = allEdgeTypes.indexOf(currentEdgeType) + 1
             if (nextIndex > allEdgeTypes.length - 1) {
@@ -40,7 +40,8 @@ export default function toggleShowRoot(state: networkType = defaultNetworkType, 
                 ...state,
                 edgeType: allEdgeTypes[nextIndex]
             }
-        case SAVE_NETWORK_DATA:
+        }
+        case SAVE_NETWORK_DATA: {
             console.log("computing network data...")
 
             /** compute network data */
@@ -81,6 +82,9 @@ export default function toggleShowRoot(state: networkType = defaultNetworkType, 
                             length: 300,
                             physics: !isRoot,
                             dashed: isRoot,
+                            color: {
+                                inherit: "both"
+                            }
                         });
                     }
                 }
@@ -95,7 +99,8 @@ export default function toggleShowRoot(state: networkType = defaultNetworkType, 
                 ...state,
                 networkData
             }
-        case FIT_COLORS:
+        }
+        case FIT_COLORS: {
             const {
                 nodes,
                 edges
@@ -116,12 +121,11 @@ export default function toggleShowRoot(state: networkType = defaultNetworkType, 
                 }))
                 chats.sort((a,b) => b.score - a.score)
 
-                //absorb subsets of chats with higher score
+                // absorb subsets of chats with higher score
                 for (let i = 0; i < chats.length; i += 1) {
                     const candidate = chats[i]
                     const toMergeIds = []
                     const toMerge = []
-                    console.log(candidate.participants.map(p => p.name))
                     for (let j = i + 1; j < chats.length; j += 1) {
                         // detect subset 
                         const merge = chats[j]
@@ -132,12 +136,9 @@ export default function toggleShowRoot(state: networkType = defaultNetworkType, 
                     }   
                     toMergeIds.sort((a, b) => b - a)
                     toMergeIds.forEach(id => {
-                        console.log("removing", chats[id].participants.map(p => p.name))
                         chats.splice(id, 1)
                     })
                 }
-
-                console.log(chats)
 
                 // color bottom up
                 chats.reverse()
@@ -155,7 +156,7 @@ export default function toggleShowRoot(state: networkType = defaultNetworkType, 
 
                 const actualColors = {}
                 for (let i = 0; i < currentColor; i += 1) {
-                    actualColors[i] = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
+                    actualColors[i] = `#${(0x1000000+(Math.random())*0xffffff).toString(16).substr(1,6)}`
                 }
 
                 Object.keys(colors).forEach(person => {
@@ -166,6 +167,7 @@ export default function toggleShowRoot(state: networkType = defaultNetworkType, 
                 ...state,
                 colors
             }
+        }
         default:
             return state;
     }

@@ -68,7 +68,7 @@ class ChatItem extends React.Component<Props> {
 
         if (chat.participants.length > labelMax) {
             participantLabels.push(
-                <Label as='a'>
+                <Label as='a' key="more">
                     And {chat.participants.length - labelMax} More
                 </Label>
             )

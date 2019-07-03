@@ -118,7 +118,6 @@ export default class Network extends Component<Props> {
     renderGraph() {
         const {
             showRoot,
-            rootName,
             nodes,
             edges,
             edgeType

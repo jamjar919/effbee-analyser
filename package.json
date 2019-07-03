@@ -204,6 +204,7 @@
     "async": "^2.6.2",
     "c3": "^0.7.1",
     "classnames": "^2.2.6",
+    "color-between": "^1.0.2",
     "devtron": "^1.4.0",
     "electron-debug": "^2.0.0",
     "electron-log": "^2.2.17",
