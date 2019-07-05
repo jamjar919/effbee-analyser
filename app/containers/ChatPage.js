@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Header, Icon, Segment, Menu, Placeholder, Item, Grid, Statistic } from 'semantic-ui-react'
 
+import { analyseWordFrequency } from '../facebookapi/textanalysis'
 import FriendBreakdownPie from '../components/FriendBreakdownPie';
 import PageContainer from './PageContainer';
 import FriendTimeline from '../components/FriendTimeline';
@@ -35,8 +36,6 @@ class ChatPage extends Component<Props> {
         }
 
         const isPrivateChat = (chat.participants.length === 2)
-
-        console.log(chat)
 
         const maxPerson = chat.participants.reduce((max, current) => {
             if (max.count < current.count) {
@@ -117,6 +116,13 @@ class ChatPage extends Component<Props> {
                             <Grid.Column width={6}>
                                 <Segment>
                                     <FriendBreakdownPie friends={chat.participants} />
+                                </Segment>
+                            </Grid.Column>
+                        </Grid.Row>
+                        <Grid.Row>
+                            <Grid.Column width={16}>
+                                <Segment>
+                                    {JSON.stringify(analyseWordFrequency(chat.messages))}
                                 </Segment>
                             </Grid.Column>
                         </Grid.Row>

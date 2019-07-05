@@ -198,7 +198,6 @@ export default class Network extends Component<Props> {
                 networkNodes.remove({ id: 'root' })
             }
 
-
             // Events on selectnode, deselectnode for more in-depth graph inspection
             network.on("selectNode", params => {
                 // batching node/edge updates provides a massive performance gain

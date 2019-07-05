@@ -53,17 +53,3 @@
 .dropdownMenu, .dropdownMenu > div {
     z-index: 200 !important;
 }
-
-i.dropdownIcon {
-    margin: 0 !important;
-}
-
-.dropdownItem {
-    text-align: left !important;
-}
-
-.dropdownItem > div {
-    display: block;
-    right: 0;
-    margin-right: 30px;
-}
