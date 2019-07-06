@@ -2,7 +2,7 @@ import types from '../reducers/types'
 import natural from 'natural';
 import stopwords from './stopwords'
 
-function turnMessagesIntoDocuments(messages: types.messagesType, timeperiod = 21600) { // 21600 is 6 hours
+export function turnMessagesIntoDocuments(messages: types.messagesType, timeperiod = 21600) { // 21600 is 6 hours
     messages.reverse();
     const documents = [];
     let document = [];
@@ -41,7 +41,7 @@ function turnMessagesIntoDocuments(messages: types.messagesType, timeperiod = 21
     })
 }
 
-function isMessageTextOnly(message) {
+export function isMessageTextOnly(message) {
     return !(
         (typeof message.content === "undefined") ||
         Object.prototype.hasOwnProperty.call(message, "photos") ||
@@ -50,14 +50,9 @@ function isMessageTextOnly(message) {
     );
 }
 
-export function analyseWordFrequency(messages: types.messagesType) {
-    // copy messages
-    const messagesCopy = messages.filter(message => isMessageTextOnly(message))
-    // create a word frequency model
-    const documents = turnMessagesIntoDocuments(messagesCopy)
+export function countMessages(documents) {
     const totalDocuments = documents.length
     let totalTerms = 0;
-
     const count = {}
     documents.forEach(document => {
         document.forEach(word => {
@@ -75,6 +70,24 @@ export function analyseWordFrequency(messages: types.messagesType) {
             count[word].docCount += 1
         })
     })
+    return {
+        count,
+        totalDocuments,
+        totalTerms
+    };
+}
+
+export function analyseWordFrequency(messages: types.messagesType) {
+    // copy messages
+    const messagesCopy = messages.filter(message => isMessageTextOnly(message))
+    // create a word frequency model
+    const documents = turnMessagesIntoDocuments(messagesCopy)
+
+    const { 
+        count,
+        totalDocuments,
+        totalTerms
+    } = countMessages(documents)
 
     const scores = Object.keys(count).map(word => {
         const tf = count[word].wordCount / totalTerms
@@ -84,5 +97,5 @@ export function analyseWordFrequency(messages: types.messagesType) {
     })
     scores.sort((a, b) => b.score - a.score)
 
-    return scores;
+    return { scores, count, totalTerms, totalDocuments };
 }

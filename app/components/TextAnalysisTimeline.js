@@ -5,7 +5,7 @@ import colorBetween from 'color-between';
 import uuid from 'uuid/v4';
 import moment from 'moment';
 
-import { analyseWordFrequency } from '../facebookapi/textanalysis'
+import { isMessageTextOnly, turnMessagesIntoDocuments, countMessages, analyseWordFrequency } from '../facebookapi/textanalysis'
 
 import styles from './css/TextAnalysisTimeline.css'
 
@@ -37,9 +37,11 @@ class Word extends Component<Props> {
         } = this.state
 
         const size = scaleSize(score, avgScore, maxSize)
-        let content = `${word.substring(0, maxWordLength)}...`;
+        let content = word.substring(0, maxWordLength);
         if (extended) {
             content = word;
+        } else if (word.length > maxWordLength) {
+            content += '...'
         }
         return (
             <div
@@ -67,6 +69,8 @@ export default class TextAnalysisTimeline extends Component<Props> {
     }
 
     getFrequencyData() {
+        console.log("getting frequency data")
+
         const {
             title,
             messages,
@@ -77,15 +81,30 @@ export default class TextAnalysisTimeline extends Component<Props> {
             messageApi
         } = api
 
+        const { scores, count, totalTerms, totalDocuments } = analyseWordFrequency(messages)
+
         const chat = { messages, title }
         const firstTimestamp = Math.floor(messages[messages.length - 1].timestamp_ms / 1000)
         const lastTimestamp = Math.floor(messages[0].timestamp_ms / 1000)
         const bucketedMessages = messageApi
             .bucketMessagesByTimeInterval([chat], firstTimestamp, lastTimestamp, 2629746, false)
-            .map(bucket => ({
-                ...bucket,
-                frequency: analyseWordFrequency(bucket.messages)
-            }))
+            .map(bucket => {
+                const messagesCopy = bucket.messages.filter(message => isMessageTextOnly(message))
+                const documents = turnMessagesIntoDocuments(messagesCopy)
+                const bucketCount = countMessages(documents).count
+                const frequency = Object.keys(bucketCount).map(word => {
+                    const tf = bucketCount[word].wordCount / totalTerms
+                    const idf = Math.log(totalDocuments / bucketCount[word].docCount)
+                    const score = tf * idf
+                    return {word, score, tf, idf, count: bucketCount[word]}
+                })
+                frequency.sort((a, b) => b.score - a.score)
+
+                return ({
+                    ...bucket,
+                    frequency
+                })
+            })
 
         return bucketedMessages;
     }
@@ -110,7 +129,7 @@ export default class TextAnalysisTimeline extends Component<Props> {
             return (<Loader active />)
         }
 
-        const maxSize = 50;
+        const maxSize = 40;
         const numItems = 20;
         let numMissed = 0;
         const avgScore = (frequencyData.reduce((sum, bucket) => {
@@ -121,11 +140,16 @@ export default class TextAnalysisTimeline extends Component<Props> {
             return bucket.frequency[0].score + sum;
         }, 0) / (frequencyData.length - numMissed))
 
-        console.log(frequencyData.map(bucket => bucket.frequency))
+        const maxMessages = frequencyData.reduce((max, bucket) => {
+            if (max < bucket.messages.length) {
+                return bucket.messages.length
+            }
+            return max;
+        }, 0)
 
         const columns = frequencyData.map(bucket => {
             const mid = Math.floor((bucket.start + bucket.end)/2)
-            const toShow = bucket.frequency.splice(0, numItems - 1)
+            const toShow = bucket.frequency.slice(0, numItems - 1)
             return (
                 <div
                     className={styles.column}
@@ -143,7 +167,7 @@ export default class TextAnalysisTimeline extends Component<Props> {
                                         key={uuid()}
                                     />
                                 )
-                            }) 
+                            })
                         }
                     </div>
                     <div className={styles.date}>
@@ -159,7 +183,6 @@ export default class TextAnalysisTimeline extends Component<Props> {
             </div>
         );
     }
-
 }
 
 TextAnalysisTimeline.propTypes = {
