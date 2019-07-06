@@ -22,8 +22,10 @@ function turnMessagesIntoDocuments(messages: types.messagesType, timeperiod = 21
     }
 
     // push last document
-    document.push(messages[messageIndex])
-    documents.push(document)
+    if (typeof messages[messageIndex] !== "undefined") {
+        document.push(messages[messageIndex])
+        documents.push(document)
+    }
     
     const tokenizer = new natural.WordTokenizer();
 
@@ -31,7 +33,8 @@ function turnMessagesIntoDocuments(messages: types.messagesType, timeperiod = 21
         const words = []
         document.forEach(message => {
             tokenizer.tokenize(message.content.toLowerCase())
-                .filter(word => stopwords.indexOf(word) < 0)
+                .filter(word => stopwords.indexOf(word) < 0) // stop words
+                .filter(word =>  !(/^\d+$/.test(word))) // digits
                 .forEach(word => { words.push(word) })
         })
         return words
@@ -77,11 +80,9 @@ export function analyseWordFrequency(messages: types.messagesType) {
         const tf = count[word].wordCount / totalTerms
         const idf = Math.log(totalDocuments / count[word].docCount)
         const score = tf * idf
-        return [word, score, { tf, idf, count: count[word] }]
+        return {word, score, tf, idf, count: count[word]}
     })
-    scores.sort((a, b) => b[1] - a[1])
+    scores.sort((a, b) => b.score - a.score)
 
-    console.log(scores)
-
-    return messages.length
+    return scores;
 }

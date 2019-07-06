@@ -1,0 +1,17 @@
+.container {
+    overflow-y: hidden;
+    overflow-x: scroll;
+    display: flex;
+    flex-direction: row;
+}
+
+.column {
+    margin: 0 1em;
+    display: flex;
+    flex-direction: column;
+    align-self: flex-end;
+}
+
+.word {
+    margin-bottom: 0.75em;
+}

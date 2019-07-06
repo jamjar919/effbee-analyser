@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Header, Icon, Segment, Menu, Placeholder, Item, Grid, Statistic } from 'semantic-ui-react'
 
-import { analyseWordFrequency } from '../facebookapi/textanalysis'
+import { analyseWordFrequency } from '../facebookapi/textanalysis';
+import TextAnalysisTimeline from '../components/TextAnalysisTimeline';
 import FriendBreakdownPie from '../components/FriendBreakdownPie';
 import PageContainer from './PageContainer';
 import FriendTimeline from '../components/FriendTimeline';
@@ -122,7 +123,10 @@ class ChatPage extends Component<Props> {
                         <Grid.Row>
                             <Grid.Column width={16}>
                                 <Segment>
-                                    {JSON.stringify(analyseWordFrequency(chat.messages))}
+                                    <TextAnalysisTimeline
+                                        messages={chat.messages}
+                                        api={api}
+                                    />
                                 </Segment>
                             </Grid.Column>
                         </Grid.Row>

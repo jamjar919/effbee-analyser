@@ -269,7 +269,7 @@ class MessagesApi extends FacebookApi {
         return hourMap;
     }
 
-    bucketMessagesByTimeInterval(messages, firstTimestamp, lastTimestamp, timeInterval, filterBuckets = true) {
+    bucketMessagesByTimeInterval(chats, firstTimestamp, lastTimestamp, timeInterval, filterBuckets = true) {
         // bucket messages based on time interval
         // calculate number of buckets 
         const timespan = lastTimestamp - firstTimestamp;
@@ -283,7 +283,7 @@ class MessagesApi extends FacebookApi {
             })
         }
 
-        messages.forEach(chat => {
+        chats.forEach(chat => {
             chat.messages.forEach(message => {
                 const messageTimestamp = Math.floor(message.timestamp_ms/1000);
                 let b = 0;
