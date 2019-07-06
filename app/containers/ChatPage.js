@@ -122,6 +122,13 @@ class ChatPage extends Component<Props> {
                         <Grid.Row>
                             <Grid.Column width={16}>
                                 <Segment>
+                                    <Header as='h3'>
+                                        <Icon name='text width' />
+                                        <Header.Content>
+                                            Text Analysis
+                                        </Header.Content>
+                                        <Header.Subheader>Topics ordered by month</Header.Subheader>
+                                    </Header>
                                     <TextAnalysisTimeline
                                         messages={chat.messages}
                                         api={api}

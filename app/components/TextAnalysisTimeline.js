@@ -117,24 +117,35 @@ export default class TextAnalysisTimeline extends Component<Props> {
         const maxSize = 40;
         const numItems = 20;
         let numMissed = 0;
-        const avgScore = (frequencyData.reduce((sum, bucket) => {
-            if (bucket.frequency.length < 1) {
-                numMissed += 1;
-                return sum;
-            }
-            return bucket.frequency[0].score + sum;
-        }, 0) / (frequencyData.length - numMissed))
 
-        const maxMessages = frequencyData.reduce((max, bucket) => {
-            if (max < bucket.messages.length) {
-                return bucket.messages.length
+        const rollingAverageSize = 3;
+        const lastMaxScores = []
+        let i = 0;
+        while (
+            (lastMaxScores.length < rollingAverageSize) &&
+            (i < frequencyData.length)
+        ) {
+            if (
+                (frequencyData[i].frequency.length > 0) &&
+                (frequencyData[i].frequency[0].score > 0)
+            ) {
+                lastMaxScores.push(frequencyData[i].frequency[0].score)
             }
-            return max;
-        }, 0)
+            i += 1;
+        }
 
         const columns = frequencyData.map(bucket => {
             const mid = Math.floor((bucket.start + bucket.end)/2)
             const toShow = bucket.frequency.slice(0, numItems - 1)
+            if (
+                (toShow.length > 0) &&
+                (toShow[0].score > 0)
+            ) {
+                lastMaxScores.push(toShow[0].score)
+                if (lastMaxScores.length > rollingAverageSize) {
+                    lastMaxScores.shift()
+                }
+            }
             return (
                 <div
                     className={styles.column}
@@ -147,7 +158,7 @@ export default class TextAnalysisTimeline extends Component<Props> {
                                     <Word
                                         word={f.word}
                                         score={f.score}
-                                        avgScore={toShow[0].score}
+                                        avgScore={lastMaxScores.reduce((sum, score) => sum + score)/rollingAverageSize}
                                         maxSize={maxSize}
                                         key={uuid()}
                                     />
