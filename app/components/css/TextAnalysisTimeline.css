@@ -9,9 +9,23 @@
     margin: 0 1em;
     display: flex;
     flex-direction: column;
-    align-self: flex-end;
 }
 
 .word {
     margin-bottom: 0.75em;
+}
+
+.words {
+    margin-top: auto;
+    padding-left: 10px;
+    border-left: 5px solid #33C3F0;
+    border-bottom: 5px solid #000;
+}
+
+.date {
+    font-size: 20px;
+    padding-bottom: 25px;
+    text-align: left;
+    width: 150px;
+    padding-top: 20px
 }

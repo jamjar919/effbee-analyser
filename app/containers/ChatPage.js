@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Header, Icon, Segment, Menu, Placeholder, Item, Grid, Statistic } from 'semantic-ui-react'
 
-import { analyseWordFrequency } from '../facebookapi/textanalysis';
 import TextAnalysisTimeline from '../components/TextAnalysisTimeline';
 import FriendBreakdownPie from '../components/FriendBreakdownPie';
 import PageContainer from './PageContainer';

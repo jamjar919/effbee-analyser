@@ -2,13 +2,15 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Loader } from 'semantic-ui-react'
 import colorBetween from 'color-between';
+import uuid from 'uuid/v4';
+import moment from 'moment';
 
 import { analyseWordFrequency } from '../facebookapi/textanalysis'
 
 import styles from './css/TextAnalysisTimeline.css'
 
 const scaleSize = (score, maxScore, maxSize) => {
-    return Math.min((score/maxScore) * maxSize, maxSize);
+    return Math.max(Math.min((score/maxScore) * maxSize, maxSize), 10);
 }
 
 class Word extends Component<Props> {
@@ -17,7 +19,7 @@ class Word extends Component<Props> {
         const maxWordLength = 15;
         this.state = {
             maxWordLength,
-            extended: (props.word.length < maxWordLength)
+            extended: (props.word.length <= maxWordLength)
         }
     }
 
@@ -41,12 +43,12 @@ class Word extends Component<Props> {
         }
         return (
             <div
+                onClick={() => { this.setState({ extended: !extended }) }}
                 className={styles.word}
                 style={{
                     fontSize: `${size}px`,
                     color: colorBetween("#000000", "#33C3F0", Math.min((score/avgScore), 1))
                 }}
-                data={size}
             >
                 {content}
             </div>
@@ -119,30 +121,37 @@ export default class TextAnalysisTimeline extends Component<Props> {
             return bucket.frequency[0].score + sum;
         }, 0) / (frequencyData.length - numMissed))
 
-        console.log(frequencyData)
+        console.log(frequencyData.map(bucket => bucket.frequency))
 
         const columns = frequencyData.map(bucket => {
+            const mid = Math.floor((bucket.start + bucket.end)/2)
             const toShow = bucket.frequency.splice(0, numItems - 1)
             return (
                 <div
                     className={styles.column}
                     style={{ paddingTop: `${maxSize/2}px` }}
                 >
-                    {
-                        toShow.map(f => {
-                            return (
-                                <Word
-                                    word={f.word}
-                                    score={f.score}
-                                    avgScore={avgScore}
-                                    maxSize={maxSize}
-                                />
-                            )
-                        }) 
-                    }
+                    <div className={styles.words}>
+                        {
+                            toShow.map(f => {
+                                return (
+                                    <Word
+                                        word={f.word}
+                                        score={f.score}
+                                        avgScore={avgScore}
+                                        maxSize={maxSize}
+                                        key={uuid()}
+                                    />
+                                )
+                            }) 
+                        }
+                    </div>
+                    <div className={styles.date}>
+                        { moment.unix(mid).format("MMMM YYYY") }
+                    </div>
                 </div>
             )
-        })        
+        })
 
         return (
             <div className={styles.container}>
