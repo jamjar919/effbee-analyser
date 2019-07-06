@@ -2,7 +2,7 @@ import types from '../reducers/types'
 import natural from 'natural';
 import stopwords from './stopwords'
 
-export function turnMessagesIntoDocuments(messages: types.messagesType, timeperiod = 21600) { // 21600 is 6 hours
+function turnMessagesIntoDocuments(messages: types.messagesType, timeperiod = 21600) { // 21600 is 6 hours
     messages.reverse();
     const documents = [];
     let document = [];
@@ -41,7 +41,7 @@ export function turnMessagesIntoDocuments(messages: types.messagesType, timeperi
     })
 }
 
-export function isMessageTextOnly(message) {
+function isMessageTextOnly(message) {
     return !(
         (typeof message.content === "undefined") ||
         Object.prototype.hasOwnProperty.call(message, "photos") ||
@@ -50,7 +50,7 @@ export function isMessageTextOnly(message) {
     );
 }
 
-export function countMessages(documents) {
+function countMessages(documents) {
     const totalDocuments = documents.length
     let totalTerms = 0;
     const count = {}
@@ -97,5 +97,5 @@ export function analyseWordFrequency(messages: types.messagesType) {
     })
     scores.sort((a, b) => b.score - a.score)
 
-    return { scores, count, totalTerms, totalDocuments };
+    return scores;
 }

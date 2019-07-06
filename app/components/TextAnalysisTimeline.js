@@ -5,7 +5,7 @@ import colorBetween from 'color-between';
 import uuid from 'uuid/v4';
 import moment from 'moment';
 
-import { isMessageTextOnly, turnMessagesIntoDocuments, countMessages, analyseWordFrequency } from '../facebookapi/textanalysis'
+import { analyseWordFrequency } from '../facebookapi/textanalysis'
 
 import styles from './css/TextAnalysisTimeline.css'
 
@@ -81,30 +81,15 @@ export default class TextAnalysisTimeline extends Component<Props> {
             messageApi
         } = api
 
-        const { scores, count, totalTerms, totalDocuments } = analyseWordFrequency(messages)
-
         const chat = { messages, title }
         const firstTimestamp = Math.floor(messages[messages.length - 1].timestamp_ms / 1000)
         const lastTimestamp = Math.floor(messages[0].timestamp_ms / 1000)
         const bucketedMessages = messageApi
             .bucketMessagesByTimeInterval([chat], firstTimestamp, lastTimestamp, 2629746, false)
-            .map(bucket => {
-                const messagesCopy = bucket.messages.filter(message => isMessageTextOnly(message))
-                const documents = turnMessagesIntoDocuments(messagesCopy)
-                const bucketCount = countMessages(documents).count
-                const frequency = Object.keys(bucketCount).map(word => {
-                    const tf = bucketCount[word].wordCount / totalTerms
-                    const idf = Math.log(totalDocuments / bucketCount[word].docCount)
-                    const score = tf * idf
-                    return {word, score, tf, idf, count: bucketCount[word]}
-                })
-                frequency.sort((a, b) => b.score - a.score)
-
-                return ({
-                    ...bucket,
-                    frequency
-                })
-            })
+            .map(bucket => ({
+                ...bucket,
+                frequency: analyseWordFrequency(bucket.messages)
+            }))
 
         return bucketedMessages;
     }
@@ -162,7 +147,7 @@ export default class TextAnalysisTimeline extends Component<Props> {
                                     <Word
                                         word={f.word}
                                         score={f.score}
-                                        avgScore={avgScore}
+                                        avgScore={toShow[0].score}
                                         maxSize={maxSize}
                                         key={uuid()}
                                     />
