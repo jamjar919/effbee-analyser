@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Loader, Menu, Search, Label } from 'semantic-ui-react'
+import { Loader, Menu, Search, Label, Dropdown, Popup } from 'semantic-ui-react'
 import colorBetween from 'color-between';
 import uuid from 'uuid/v4';
 import moment from 'moment';
@@ -74,7 +74,8 @@ export default class TextAnalysisTimeline extends Component<Props> {
         this.state = {
             loading: true,
             frequencyData: [],
-            highlight: ""
+            highlight: "",
+            sortMode: "TFIDF"
         }
     }
 
@@ -91,6 +92,10 @@ export default class TextAnalysisTimeline extends Component<Props> {
             messageApi
         } = api
 
+        const {
+            sortMode
+        } = this.state;
+
         const chat = { messages, title }
         const firstTimestamp = Math.floor(messages[messages.length - 1].timestamp_ms / 1000)
         const lastTimestamp = Math.floor(messages[0].timestamp_ms / 1000)
@@ -98,10 +103,41 @@ export default class TextAnalysisTimeline extends Component<Props> {
             .bucketMessagesByTimeInterval([chat], firstTimestamp, lastTimestamp, 2629746, false)
             .map(bucket => ({
                 ...bucket,
-                frequency: analyseWordFrequency(bucket.messages)
+                frequency: analyseWordFrequency(bucket.messages).map(w => {
+                    switch(sortMode) {
+                        case "TFIDF": {
+                            return w;
+                        }
+                        case "TF": {
+                            return {
+                                ...w,
+                                score: w.tf
+                            }
+                        }
+                    }
+                })
             }))
 
+        bucketedMessages.forEach(bucket => {
+            bucket.frequency.sort((a, b) => b.score - a.score)
+        });
+
         return bucketedMessages;
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if (this.state.sortMode !== nextState.sortMode) {
+            this.setState({ loading: true }, () => {
+                setTimeout(() => {
+                    const frequencyData = this.getFrequencyData()
+                    this.setState({
+                        frequencyData,
+                        loading: false
+                    })
+                }, 100)
+            })
+        }
+        return true;
     }
 
     componentDidMount() {
@@ -118,7 +154,8 @@ export default class TextAnalysisTimeline extends Component<Props> {
         const {
             loading,
             frequencyData,
-            highlight
+            highlight,
+            sortMode
         } = this.state;
         
         if (loading) {
@@ -200,10 +237,44 @@ export default class TextAnalysisTimeline extends Component<Props> {
             return self.indexOf(item) == pos;
         }).map(w => ({ title: w }))
 
+        const textAnalysisOptions = [
+            {
+                key: 'TF',
+                text: 'TF',
+                value: 'TF',
+                content: <Popup
+                    content='Text Frequency (Most frequent words prioritised)'
+                    trigger={<div className={styles.dropdownItem}>TF</div>}
+                    position="right center"
+                />
+            },
+            {
+                key: 'TFIDF',
+                text: 'TFIDF',
+                value: 'TFIDF',
+                content: <Popup
+                    content='Text Frequency, Inverse Document Frequency (Smart measure prioritising infrequent words)'
+                    trigger={<div className={styles.dropdownItem}>TFIDF</div>}
+                    position="right center"
+                />
+            },
+        ]
+
         return (
             <React.Fragment>
                 <Menu secondary className={styles.secondaryMenu}>
                     <Menu.Menu position="right">
+                        <Menu.Item>
+                            <span>
+                                Text analysis mode {" "}
+                                <Dropdown
+                                    inline
+                                    options={textAnalysisOptions}
+                                    defaultValue={sortMode}
+                                    onChange={(e, data) => { this.setState({ sortMode: data.value }) }}
+                                />
+                            </span>
+                        </Menu.Item>
                         <Menu.Item>
                             <Label size="medium" color={numHighlighted > 0 ? 'green' : 'grey'}>
                                 { numHighlighted } results

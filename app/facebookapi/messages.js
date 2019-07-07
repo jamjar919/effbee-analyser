@@ -36,7 +36,10 @@ class MessagesApi extends FacebookApi {
                     })),
                     title: modifiedTitle,
                     file,
-                    messages: details.messages
+                    messages: details.messages.map((message, index) => ({
+                        ...message,
+                        index
+                    }))
                 };
             })
 

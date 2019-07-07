@@ -35,3 +35,8 @@
     top: 0;
     right: 0;
 }
+
+.dropdownItem {
+    margin: -.78571429em -1.14285714em;
+    padding: .78571429em 1.14285714em;
+}
