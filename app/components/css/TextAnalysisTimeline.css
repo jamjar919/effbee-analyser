@@ -29,3 +29,9 @@
     width: 150px;
     padding-top: 20px
 }
+
+.secondaryMenu {
+    position: absolute;
+    top: 0;
+    right: 0;
+}

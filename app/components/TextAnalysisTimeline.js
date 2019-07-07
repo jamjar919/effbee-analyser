@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Loader } from 'semantic-ui-react'
+import { Loader, Menu, Search, Label } from 'semantic-ui-react'
 import colorBetween from 'color-between';
 import uuid from 'uuid/v4';
 import moment from 'moment';
@@ -28,7 +28,8 @@ class Word extends Component<Props> {
             score,
             avgScore,
             maxSize,
-            word
+            word,
+            highlightWord
         } = this.props;
 
         const {
@@ -36,20 +37,28 @@ class Word extends Component<Props> {
             extended
         } = this.state
 
-        const size = scaleSize(score, avgScore, maxSize)
+        let size = scaleSize(score, avgScore, maxSize)
         let content = word.substring(0, maxWordLength);
+        let color = colorBetween("#000000", "#33C3F0", Math.min((score/avgScore), 1))
+
         if (extended) {
             content = word;
         } else if (word.length > maxWordLength) {
             content += '...'
         }
+
+        if (highlightWord) {
+            size = maxSize * 1.25
+            color = "#FF0000"
+        }
+
         return (
             <div
                 onClick={() => { this.setState({ extended: !extended }) }}
                 className={styles.word}
                 style={{
                     fontSize: `${size}px`,
-                    color: colorBetween("#000000", "#33C3F0", Math.min((score/avgScore), 1))
+                    color
                 }}
             >
                 {content}
@@ -64,7 +73,8 @@ export default class TextAnalysisTimeline extends Component<Props> {
         super(props)
         this.state = {
             loading: true,
-            frequencyData: []
+            frequencyData: [],
+            highlight: ""
         }
     }
 
@@ -107,7 +117,8 @@ export default class TextAnalysisTimeline extends Component<Props> {
     render() {
         const {
             loading,
-            frequencyData
+            frequencyData,
+            highlight
         } = this.state;
         
         if (loading) {
@@ -134,6 +145,8 @@ export default class TextAnalysisTimeline extends Component<Props> {
             i += 1;
         }
 
+        let numHighlighted = 0
+        let results = []
         const columns = frequencyData.map(bucket => {
             const mid = Math.floor((bucket.start + bucket.end)/2)
             const toShow = bucket.frequency.slice(0, numItems - 1)
@@ -150,10 +163,19 @@ export default class TextAnalysisTimeline extends Component<Props> {
                 <div
                     className={styles.column}
                     style={{ paddingTop: `${maxSize/2}px` }}
+                    key={uuid()}
                 >
                     <div className={styles.words}>
                         {
                             toShow.map(f => {
+                                const isHighlighted = (
+                                    (highlight !== "") &&
+                                    (f.word.slice(0, highlight.length) === highlight)
+                                )
+                                if (isHighlighted) {
+                                    numHighlighted += 1
+                                    results.push(f.word)
+                                }
                                 return (
                                     <Word
                                         word={f.word}
@@ -161,6 +183,7 @@ export default class TextAnalysisTimeline extends Component<Props> {
                                         avgScore={lastMaxScores.reduce((sum, score) => sum + score)/rollingAverageSize}
                                         maxSize={maxSize}
                                         key={uuid()}
+                                        highlightWord={isHighlighted}
                                     />
                                 )
                             })
@@ -173,10 +196,32 @@ export default class TextAnalysisTimeline extends Component<Props> {
             )
         })
 
+        results = results.filter(function(item, pos, self) {
+            return self.indexOf(item) == pos;
+        }).map(w => ({ title: w }))
+
         return (
-            <div className={styles.container}>
-                { columns }
-            </div>
+            <React.Fragment>
+                <Menu secondary className={styles.secondaryMenu}>
+                    <Menu.Menu position="right">
+                        <Menu.Item>
+                            <Label size="medium" color={numHighlighted > 0 ? 'green' : 'grey'}>
+                                { numHighlighted } results
+                            </Label>
+                        </Menu.Item>
+                        <Menu.Item>
+                            <Search
+                                onSearchChange={(e, data) => { this.setState({ highlight: data.value.toLowerCase() }) }}
+                                onResultSelect={(e, data) => { console.log(data); this.setState({ highlight: data.result.title }) }}
+                                results={results}
+                            />
+                        </Menu.Item>
+                    </Menu.Menu>
+                </Menu>
+                <div className={styles.container}>
+                    { columns }
+                </div>
+            </React.Fragment>
         );
     }
 }

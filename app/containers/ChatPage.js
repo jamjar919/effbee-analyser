@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Header, Icon, Segment, Menu, Placeholder, Item, Grid, Statistic } from 'semantic-ui-react'
+import { Header, Icon, Segment, Menu, Placeholder, Item, Grid, Statistic, Search } from 'semantic-ui-react'
 
 import TextAnalysisTimeline from '../components/TextAnalysisTimeline';
 import FriendBreakdownPie from '../components/FriendBreakdownPie';
@@ -122,13 +122,15 @@ class ChatPage extends Component<Props> {
                         <Grid.Row>
                             <Grid.Column width={16}>
                                 <Segment>
-                                    <Header as='h3'>
-                                        <Icon name='text width' />
-                                        <Header.Content>
-                                            Text Analysis
-                                        </Header.Content>
-                                        <Header.Subheader>Topics ordered by month</Header.Subheader>
-                                    </Header>
+                                    <Menu secondary>
+                                        <Menu.Item>
+                                            <Header as='h3'>
+                                                <Icon name='text width' />
+                                                <Header.Content>Text Analysis</Header.Content>
+                                                <Header.Subheader>Popular conversation topics ordered by month</Header.Subheader>
+                                            </Header>
+                                        </Menu.Item>
+                                    </Menu>
                                     <TextAnalysisTimeline
                                         messages={chat.messages}
                                         api={api}
