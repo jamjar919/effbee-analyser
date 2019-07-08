@@ -77,45 +77,58 @@ class ChatPage extends Component<Props> {
                         <Header.Subheader>{isPrivateChat ? 'Private Chat' : 'Group Chat' }</Header.Subheader>
                     </Header>
                     <Grid>
+                        { !isPrivateChat ? 
                         <Grid.Row>
                             <Grid.Column width={10}>
-                            <Segment.Group>
-                                <Segment>
-                                    <Header as='h3'>
-                                        <Icon name='area graph' />
-                                        <Header.Content>Basic Statistics</Header.Content>
-                                    </Header>
-                                </Segment>
-                                <Segment>
-                                    <Statistic.Group widths="two">
-                                        <Statistic>
-                                            <Statistic.Value>{chat.messages.length}</Statistic.Value>
-                                            <Statistic.Label>Total Messages</Statistic.Label>
-                                        </Statistic>
-                                        <Statistic>
-                                        <Statistic.Value>
-                                            <Icon name='user' />
-                                            {chat.participants.length}
-                                            </Statistic.Value>
-                                            <Statistic.Label>Participants</Statistic.Label>
-                                        </Statistic>
-                                        <Statistic>
-                                            <Statistic.Label>Top Contributor</Statistic.Label>
-                                            <Statistic.Value text>{maxPerson.name}</Statistic.Value>
-                                            <Statistic.Label>{maxPerson.count} Messages</Statistic.Label>
-                                        </Statistic>
-                                        <Statistic>
-                                            <Statistic.Label>Bottom Contributor</Statistic.Label>
-                                            <Statistic.Value text>{minPerson.name}</Statistic.Value>
-                                            <Statistic.Label>{minPerson.count} Messages</Statistic.Label>
-                                        </Statistic>
-                                    </Statistic.Group>
-                                </Segment>
-                            </Segment.Group>
+                                <Segment.Group>
+                                    <Segment>
+                                        <Header as='h3'>
+                                            <Icon name='area graph' />
+                                            <Header.Content>Basic Statistics</Header.Content>
+                                        </Header>
+                                    </Segment>
+                                    <Segment>
+                                        <Statistic.Group widths="two">
+                                            <Statistic>
+                                                <Statistic.Value>{chat.messages.length}</Statistic.Value>
+                                                <Statistic.Label>Total Messages</Statistic.Label>
+                                            </Statistic>
+                                            <Statistic>
+                                            <Statistic.Value>
+                                                <Icon name='user' />
+                                                {chat.participants.length}
+                                                </Statistic.Value>
+                                                <Statistic.Label>Participants</Statistic.Label>
+                                            </Statistic>
+                                            <Statistic>
+                                                <Statistic.Label>Top Contributor</Statistic.Label>
+                                                <Statistic.Value text>{maxPerson.name}</Statistic.Value>
+                                                <Statistic.Label>{maxPerson.count} Messages</Statistic.Label>
+                                            </Statistic>
+                                            <Statistic>
+                                                <Statistic.Label>Bottom Contributor</Statistic.Label>
+                                                <Statistic.Value text>{minPerson.name}</Statistic.Value>
+                                                <Statistic.Label>{minPerson.count} Messages</Statistic.Label>
+                                            </Statistic>
+                                        </Statistic.Group>
+                                    </Segment>
+                                </Segment.Group>
                             </Grid.Column>
                             <Grid.Column width={6}>
                                 <Segment>
                                     <FriendBreakdownPie friends={chat.participants} />
+                                </Segment>
+                            </Grid.Column>
+                        </Grid.Row> : '' }
+                        <Grid.Row>
+                            <Grid.Column width={8}>
+                                <Segment>
+                                    Moreee
+                                </Segment>
+                            </Grid.Column>
+                            <Grid.Column width={8}>
+                                <Segment>
+                                    sdasdasdsad
                                 </Segment>
                             </Grid.Column>
                         </Grid.Row>
