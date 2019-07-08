@@ -64,6 +64,10 @@
     display: none;
 }
 
+.messages .groupedMessage {
+    margin-bottom: 0;
+}
+
 .messages .announcement {
     display: block;
     font-weight: 500;

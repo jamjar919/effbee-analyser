@@ -7,6 +7,20 @@ import Identicon from './Identicon';
 
 import styles from './css/MessageBubbles.css'
 
+const BubbleContent = (props) => {
+    const message = props.message;
+    if (message.hasOwnProperty("content")) {
+        return <div class={styles.message} key={uuid()}>{message.content}</div>
+    }
+    if (message.hasOwnProperty("sticker")) {
+        return <div class={styles.message} key={uuid()}>{message.sticker.uri}</div>
+    }
+    if (message.hasOwnProperty("photos")) {
+        return <div class={styles.message} key={uuid()}>{JSON.stringify(message.photos)}</div>
+    }
+    return <div class={styles.message} key={uuid()}>{JSON.stringify(message)}</div>;
+}
+
 const Bubble = (props) => (
     <div class={classNames(styles.messageWrapper, (props.isRoot ? styles.self : ''))}> 
         <div class={styles.imageWrapper}>
@@ -14,20 +28,20 @@ const Bubble = (props) => (
         </div>
         <div class={styles.messageContent}>
             <div class={styles.from}>{props.sender}</div>
-            <div class={styles.message}>{props.content}</div>
+            { props.messages.map(m => <BubbleContent message={m} />) } 
         </div>
     </div>
 );
 
 Bubble.propTypes = {
     isRoot: PropTypes.bool,
-    content: PropTypes.string,
+    messages: PropTypes.arrayOf(PropTypes.any),
     sender: PropTypes.string,
 }
 
 Bubble.defaultProps = {
     isRoot: false,
-    content: "",
+    messages: [],
     sender: ""
 }
 
@@ -38,14 +52,43 @@ export default class MessageBubbles extends Component<Props> {
             root
         } = this.props;
 
-        const bubbles = messages.map(message => (
-            <Bubble
-                key={uuid()}
-                content={message.content}
-                sender={message.sender_name}
-                isRoot={message.sender_name === root}
-            />
-        ))
+        console.log(messages)
+
+        let bubbles =  []
+        
+        let messageGroup = []
+        messages.forEach((message, i) => {
+            messageGroup.push(message)
+            const nextMessage = messages[i + 1]
+            if (
+                (nextMessage) &&
+                (nextMessage.sender_name !== message.sender_name) &&
+                (messageGroup.length)
+            ) {
+                console.log("grouped")
+                bubbles.push(
+                    <Bubble
+                        key={uuid()}
+                        messages={messageGroup}
+                        sender={messageGroup[0].sender_name}
+                        isRoot={messageGroup[0].sender_name === root}
+                    />
+                )
+                messageGroup = []
+            }
+        })
+
+        if (messageGroup.length > 0) {
+            bubbles.push(
+                <Bubble
+                    key={uuid()}
+                    messages={messageGroup}
+                    sender={messageGroup[0].sender_name}
+                    isRoot={messageGroup[0].sender_name === root}
+                />
+            )
+        }
+        
         return (
             <div className={styles.messages}>
                 {bubbles}
