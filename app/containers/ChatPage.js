@@ -7,6 +7,7 @@ import TextAnalysisTimeline from '../components/TextAnalysisTimeline';
 import FriendBreakdownPie from '../components/FriendBreakdownPie';
 import PageContainer from './PageContainer';
 import FriendTimeline from '../components/FriendTimeline';
+import MessageBubbles from '../components/MessageBubbles';
 import type { defaultFacebookType } from '../reducers/defaultTypes'
 
 import menuStyles from '../components/css/Menu.css';
@@ -28,7 +29,8 @@ class ChatPage extends Component<Props> {
         } = this.props;
 
         const {
-            messageApi
+            messageApi,
+            profileApi
         } = api
 
         if (chat === false) {
@@ -51,11 +53,16 @@ class ChatPage extends Component<Props> {
             return min;
         })
 
+        const numFirstMessagesToShow = 10
+        const firstMessages = chat.messages.slice(chat.messages.length - numFirstMessagesToShow, chat.messages.length)
+        firstMessages.reverse()
+
         const firstMessage = chat.messages[chat.messages.length - 1];
         const lastMessage = chat.messages[0]
         const firstTimestamp = Math.floor(firstMessage.timestamp_ms / 1000)
         const lastTimestamp = Math.floor(lastMessage.timestamp_ms / 1000)
         const messagesByInterval = messageApi.bucketMessagesByTimeInterval([chat], firstTimestamp, lastTimestamp, 1209600, false)
+        const root = profileApi.getFullName()
 
         return (
             <React.Fragment>
@@ -123,7 +130,18 @@ class ChatPage extends Component<Props> {
                         <Grid.Row>
                             <Grid.Column width={8}>
                                 <Segment>
-                                    Moreee
+                                    <Menu secondary>
+                                        <Menu.Item>
+                                            <Header as='h3'>
+                                                <Icon name='thumbtack' />
+                                                <Header.Content>First Messages</Header.Content>
+                                            </Header>
+                                        </Menu.Item>
+                                    </Menu>
+                                    <MessageBubbles
+                                        messages={firstMessages}
+                                        root={root}
+                                    />
                                 </Segment>
                             </Grid.Column>
                             <Grid.Column width={8}>

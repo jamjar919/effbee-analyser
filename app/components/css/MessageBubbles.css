@@ -1,0 +1,75 @@
+
+.messages {
+    padding: 12px;
+}
+
+.messages .messageWrapper {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 15px;
+}
+
+.messages .messageWrapper .imageWrapper {
+    display: flex;
+}
+
+.messages .messageWrapper .imageWrapper .image {
+    height: 28px;
+    width: 28px;
+    border-radius: 13px;
+    align-self: flex-end;
+}
+
+.messages .from {
+    margin-left: 12px;
+    color: rgba(0, 0, 0, .40);
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.messages .messageContent {
+    margin-left: 12px;
+}
+
+.messages .message {
+    border-radius: 18.2px;
+    background-color: #f1f0f0;
+    line-height: 17.92px;
+    margin-bottom: 1px;
+    padding: 6px 12px;
+}
+
+.messages .message:first {
+    border-bottom-left-radius: 4px; 
+}
+
+.messages .message:first:last {
+    border-bottom-left-radius: 18.2px; 
+}
+
+.messages .self.messageWrapper .message {
+    background-color: #0084ff;
+    color: #FFF;
+} 
+
+.messages .self.messageWrapper .messageContent {
+    margin-left: auto;
+}
+
+.messages .self.messageWrapper .imageWrapper {
+    display: none;
+}
+
+.messages .self.messageWrapper .from {
+    display: none;
+}
+
+.messages .announcement {
+    display: block;
+    font-weight: 500;
+    margin: 12px 0 12px 20px;
+    text-transform: uppercase;
+    text-align: center;
+    color: rgba(0, 0, 0, .40);
+    font-size: 12px;
+}
