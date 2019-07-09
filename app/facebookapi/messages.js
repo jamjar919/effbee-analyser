@@ -39,7 +39,8 @@ class MessagesApi extends FacebookApi {
                     messages: details.messages.map((message, index) => ({
                         ...message,
                         index
-                    }))
+                    })),
+                    directory
                 };
             })
 

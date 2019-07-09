@@ -27,8 +27,3 @@ svg.rv-xy-plot__inner {
 a {
   cursor: pointer;
 }
-
-/* force color of top modal */
-body > .ui.page.modals {
-  background-color: #232c39;
-}

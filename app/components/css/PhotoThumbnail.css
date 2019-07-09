@@ -1,0 +1,29 @@
+.container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.thumbnail {
+    border-radius: 4px;
+    margin: 1.5px;
+    overflow: hidden;
+    max-width: 150px;
+    max-height: 150px;
+    display: flex;
+    cursor: pointer;
+}
+
+.thumbnailImage {
+    margin: auto;
+    max-height: 150px;
+}
+
+.photoModal {
+    display: flex;
+}
+
+.photoModal img {
+    margin: auto;
+    display: flex;
+}

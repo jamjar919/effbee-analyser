@@ -4,31 +4,37 @@ import classNames from 'classnames'
 import uuid from 'uuid/v4';
 
 import Identicon from './Identicon';
+import SettingsFile from '../SettingsFile';
+import { PhotoThumbnail, PhotoThumbnailGroup } from './PhotoThumbnail';
 
 import styles from './css/MessageBubbles.css'
 
 const BubbleContent = (props) => {
-    const message = props.message;
-    if (message.hasOwnProperty("content")) {
-        return <div class={styles.message} key={uuid()}>{message.content}</div>
+    const { message, dataDir } = props;
+    if (Object.prototype.hasOwnProperty.call(message, "content")) {
+        return <div className={styles.message}>{message.content}</div>
     }
-    if (message.hasOwnProperty("sticker")) {
-        return <div class={styles.message} key={uuid()}>{message.sticker.uri}</div>
+    if (Object.prototype.hasOwnProperty.call(message, "sticker")) {
+        return <div><img src={`${dataDir}/${message.sticker.uri}`} alt="sticker" /></div>
     }
-    if (message.hasOwnProperty("photos")) {
-        return <div class={styles.message} key={uuid()}>{JSON.stringify(message.photos)}</div>
+    if (Object.prototype.hasOwnProperty.call(message, "photos")) {
+        return (
+            <PhotoThumbnailGroup dataDir={dataDir}>
+                {message.photos.map(photo => <PhotoThumbnail uri={photo.uri} key={uuid()} />)}
+            </PhotoThumbnailGroup>
+        )
     }
-    return <div class={styles.message} key={uuid()}>{JSON.stringify(message)}</div>;
+    return <div className={styles.message}>{JSON.stringify(message)}</div>;
 }
 
 const Bubble = (props) => (
-    <div class={classNames(styles.messageWrapper, (props.isRoot ? styles.self : ''))}> 
-        <div class={styles.imageWrapper}>
+    <div className={classNames(styles.messageWrapper, (props.isRoot ? styles.self : ''))}> 
+        <div className={styles.imageWrapper}>
             <Identicon size={50} value={props.sender} className={styles.image} />
         </div>
-        <div class={styles.messageContent}>
-            <div class={styles.from}>{props.sender}</div>
-            { props.messages.map(m => <BubbleContent message={m} />) } 
+        <div className={styles.messageContent}>
+            <div className={styles.from}>{props.sender}</div>
+            { props.messages.map(m => <BubbleContent message={m} dataDir={props.dataDir} key={uuid()} />) } 
         </div>
     </div>
 );
@@ -37,12 +43,14 @@ Bubble.propTypes = {
     isRoot: PropTypes.bool,
     messages: PropTypes.arrayOf(PropTypes.any),
     sender: PropTypes.string,
+    dataDir: PropTypes.string,
 }
 
 Bubble.defaultProps = {
     isRoot: false,
     messages: [],
-    sender: ""
+    sender: "",
+    dataDir: ""
 }
 
 export default class MessageBubbles extends Component<Props> {
@@ -52,10 +60,9 @@ export default class MessageBubbles extends Component<Props> {
             root
         } = this.props;
 
-        console.log(messages)
+        const dataDir = new SettingsFile().get("facebookDataDir");
 
-        let bubbles =  []
-        
+        const bubbles =  []
         let messageGroup = []
         messages.forEach((message, i) => {
             messageGroup.push(message)
@@ -65,13 +72,13 @@ export default class MessageBubbles extends Component<Props> {
                 (nextMessage.sender_name !== message.sender_name) &&
                 (messageGroup.length)
             ) {
-                console.log("grouped")
                 bubbles.push(
                     <Bubble
                         key={uuid()}
                         messages={messageGroup}
                         sender={messageGroup[0].sender_name}
                         isRoot={messageGroup[0].sender_name === root}
+                        dataDir={dataDir}
                     />
                 )
                 messageGroup = []
@@ -104,5 +111,5 @@ MessageBubbles.propTypes = {
 
 MessageBubbles.defaultProps = {
     messages: [],
-    root: "root"
+    root: "root",
 }
