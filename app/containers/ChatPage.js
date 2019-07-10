@@ -9,6 +9,7 @@ import PageContainer from './PageContainer';
 import FriendTimeline from '../components/FriendTimeline';
 import MessageBubbles from '../components/MessageBubbles';
 import ChatNamesHistory from '../components/ChatNamesHistory';
+import TalkedAbout from '../components/TalkedAbout';
 
 import type { defaultFacebookType } from '../reducers/defaultTypes';
 import menuStyles from '../components/css/Menu.css';
@@ -156,6 +157,18 @@ class ChatPage extends Component<Props> {
                                         messages={chat.messages}
                                     />
                                 </Segment> : '' }
+                                <Segment>
+                                    <Header as='h3'>
+                                        <Icon name='users' />
+                                        <Header.Content>Talked About</Header.Content>
+                                        <Header.Subheader>Who's mentioned most in your chat from your friends list</Header.Subheader>
+                                    </Header>
+                                    <TalkedAbout 
+                                        messages={chat.messages}
+                                        participants={chat.participants}
+                                        api={api}
+                                    />
+                                </Segment>
                             </Grid.Column>
                         </Grid.Row>
                         <Grid.Row>
