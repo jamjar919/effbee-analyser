@@ -8,8 +8,9 @@ import FriendBreakdownPie from '../components/FriendBreakdownPie';
 import PageContainer from './PageContainer';
 import FriendTimeline from '../components/FriendTimeline';
 import MessageBubbles from '../components/MessageBubbles';
-import type { defaultFacebookType } from '../reducers/defaultTypes'
+import ChatNamesHistory from '../components/ChatNamesHistory';
 
+import type { defaultFacebookType } from '../reducers/defaultTypes';
 import menuStyles from '../components/css/Menu.css';
 import styles from './css/ChatPage.css';
 
@@ -145,9 +146,16 @@ class ChatPage extends Component<Props> {
                                 </Segment>
                             </Grid.Column>
                             <Grid.Column width={8}>
-                                <Segment>
-                                    sdasdasdsad
-                                </Segment>
+                                { !isPrivateChat ? <Segment>
+                                    <Header as='h3'>
+                                        <Icon name='address card' />
+                                        <Header.Content>Group Names</Header.Content>
+                                        <Header.Subheader>Group Chat Name History</Header.Subheader>
+                                    </Header>
+                                    <ChatNamesHistory 
+                                        messages={chat.messages}
+                                    />
+                                </Segment> : '' }
                             </Grid.Column>
                         </Grid.Row>
                         <Grid.Row>
