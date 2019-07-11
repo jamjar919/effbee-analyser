@@ -5,3 +5,7 @@
 .gridColumnCenterItem {
     margin: auto !important;
 }
+
+.nameStatistic {
+    line-height: 50px !important;
+}

@@ -90,10 +90,15 @@ export function analyseWordFrequency(messages: types.messagesType) {
     } = countMessages(documents)
 
     const scores = Object.keys(count).map(word => {
-        const tf = count[word].wordCount / totalTerms
-        const idf = Math.log(totalDocuments / count[word].docCount)
-        const score = tf * idf
-        return {word, score, tf, idf, count: count[word]}
+        // null check to fix max's problem?
+        if (!isNaN(count[word].wordCount) && !isNaN(count[word].docCount)) {
+            const tf = count[word].wordCount / totalTerms
+            const idf = Math.log(totalDocuments / count[word].docCount)
+            const score = tf * idf
+            return {word, score, tf, idf, count: count[word]}
+        }
+        console.error("NaN DocCount/WordCount for: ", count[word])
+        return { word, score: 0, tf: 0, idf: 0, count: 0 } 
     })
     scores.sort((a, b) => b.score - a.score)
 

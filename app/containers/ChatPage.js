@@ -111,12 +111,12 @@ class ChatPage extends Component<Props> {
                                             </Statistic>
                                             <Statistic>
                                                 <Statistic.Label>Top Contributor</Statistic.Label>
-                                                <Statistic.Value text>{maxPerson.name}</Statistic.Value>
+                                                <Statistic.Value text className={styles.nameStatistic}>{maxPerson.name}</Statistic.Value>
                                                 <Statistic.Label>{maxPerson.count} Messages</Statistic.Label>
                                             </Statistic>
                                             <Statistic>
                                                 <Statistic.Label>Bottom Contributor</Statistic.Label>
-                                                <Statistic.Value text>{minPerson.name}</Statistic.Value>
+                                                <Statistic.Value text className={styles.nameStatistic}>{minPerson.name}</Statistic.Value>
                                                 <Statistic.Label>{minPerson.count} Messages</Statistic.Label>
                                             </Statistic>
                                         </Statistic.Group>

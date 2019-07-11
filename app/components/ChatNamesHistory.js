@@ -53,7 +53,8 @@ export default class ChatNamesHistory extends Component<Props> {
                 <Popup
                     position="top center"
                     content={`Changed by ${message.sender_name} on ${moment(message.timestamp_ms).format("MMMM Do YYYY")} (${moment(message.timestamp_ms).fromNow()})`}
-                    trigger={<Label key={uuid()}>{message.change}</Label>}
+                    trigger={<Label>{message.change}</Label>}
+                    key={uuid()}
                 />
             ))
             .filter((message, i) => i < numToShow)
@@ -61,9 +62,10 @@ export default class ChatNamesHistory extends Component<Props> {
         if (data.length > numToShow) {
             names.push(
                 <Label
-                    color="green"
+                    color="blue"
                     onClick={() => { this.setState({ numToShow: numToShow + 10 }) }}
                     style={{ cursor: "pointer" }}
+                    key={uuid()}
                 >
                     Show more ({data.length - numToShow})
                 </Label>)

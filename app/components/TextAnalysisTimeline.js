@@ -29,7 +29,8 @@ class Word extends Component<Props> {
             avgScore,
             maxSize,
             word,
-            highlightWord
+            highlightWord,
+            onClick
         } = this.props;
 
         const {
@@ -54,7 +55,7 @@ class Word extends Component<Props> {
 
         return (
             <div
-                onClick={() => { this.setState({ extended: !extended }) }}
+                onClick={() => { onClick(word) }}
                 className={styles.word}
                 style={{
                     fontSize: `${size}px`,
@@ -65,6 +66,10 @@ class Word extends Component<Props> {
             </div>
         )
     }
+}
+
+Word.defaultProps = {
+    onClick: () => {}
 }
 
 
@@ -215,6 +220,7 @@ export default class TextAnalysisTimeline extends Component<Props> {
                                 }
                                 return (
                                     <Word
+                                        onClick={(word) => { console.log(f) }}
                                         word={f.word}
                                         score={f.score}
                                         avgScore={lastMaxScores.reduce((sum, score) => sum + score)/rollingAverageSize}
@@ -299,12 +305,12 @@ export default class TextAnalysisTimeline extends Component<Props> {
 
 TextAnalysisTimeline.propTypes = {
     title: PropTypes.string,
-    messages: PropTypes.arrayOf({
+    messages: PropTypes.arrayOf(PropTypes.shape({
         sender_name: PropTypes.string,
         content: PropTypes.string,
         timestamp_ms: PropTypes.number, 
         type: PropTypes.string
-    }),
+    })),
     api: PropTypes.shape({
         profileApi: PropTypes.any,
         messageApi: PropTypes.any,
