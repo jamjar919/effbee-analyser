@@ -92,6 +92,7 @@ export default class MessageBubbles extends Component<Props> {
                     messages={messageGroup}
                     sender={messageGroup[0].sender_name}
                     isRoot={messageGroup[0].sender_name === root}
+                    dataDir={dataDir}
                 />
             )
         }
