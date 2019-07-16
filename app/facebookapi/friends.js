@@ -7,8 +7,8 @@ class FriendsApi extends FacebookApi {
         try {
             super()
             const file = `${super.getRoot()}/friends/friends.json`;
-            const contents = fs.readFileSync(file, { encoding: "utf-8" })
-            this.friends = JSON.parse(contents).friends
+            this.friends = this.readFacebookJson(file).friends
+                .map(friend => ({ ...friend, prettyName: this.fixEncoding(friend.name) }))
                 .filter(
                     (friend, i, arr) => arr.filter(
                         friend2 => friend2.name === friend.name

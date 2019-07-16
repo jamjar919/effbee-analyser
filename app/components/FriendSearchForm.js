@@ -11,7 +11,7 @@ class FriendSearchForm extends Component<Props> {
         
         let friends = []
         if (typeof props.friendsApi.get() !== "undefined") {
-            friends = props.friendsApi.get().map(f => ({ title: f.name }))
+            friends = props.friendsApi.get().map(f => ({ name: f.name, title: f.prettyName }))
         }
 
         this.state = {
@@ -36,7 +36,7 @@ class FriendSearchForm extends Component<Props> {
             <Search
                 loading={isSearchLoading}
                 onResultSelect={(e, { result }) => {
-                    onResultSelect(result.title)
+                    onResultSelect(result.name)
                 }}
                 onSearchChange={(e, { value }) => {
                     this.setState({ isSearchLoading: true }, () => {

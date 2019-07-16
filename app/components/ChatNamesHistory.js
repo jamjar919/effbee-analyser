@@ -52,7 +52,7 @@ export default class ChatNamesHistory extends Component<Props> {
             .map(message => (
                 <Popup
                     position="top center"
-                    content={`Changed by ${message.sender_name} on ${moment(message.timestamp_ms).format("MMMM Do YYYY")} (${moment(message.timestamp_ms).fromNow()})`}
+                    content={`Changed by ${message.prettySenderName} on ${moment(message.timestamp_ms).format("MMMM Do YYYY")} (${moment(message.timestamp_ms).fromNow()})`}
                     trigger={<Label>{message.change}</Label>}
                     key={uuid()}
                 />

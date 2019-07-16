@@ -23,7 +23,14 @@ class ChatPage extends Component<Props> {
     constructor(props) {
         super(props);
         this.state = {
-            visibleSidebar: true
+            visibleSidebar: false,
+            timeRangeMessages: []
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.messages.selectedWord !== this.props.messages.selectedWord) {
+            this.setState({ visibleSidebar: true })
         }
     }
 
@@ -72,7 +79,7 @@ class ChatPage extends Component<Props> {
                         className={styles.messagesSidebarContainer}
                         width="very wide"
                     >
-                        <Menu className={menuStyles.topSidebarMenu} inverted>
+                        <Menu className={menuStyles.topSidebarMenu}>
                             <Menu.Item 
                                 onClick={() => {
                                     this.setState({ visibleSidebar: false })
@@ -81,17 +88,26 @@ class ChatPage extends Component<Props> {
                                 <Icon name="chevron right" />
                             </Menu.Item>
                         </Menu>
-                        <HighlightedMessages
-                            messages={allMessages}
-                            selectedWord={selectedWord}
-                        />
+                        <div className={styles.messagesSidebarContent}>
+                            <Header as='h2'>
+                                <Icon name='searchengin' />
+                                <Header.Content>
+                                    Conversations containing the word {selectedWord.word}
+                                </Header.Content>
+                                <Header.Subheader>{selectedWord.word}</Header.Subheader>
+                            </Header>
+                            <HighlightedMessages
+                                messages={allMessages}
+                                selectedWord={selectedWord}
+                            />
+                        </div>
                     </Sidebar>
                     <Sidebar.Pusher>
                         <PageContainer>
                             <Header as='h1'>
                                 <Icon name='envelope' />
                                 <Header.Content>
-                                    {chat.title}
+                                    {chat.prettyTitle}
                                 </Header.Content>
                                 <Header.Subheader>{isPrivateChat ? 'Private Chat' : 'Group Chat' }</Header.Subheader>
                             </Header>

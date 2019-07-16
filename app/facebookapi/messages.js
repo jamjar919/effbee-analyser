@@ -2,6 +2,7 @@
 import fs from 'fs';
 import { join } from 'path';
 import moment from 'moment';
+import iconv from 'iconv-lite';
 import FacebookApi from "./api";
 
 class MessagesApi extends FacebookApi {
@@ -15,7 +16,7 @@ class MessagesApi extends FacebookApi {
             const titleCount = {}
             this.messages = getDirectories(directories).map(directory => {
                 const file = `${directory}/message_1.json`;
-                const details = JSON.parse(fs.readFileSync(file, { encoding: "utf-8" }))
+                const details = this.readFacebookJson(file)
 
                 // duplicate renaming
                 const title = details.title
@@ -35,11 +36,17 @@ class MessagesApi extends FacebookApi {
                         count: details.messages.filter(message => message.sender_name == p.name).length
                     })),
                     title: modifiedTitle,
+                    prettyTitle: this.fixEncoding(modifiedTitle),
                     file,
-                    messages: details.messages.map((message, index) => ({
-                        ...message,
-                        index
-                    })),
+                    messages: details.messages.map((message, index) => {
+                        const toReturn = message;
+                        toReturn.index = index
+                        toReturn.prettySenderName = this.fixEncoding(toReturn.sender_name)
+                        if (typeof message.content !== "undefined") {
+                            toReturn.content = this.fixEncoding(message.content)
+                        }
+                        return toReturn;
+                    }),
                     directory
                 };
             })
@@ -70,6 +77,7 @@ class MessagesApi extends FacebookApi {
             this.loaded = true;
         } catch (e) {
             console.log("couldn't load messages api")
+            console.error(e)
             this.messages = []
             this.loaded = false;
         }

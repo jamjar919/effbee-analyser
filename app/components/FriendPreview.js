@@ -88,7 +88,7 @@ class FriendPreview extends React.Component<Props> {
 
         // Chat Details With Others
         const theirChats = messageApi.chats(name); 
-
+            
         return (
             <div>
                 <Header as='h1' icon textAlign='center'>
@@ -169,7 +169,6 @@ class FriendPreview extends React.Component<Props> {
                         With Others
                     </Header>
                 </Divider>
-
                 <Segment>
                     <FriendList friends={theirChats.peopleRanking} />
                 </Segment>

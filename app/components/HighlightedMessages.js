@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import natural from 'natural';
+import uuid from 'uuid';
+import { Card } from 'semantic-ui-react';
+
 import stopwords from '../facebookapi/stopwords'
 import MessageBubbles from './MessageBubbles';
 
@@ -56,7 +59,6 @@ export default class HighlightedMessages extends Component<Props> {
             tokenisedMessages
         } = this.state;
 
-        console.log(tokenisedMessages)
         const previewSize = 5;
 
         const bubbles = tokenisedMessages.filter(message => (
@@ -74,21 +76,19 @@ export default class HighlightedMessages extends Component<Props> {
             const toShow = tokenisedMessages.slice(startIndex, endIndex);
             toShow.reverse();
 
-            if (startIndex > endIndex) {
-                console.error("how!!!!")
-            }
-
-            console.log(startIndex, endIndex, tokenisedMessages.length)
-            console.log(message, toShow)
             return (
-                <div className={styles.highlightContainer}>
+                <Card key={uuid()} className={styles.highlightContainer} fluid>
                     <MessageBubbles 
                         messages={toShow}
                     />
-                </div>
+                </Card>
             )
         })
 
-        return <div>{ bubbles }</div>;
+        return (
+            <Card.Group centered className={styles.highlightBubblesContainer}>
+                { bubbles }
+            </Card.Group>
+        );
     }
 }

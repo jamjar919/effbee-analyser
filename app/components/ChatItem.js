@@ -61,7 +61,7 @@ class ChatItem extends React.Component<Props> {
             return (
                 <Label as='a' key={i}>
                     <Identicon value={participant.name} size={25} className={styles.labelImage} />
-                    { participant.name }
+                    { participant.prettyName }
                 </Label>
             )
         }).filter((l, i) => (i < labelMax))
@@ -84,7 +84,7 @@ class ChatItem extends React.Component<Props> {
                         className={styles.chatItemHeader}
                         onClick={() => { this.toChat() }}
                     >
-                        {chat.title}
+                        {chat.prettyTitle}
                     </Card.Header>
                     <Card.Description>
                         {chat.messages.length} messages in chat

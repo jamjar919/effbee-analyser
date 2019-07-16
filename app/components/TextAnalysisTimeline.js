@@ -227,7 +227,7 @@ export default class TextAnalysisTimeline extends Component<Props> {
                                         onClick={(word) => { onSelectWord(f) }}
                                         word={f.word}
                                         score={f.score}
-                                        avgScore={lastMaxScores.reduce((sum, score) => sum + score)/rollingAverageSize}
+                                        avgScore={lastMaxScores.reduce((sum, score) => sum + score, 0)/rollingAverageSize}
                                         maxSize={maxSize}
                                         key={uuid()}
                                         highlightWord={isHighlighted}

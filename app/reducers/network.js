@@ -47,14 +47,13 @@ export default function toggleShowRoot(state: networkType = defaultNetworkType, 
             const rootName = profileApi.getFullName();
 
             const friendNodes = friendsApi.get()
-                .map(friend => friend.name)
-                .map(name => ({
-                    label: name,
-                    id: name,
+                .map(friend => ({
+                    label: friend.prettyName,
+                    id: friend.name,
                     shape: "dot"
                 }))
                 .map(node => {
-                    const chatsBetweenRoot = messageApi.chatsBetween([rootName, node.label])
+                    const chatsBetweenRoot = messageApi.chatsBetween([rootName, node.id])
                     return {
                         ...node,
                         value: chatsBetweenRoot.count
@@ -67,7 +66,7 @@ export default function toggleShowRoot(state: networkType = defaultNetworkType, 
                 for (let j = i + 1; j < friendNodes.length; j += 1) {
                     const f1 = friendNodes[i];
                     const f2 = friendNodes[j];
-                    const chatsBetween = messageApi.chatsBetween([f1.label, f2.label])
+                    const chatsBetween = messageApi.chatsBetween([f1.id, f2.id])
                     const numMessages = chatsBetween.count
                     const numChats = chatsBetween.chats.length
                     const isRoot = isConnectedToRoot({from: f1.id, to: f2.id})

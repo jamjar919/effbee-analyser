@@ -74,7 +74,7 @@ export class PhotoThumbnailGroup extends Component<Props> {
 }
 
 PhotoThumbnailGroup.propTypes = {
-    children: PropTypes.oneOf([PropTypes.arrayOf(PropTypes.node), PropTypes.node]),
+    children: PropTypes.arrayOf(PropTypes.node),
     className: PropTypes.string,
     dataDir: PropTypes.string,
 }

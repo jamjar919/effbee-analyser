@@ -11,5 +11,9 @@
 }
 
 .messagesSidebarContainer {
-    padding-top: 0 !important;
+    padding: 0 !important;
+}
+
+.messagesSidebarContent {
+    padding: 1em
 }

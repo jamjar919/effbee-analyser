@@ -1,4 +1,6 @@
 import SettingsFile from '../SettingsFile';
+import iconv from 'iconv-lite';
+import fs from 'fs';
 
 class FacebookApi {
     constructor() {
@@ -10,6 +12,15 @@ class FacebookApi {
         return this.root;
     }
 
+    readFacebookJson(filename) {
+        var content = fs.readFileSync(filename, "utf8");
+        const json = JSON.parse(content)
+        return json
+    }
+
+    fixEncoding(string) {
+        return iconv.decode(iconv.encode(string, "latin1"), "utf8")
+    }
 }
 
 export default FacebookApi;

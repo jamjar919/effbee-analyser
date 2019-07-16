@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames'
 import uuid from 'uuid/v4';
+import moment from 'moment';
 
 import Identicon from './Identicon';
 import SettingsFile from '../SettingsFile';
@@ -21,6 +22,13 @@ const BubbleContent = (props) => {
         return (
             <PhotoThumbnailGroup dataDir={dataDir}>
                 {message.photos.map(photo => <PhotoThumbnail uri={photo.uri} key={uuid()} />)}
+            </PhotoThumbnailGroup>
+        )
+    }
+    if (Object.prototype.hasOwnProperty.call(message, "gifs")) {
+        return (
+            <PhotoThumbnailGroup dataDir={dataDir}>
+                {message.gifs.map(gif => <PhotoThumbnail uri={gif.uri} key={uuid()} />)}
             </PhotoThumbnailGroup>
         )
     }
@@ -53,6 +61,10 @@ Bubble.defaultProps = {
     dataDir: ""
 }
 
+const Announcement = (props) => (
+    <div className={ styles.announcement }>{ props.content }</div>
+)
+
 export default class MessageBubbles extends Component<Props> {
     render() {
         const {
@@ -62,25 +74,40 @@ export default class MessageBubbles extends Component<Props> {
 
         const dataDir = new SettingsFile().get("facebookDataDir");
 
-        const bubbles =  []
+        const bubbles = []
+
+        bubbles.push(
+            <Announcement key={uuid()} content={moment(messages[0].timestamp_ms).format("MMM D, YYYY, h:mm A")} />
+        )
+
         let messageGroup = []
         messages.forEach((message, i) => {
             messageGroup.push(message)
             const nextMessage = messages[i + 1]
             if (
-                (nextMessage) &&
-                (nextMessage.sender_name !== message.sender_name) &&
-                (messageGroup.length)
+                (nextMessage) && (
+                    (
+                        (nextMessage.sender_name !== message.sender_name) &&            // make message group if sender is different
+                        (messageGroup.length)                                           // and we have messages in the group
+                    ) || (                                                              // or
+                        (nextMessage.timestamp_ms - message.timestamp_ms > 21600000)    // difference in timestamps is more than 6 hours
+                    )
+                )
             ) {
                 bubbles.push(
                     <Bubble
                         key={uuid()}
                         messages={messageGroup}
-                        sender={messageGroup[0].sender_name}
+                        sender={messageGroup[0].prettySenderName}
                         isRoot={messageGroup[0].sender_name === root}
                         dataDir={dataDir}
                     />
                 )
+                if (nextMessage.timestamp_ms - message.timestamp_ms > 21600000) {
+                    bubbles.push(
+                        <Announcement key={uuid()} content={moment(nextMessage.timestamp_ms).format("MMM D, YYYY, h:mm A")} />
+                    )
+                }
                 messageGroup = []
             }
         })
@@ -90,7 +117,7 @@ export default class MessageBubbles extends Component<Props> {
                 <Bubble
                     key={uuid()}
                     messages={messageGroup}
-                    sender={messageGroup[0].sender_name}
+                    sender={messageGroup[0].prettySenderName}
                     isRoot={messageGroup[0].sender_name === root}
                     dataDir={dataDir}
                 />
