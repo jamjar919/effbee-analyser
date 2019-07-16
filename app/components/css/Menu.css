@@ -15,3 +15,9 @@
 .topMenu {
     margin-bottom: 0 !important;
 }
+
+.topSidebarMenu {
+    margin: 0;
+    padding: 0;
+    margin-bottom: 2px solid #FFF;
+}

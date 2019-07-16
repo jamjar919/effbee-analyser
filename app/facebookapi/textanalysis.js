@@ -57,7 +57,7 @@ function countMessages(documents) {
     documents.forEach(document => {
         document.forEach(word => {
             if (typeof count[word] === "undefined") {
-                count[word] = { docCount: 0, wordCount: 0 }
+                count[word] = { docCount: 0, wordCount: 0, messages: [] }
             }
             count[word].wordCount += 1
             totalTerms += 1

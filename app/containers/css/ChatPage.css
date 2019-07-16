@@ -9,3 +9,7 @@
 .nameStatistic {
     line-height: 50px !important;
 }
+
+.messagesSidebarContainer {
+    padding-top: 0 !important;
+}

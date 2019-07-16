@@ -12,6 +12,10 @@ export const defaultNetworkType = {
 export const defaultSelectionType = {
     friend: false,
     chat: false,
+    messages: {
+        allMessages: [],
+        selectedWord: ""
+    },
 }
 
 export const defaultFacebookType = {

@@ -157,6 +157,10 @@ export default class TextAnalysisTimeline extends Component<Props> {
 
     render() {
         const {
+            onSelectWord
+        } = this.props;
+
+        const {
             loading,
             frequencyData,
             highlight,
@@ -220,7 +224,7 @@ export default class TextAnalysisTimeline extends Component<Props> {
                                 }
                                 return (
                                     <Word
-                                        onClick={(word) => { console.log(f) }}
+                                        onClick={(word) => { onSelectWord(f) }}
                                         word={f.word}
                                         score={f.score}
                                         avgScore={lastMaxScores.reduce((sum, score) => sum + score)/rollingAverageSize}
@@ -289,7 +293,7 @@ export default class TextAnalysisTimeline extends Component<Props> {
                         <Menu.Item>
                             <Search
                                 onSearchChange={(e, data) => { this.setState({ highlight: data.value.toLowerCase() }) }}
-                                onResultSelect={(e, data) => { console.log(data); this.setState({ highlight: data.result.title }) }}
+                                onResultSelect={(e, data) => { this.setState({ highlight: data.result.title }) }}
                                 results={results}
                             />
                         </Menu.Item>
@@ -315,11 +319,13 @@ TextAnalysisTimeline.propTypes = {
         profileApi: PropTypes.any,
         messageApi: PropTypes.any,
         friendsApi: PropTypes.any
-    })
+    }),
+    onSelectWord: PropTypes.func,
 }
 
 TextAnalysisTimeline.defaultProps = {
     messages: [],
     title: "",
-    api: {}
+    api: {},
+    onSelectFriend: () => {}
 }

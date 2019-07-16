@@ -16,3 +16,12 @@ export function selectChatAction(dispatch) {
     payload: chat
   });
 }
+
+export const SELECT_MESSAGES = 'SELECT_MESSAGES'
+export function selectMessagesAction(dispatch) {
+  return (allMessages, selectedWord = "") => dispatch({
+    type: SELECT_MESSAGES,
+    payload: { allMessages, selectedWord }
+  });
+}
+

@@ -1,17 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Header, Icon, Segment, Menu, Placeholder, Item, Grid, Statistic, Search } from 'semantic-ui-react'
+import { Header, Icon, Segment, Menu, Sidebar } from 'semantic-ui-react'
 
-import TextAnalysisTimeline from '../components/TextAnalysisTimeline';
-import FriendBreakdownPie from '../components/FriendBreakdownPie';
 import PageContainer from './PageContainer';
-import FriendTimeline from '../components/FriendTimeline';
-import MessageBubbles from '../components/MessageBubbles';
-import ChatNamesHistory from '../components/ChatNamesHistory';
-import TalkedAbout from '../components/TalkedAbout';
+import ChatPageContent from './ChatPageContent';
+import HighlightedMessages from '../components/HighlightedMessages';
 
 import type { defaultFacebookType } from '../reducers/defaultTypes';
+import * as SelectionActions from '../actions/selection';
 import menuStyles from '../components/css/Menu.css';
 import styles from './css/ChatPage.css';
 
@@ -23,49 +20,37 @@ type Props = {
 class ChatPage extends Component<Props> {
     props: Props;
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            visibleSidebar: true
+        }
+    }
+
     render() {
         const {
             history,
             api,
-            chat
+            chat,
+            messages,
+            selectMessages
         } = this.props;
+        
+        const {
+            visibleSidebar
+        } = this.state;
 
         const {
-            messageApi,
-            profileApi
-        } = api
+            allMessages,
+            selectedWord
+        } = messages;
 
         if (chat === false) {
             return 'Nothing selected!';
         }
 
         const isPrivateChat = (chat.participants.length === 2)
-
-        const maxPerson = chat.participants.reduce((max, current) => {
-            if (max.count < current.count) {
-                return current;
-            }
-            return max;
-        })
-
-        const minPerson = chat.participants.reduce((min, current) => {
-            if (min.count > current.count) {
-                return current;
-            }
-            return min;
-        })
-
-        const numFirstMessagesToShow = 10
-        const firstMessages = chat.messages.slice(chat.messages.length - numFirstMessagesToShow, chat.messages.length)
-        firstMessages.reverse()
-
-        const firstMessage = chat.messages[chat.messages.length - 1];
-        const lastMessage = chat.messages[0]
-        const firstTimestamp = Math.floor(firstMessage.timestamp_ms / 1000)
-        const lastTimestamp = Math.floor(lastMessage.timestamp_ms / 1000)
-        const messagesByInterval = messageApi.bucketMessagesByTimeInterval([chat], firstTimestamp, lastTimestamp, 1209600, false)
-        const root = profileApi.getFullName()
-
+    
         return (
             <React.Fragment>
                 <Menu className={menuStyles.topMenu}>
@@ -77,137 +62,49 @@ class ChatPage extends Component<Props> {
                         <Icon name="chevron left" />
                     </Menu.Item>
                 </Menu>
-                <PageContainer>
-                    <Header as='h1'>
-                        <Icon name='envelope' />
-                        <Header.Content>
-                            {chat.title}
-                        </Header.Content>
-                        <Header.Subheader>{isPrivateChat ? 'Private Chat' : 'Group Chat' }</Header.Subheader>
-                    </Header>
-                    <Grid>
-                        { !isPrivateChat ? 
-                        <Grid.Row>
-                            <Grid.Column width={10}>
-                                <Segment.Group>
-                                    <Segment>
-                                        <Header as='h3'>
-                                            <Icon name='area graph' />
-                                            <Header.Content>Basic Statistics</Header.Content>
-                                        </Header>
-                                    </Segment>
-                                    <Segment>
-                                        <Statistic.Group widths="two">
-                                            <Statistic>
-                                                <Statistic.Value>{chat.messages.length}</Statistic.Value>
-                                                <Statistic.Label>Total Messages</Statistic.Label>
-                                            </Statistic>
-                                            <Statistic>
-                                            <Statistic.Value>
-                                                <Icon name='user' />
-                                                {chat.participants.length}
-                                                </Statistic.Value>
-                                                <Statistic.Label>Participants</Statistic.Label>
-                                            </Statistic>
-                                            <Statistic>
-                                                <Statistic.Label>Top Contributor</Statistic.Label>
-                                                <Statistic.Value text className={styles.nameStatistic}>{maxPerson.name}</Statistic.Value>
-                                                <Statistic.Label>{maxPerson.count} Messages</Statistic.Label>
-                                            </Statistic>
-                                            <Statistic>
-                                                <Statistic.Label>Bottom Contributor</Statistic.Label>
-                                                <Statistic.Value text className={styles.nameStatistic}>{minPerson.name}</Statistic.Value>
-                                                <Statistic.Label>{minPerson.count} Messages</Statistic.Label>
-                                            </Statistic>
-                                        </Statistic.Group>
-                                    </Segment>
-                                </Segment.Group>
-                            </Grid.Column>
-                            <Grid.Column width={6}>
-                                <Segment>
-                                    <FriendBreakdownPie friends={chat.participants} />
-                                </Segment>
-                            </Grid.Column>
-                        </Grid.Row> : '' }
-                        <Grid.Row>
-                            <Grid.Column width={8}>
-                                <Segment>
-                                    <Menu secondary>
-                                        <Menu.Item>
-                                            <Header as='h3'>
-                                                <Icon name='thumbtack' />
-                                                <Header.Content>First Messages</Header.Content>
-                                            </Header>
-                                        </Menu.Item>
-                                    </Menu>
-                                    <MessageBubbles
-                                        messages={firstMessages}
-                                        root={root}
-                                    />
-                                </Segment>
-                            </Grid.Column>
-                            <Grid.Column width={8}>
-                                { !isPrivateChat ? <Segment>
-                                    <Header as='h3'>
-                                        <Icon name='address card' />
-                                        <Header.Content>Group Names</Header.Content>
-                                        <Header.Subheader>Group Chat Name History</Header.Subheader>
-                                    </Header>
-                                    <ChatNamesHistory 
-                                        messages={chat.messages}
-                                    />
-                                </Segment> : '' }
-                                <Segment>
-                                    <Header as='h3'>
-                                        <Icon name='users' />
-                                        <Header.Content>Talked About</Header.Content>
-                                        <Header.Subheader>Who's mentioned most in your chat from your friends list</Header.Subheader>
-                                    </Header>
-                                    <TalkedAbout 
-                                        messages={chat.messages}
-                                        participants={chat.participants}
-                                        api={api}
-                                    />
-                                </Segment>
-                            </Grid.Column>
-                        </Grid.Row>
-                        <Grid.Row>
-                            <Grid.Column width={16}>
-                                <Segment>
-                                    <Menu secondary>
-                                        <Menu.Item>
-                                            <Header as='h3'>
-                                                <Icon name='text width' />
-                                                <Header.Content>Text Analysis</Header.Content>
-                                                <Header.Subheader>Popular conversation topics ordered by month</Header.Subheader>
-                                            </Header>
-                                        </Menu.Item>
-                                    </Menu>
-                                    <TextAnalysisTimeline
-                                        messages={chat.messages}
-                                        api={api}
-                                    />
-                                </Segment>
-                            </Grid.Column>
-                        </Grid.Row>
-                        <Grid.Row>
-                            <Grid.Column width={16}>
-                                <Segment>
-                                    <Header as='h3'>
-                                        <Icon name='users' />
-                                        <Header.Content>Friends Area Chart</Header.Content>
-                                    </Header>
-                                    <FriendTimeline 
-                                        messages={messagesByInterval}
-                                        participants={chat.participants}
-                                        firstTimestamp={firstTimestamp}
-                                        lastTimestamp={lastTimestamp}
-                                    />
-                                </Segment>
-                            </Grid.Column>
-                        </Grid.Row>
-                    </Grid>
-                </PageContainer>
+                <Sidebar.Pushable>
+                    <Sidebar
+                        as={Segment}
+                        animation='slide along'
+                        vertical
+                        visible={visibleSidebar}
+                        direction="right"
+                        className={styles.messagesSidebarContainer}
+                        width="very wide"
+                    >
+                        <Menu className={menuStyles.topSidebarMenu} inverted>
+                            <Menu.Item 
+                                onClick={() => {
+                                    this.setState({ visibleSidebar: false })
+                                }}
+                            >
+                                <Icon name="chevron right" />
+                            </Menu.Item>
+                        </Menu>
+                        <HighlightedMessages
+                            messages={allMessages}
+                            selectedWord={selectedWord}
+                        />
+                    </Sidebar>
+                    <Sidebar.Pusher>
+                        <PageContainer>
+                            <Header as='h1'>
+                                <Icon name='envelope' />
+                                <Header.Content>
+                                    {chat.title}
+                                </Header.Content>
+                                <Header.Subheader>{isPrivateChat ? 'Private Chat' : 'Group Chat' }</Header.Subheader>
+                            </Header>
+                            <ChatPageContent
+                                api={api}
+                                chat={chat}
+                                isPrivateChat={isPrivateChat}
+                                selectMessages={(allMessages, highlightedMessages) => { selectMessages(allMessages, highlightedMessages) }}
+                            />
+                        </PageContainer>
+                    </Sidebar.Pusher>
+                </Sidebar.Pushable>
+
             </React.Fragment>
         );
     }
@@ -217,12 +114,15 @@ function mapStateToProps(state) {
     const api = state.facebook
     return {
         api,
-        chat: state.selection.chat
+        chat: state.selection.chat,
+        messages: state.selection.messages
     };
 }
   
-function mapDispatchToProps() {
-    return {}
+function mapDispatchToProps(dispatch) {
+    return {
+        selectMessages: SelectionActions.selectMessagesAction(dispatch)
+    }
 }
   
 export default withRouter(connect(
