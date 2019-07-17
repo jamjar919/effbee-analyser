@@ -29,6 +29,15 @@ export default class MessageTimeline extends Component<Props> {
         this.renderGraph()
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        if (
+            (prevState.mode !== this.state.mode) ||
+            this.props !== prevProps
+        ) {
+            this.renderGraph()
+        }
+    }
+
     componentWillUnmount() {
         const {
             chart
@@ -36,15 +45,6 @@ export default class MessageTimeline extends Component<Props> {
         if (chart !== null) {
             chart.destroy();
             console.log("destroying chart...")
-        }
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        if (
-            (prevState.mode !== this.state.mode) ||
-            this.props !== prevProps
-        ) {
-            this.renderGraph()
         }
     }
 

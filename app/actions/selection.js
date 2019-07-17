@@ -25,3 +25,10 @@ export function selectMessagesAction(dispatch) {
   });
 }
 
+export const SELECT_MESSAGES_INDEX = 'SELECT_MESSAGES_INDEX'
+export function selectMessagesIndexAction(dispatch) {
+  return (messagesIndex) => dispatch({
+    type: SELECT_MESSAGES_INDEX,
+    payload: messagesIndex 
+  });
+}

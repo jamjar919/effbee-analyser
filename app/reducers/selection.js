@@ -1,5 +1,5 @@
 // @flow
-import { SELECT_FRIEND, SELECT_CHAT, SELECT_MESSAGES } from '../actions/selection';
+import { SELECT_FRIEND, SELECT_CHAT, SELECT_MESSAGES, SELECT_MESSAGES_INDEX } from '../actions/selection';
 import type { selectionType, Action } from './types';
 import { defaultSelectionType } from './defaultTypes';
 
@@ -21,8 +21,18 @@ export default function selectFriend(state: selectionType = defaultSelectionType
                 ...state,
                 messages: {
                     allMessages,
-                    selectedWord
+                    selectedWord,
+                    index: -1
                 },
+            }
+        }
+        case SELECT_MESSAGES_INDEX: {
+            return {
+                ...state,
+                messages: {
+                    ...state.messages,
+                    index: action.payload
+                }
             }
         }
         default:

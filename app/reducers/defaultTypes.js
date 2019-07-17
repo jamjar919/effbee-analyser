@@ -14,7 +14,8 @@ export const defaultSelectionType = {
     chat: false,
     messages: {
         allMessages: [],
-        selectedWord: ""
+        selectedWord: "",
+        index: -1
     },
 }
 

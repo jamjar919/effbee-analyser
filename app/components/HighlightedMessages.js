@@ -5,6 +5,7 @@ import { Card } from 'semantic-ui-react';
 
 import stopwords from '../facebookapi/stopwords'
 import MessageBubbles from './MessageBubbles';
+import ButtonToMessages from './ButtonToMessages';
 
 import styles from './css/HighlightedMessages.css'
 
@@ -13,6 +14,20 @@ export default class HighlightedMessages extends Component<Props> {
         super(props);
         this.state = {
             tokenisedMessages: []
+        }
+    }
+
+    componentDidMount() {
+        this.updateTokenisedWords()
+    }
+
+    componentDidUpdate(prevProps) {
+        const {
+            messages
+        } = this.props
+        if (prevProps.messages !== messages) {
+            console.info("updating tokenised words")
+            this.updateTokenisedWords()
         }
     }
 
@@ -34,20 +49,6 @@ export default class HighlightedMessages extends Component<Props> {
                 }
         })
         this.setState({ tokenisedMessages })
-    }
-
-    componentDidMount() {
-        this.updateTokenisedWords()
-    }
-
-    componentDidUpdate(prevProps) {
-        const {
-            messages
-        } = this.props
-        if (prevProps.messages !== messages) {
-            console.info("updating tokenised words")
-            this.updateTokenisedWords()
-        }
     }
 
     render() {
@@ -81,6 +82,7 @@ export default class HighlightedMessages extends Component<Props> {
                     <MessageBubbles 
                         messages={toShow}
                     />
+                    <ButtonToMessages index={message.index} text="Go to conversation" />
                 </Card>
             )
         })
