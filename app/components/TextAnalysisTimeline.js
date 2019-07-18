@@ -224,7 +224,7 @@ export default class TextAnalysisTimeline extends Component<Props> {
                                 }
                                 return (
                                     <Word
-                                        onClick={(word) => { onSelectWord(f) }}
+                                        onClick={(word) => { onSelectWord(f, [bucket.start, bucket.end]) }}
                                         word={f.word}
                                         score={f.score}
                                         avgScore={lastMaxScores.reduce((sum, score) => sum + score, 0)/rollingAverageSize}

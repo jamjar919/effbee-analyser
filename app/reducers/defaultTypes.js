@@ -15,7 +15,8 @@ export const defaultSelectionType = {
     messages: {
         allMessages: [],
         selectedWord: "",
-        index: -1
+        index: -1,
+        selectedDateRange: [-1, -1]
     },
 }
 

@@ -19,9 +19,9 @@ export function selectChatAction(dispatch) {
 
 export const SELECT_MESSAGES = 'SELECT_MESSAGES'
 export function selectMessagesAction(dispatch) {
-  return (allMessages, selectedWord = "") => dispatch({
+  return (allMessages, selectedWord = "", dateRange = [-1, -1]) => dispatch({
     type: SELECT_MESSAGES,
-    payload: { allMessages, selectedWord }
+    payload: { allMessages, selectedWord, dateRange }
   });
 }
 

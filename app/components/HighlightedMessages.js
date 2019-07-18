@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import natural from 'natural';
 import uuid from 'uuid';
 import { Card } from 'semantic-ui-react';
+import moment from 'moment';
 
 import stopwords from '../facebookapi/stopwords'
 import MessageBubbles from './MessageBubbles';
@@ -53,7 +54,8 @@ export default class HighlightedMessages extends Component<Props> {
 
     render() {
         const {
-            selectedWord
+            selectedWord,
+            messageDateRange
         } = this.props;
 
         const {
@@ -66,7 +68,12 @@ export default class HighlightedMessages extends Component<Props> {
 
         const previewSize = 5;
 
-        const bubbles = tokenisedMessages.filter(message => (
+        console.log(messageDateRange)
+        const applyDateFilter = (messageDateRange[0] !== -1) && (messageDateRange[1] !== -1)
+
+        const bubbles = tokenisedMessages
+        .filter(message => (message.timestamp_ms > messageDateRange[0]) && (message.timestamp_ms < messageDateRange[1]))
+        .filter(message => (
             message.tokens.indexOf(selectedWord.word.toLowerCase()) > -1
         )).map(message => {
             let startIndex = 0;

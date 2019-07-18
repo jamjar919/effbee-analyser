@@ -55,7 +55,8 @@ class ChatPage extends Component<Props> {
 
         const {
             allMessages,
-            selectedWord
+            selectedWord,
+            messageDateRange
         } = messages;
 
         if (chat === false) {
@@ -105,6 +106,7 @@ class ChatPage extends Component<Props> {
                             <HighlightedMessages
                                 messages={allMessages}
                                 selectedWord={selectedWord}
+                                messageDateRange={messageDateRange}
                             />
                         </div>
                     </Sidebar>
@@ -121,7 +123,7 @@ class ChatPage extends Component<Props> {
                                 api={api}
                                 chat={chat}
                                 isPrivateChat={isPrivateChat}
-                                selectMessages={(allMessages, highlightedMessages) => { selectMessages(allMessages, highlightedMessages) }}
+                                selectMessages={(allMessages, highlightedMessages, dateRange) => { selectMessages(allMessages, highlightedMessages, dateRange) }}
                             />
                         </PageContainer>
                     </Sidebar.Pusher>
@@ -137,7 +139,7 @@ function mapStateToProps(state) {
     return {
         api,
         chat: state.selection.chat,
-        messages: state.selection.messages
+        messages: state.selection.messages,
     };
 }
   

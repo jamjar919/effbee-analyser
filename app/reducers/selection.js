@@ -16,12 +16,13 @@ export default function selectFriend(state: selectionType = defaultSelectionType
                 chat: action.payload
             }
         case SELECT_MESSAGES: {
-            const { allMessages, selectedWord } = action.payload
+            const { allMessages, selectedWord, dateRange } = action.payload
             return {
                 ...state,
                 messages: {
                     allMessages,
                     selectedWord,
+                    dateRange,
                     index: -1
                 },
             }

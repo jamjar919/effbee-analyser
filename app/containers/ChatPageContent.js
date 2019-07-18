@@ -170,7 +170,7 @@ export default class ChatPageContent extends Component<Props> {
                             <TextAnalysisTimeline
                                 messages={chat.messages}
                                 api={api}
-                                onSelectWord={(word) => { selectMessages(chat.messages , word) }}
+                                onSelectWord={(word, timeRange) => { selectMessages(chat.messages, word, timeRange) }}
                             />
                         </Segment>
                     </Grid.Column>
