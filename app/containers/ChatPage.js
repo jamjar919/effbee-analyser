@@ -33,6 +33,11 @@ class ChatPage extends Component<Props> {
         if (prevProps.messages.selectedWord !== this.props.messages.selectedWord) {
             this.setState({ visibleSidebar: true })
         }
+
+        if (prevProps.chat.messages !== this.props.messages.allMessages) {
+            this.props.selectMessages(this.props.chat.messages)
+            this.setState({ visibleSidebar: false })
+        }
     }
 
     render() {

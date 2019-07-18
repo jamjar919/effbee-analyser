@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Header, Icon, Segment, Menu, Placeholder, Item, Grid, Statistic, Search } from 'semantic-ui-react'
+import { Header, Icon, Segment, Menu, Placeholder, Item, Grid, Statistic, Search, Card } from 'semantic-ui-react'
 
 import FriendTimeline from '../components/FriendTimeline';
 import MessageBubbles from '../components/MessageBubbles';
@@ -114,8 +114,8 @@ export default class ChatPageContent extends Component<Props> {
                 </Grid.Row> : '' }
                 <Grid.Row>
                     <Grid.Column width={8}>
-                        <Segment>
-                            <Menu secondary>
+                        <Card fluid className={styles.firstChatContainer}>
+                            <Menu secondary className={styles.firstChatHeaderContainer}>
                                 <Menu.Item>
                                     <Header as='h3'>
                                         <Icon name='thumbtack' />
@@ -128,7 +128,7 @@ export default class ChatPageContent extends Component<Props> {
                                 root={root}
                             />
                             <ButtonToMessages index={chat.messages.length - 1} text="Go to conversation" />
-                        </Segment>
+                        </Card>
                     </Grid.Column>
                     <Grid.Column width={8}>
                         { !isPrivateChat ? <Segment>

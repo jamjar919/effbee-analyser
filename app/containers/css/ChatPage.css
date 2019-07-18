@@ -17,3 +17,11 @@
 .messagesSidebarContent {
     padding: 0 1em calc(1em + 42px) 1em
 }
+
+.firstChatContainer {
+    padding-top: 0.35em !important;
+}
+
+.firstChatHeaderContainer {
+    margin-bottom: 0 !important;
+}

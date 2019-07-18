@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Card, Menu, Icon, Button } from 'semantic-ui-react';
+import { Card, Menu, Icon, Button, Input, Label, Search, Popup } from 'semantic-ui-react';
+import moment from 'moment';
 
 import PageContainer from './PageContainer'
 import MessageBubbles from '../components/MessageBubbles';
@@ -9,7 +10,43 @@ import MessageBubbles from '../components/MessageBubbles';
 import menuStyles from '../components/css/Menu.css';
 import styles from './css/MessagesPage.css';
 
-const DEFAULT_MESSAGE_RANGE = 30;
+class MessageTimeControl extends Component<Props> {
+    constructor(props) {
+        super(props)
+        this.state = {
+            date: moment("invalid")
+        }
+    }
+
+    render() {
+        const {
+            onSelect
+        } = this.props
+
+        return (
+            <Popup 
+                trigger={
+                    <Input
+                        action={<Button primary onClick={() => { onSelect(this.state.date) }}>Go</Button>}
+                        actionPosition='right'
+                        placeholder='Enter a date'
+                        onChange={(e, input) => {
+                            this.setState({ date: moment(input.value, ["DD/MM/YYYY", "DD/MM/YY"]) })
+                        }}
+                    />
+                }
+                position="bottom center"
+            >
+                <Popup.Header>{this.state.date.format("dddd, MMMM Do YYYY")}</Popup.Header>
+                <Popup.Content>
+                    Type a date in the form day/month/year and hit "Go" to jump directly to the closest message near that date.
+                </Popup.Content>
+            </Popup>
+        )
+    }
+}
+
+const DEFAULT_MESSAGE_RANGE = 10;
 const getIndexRange = (midpoint, max) => [Math.max(0, midpoint - DEFAULT_MESSAGE_RANGE), Math.min(max, midpoint + DEFAULT_MESSAGE_RANGE)]
 
 class MessagesPage extends Component<Props> {
@@ -44,6 +81,7 @@ class MessagesPage extends Component<Props> {
         })
     }
 
+    // it feels like we only 
     goBackwards() {
         const {
             messages
@@ -58,9 +96,27 @@ class MessagesPage extends Component<Props> {
         this.setState({
             indexRange: [
                 startIndex,
-                Math.min(messages.length - 1, endIndex + DEFAULT_MESSAGE_RANGE)
+                Math.min(messages.length, endIndex + DEFAULT_MESSAGE_RANGE)
             ]
         })
+    }
+
+    goToDate(date) {
+        const {
+            messages
+        } = this.props;
+
+        let closestIndex = -1;
+        let i = 0;
+        while((i < messages.length) && (closestIndex < 0)) {
+            if (date.isAfter(moment(messages[i].timestamp_ms))) {
+                closestIndex = i
+            }
+            i += 1
+        }
+
+        this.setState({ indexRange: getIndexRange(closestIndex, messages.length) })
+        
     }
 
     render() {
@@ -87,8 +143,6 @@ class MessagesPage extends Component<Props> {
             return 'No messages selected!'
         }
 
-        console.log(messages)
-
         const toShow = messages.slice(startIndex, endIndex);
         toShow.reverse()
 
@@ -104,17 +158,29 @@ class MessagesPage extends Component<Props> {
                     </Menu.Item>
                 </Menu>
                 <PageContainer withMenu>
+                    <Menu secondary>
+                        <Menu.Item>
+                            <Label>{messages.length - endIndex} to {messages.length - startIndex} of {messages.length}</Label>
+                        </Menu.Item>
+                        <Menu.Menu position="right">
+                            <Menu.Item>
+                                <MessageTimeControl
+                                    onSelect={(date) => { this.goToDate(date) }}
+                                />
+                            </Menu.Item>
+                        </Menu.Menu>
+                    </Menu>
                     <Card className={styles.bubblesContainer} fluid>
-                        <Button onClick={() => { this.goBackwards() }} primary>
+                        { endIndex !== messages.length ? <Button onClick={() => { this.goBackwards() }} primary>
                             More
-                        </Button>
+                        </Button> : '' }
                         <MessageBubbles
                             messages={toShow}
                             root={profileApi.getFullName()}
                         />
-                        <Button onClick={() => { this.goForwards() }} primary>
+                        { startIndex !== 0 ? <Button onClick={() => { this.goForwards() }} primary>
                             More
-                        </Button>
+                        </Button> : '' }
                     </Card>
                 </PageContainer>
             </React.Fragment>

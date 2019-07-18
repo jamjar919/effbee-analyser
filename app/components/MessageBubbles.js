@@ -91,7 +91,7 @@ export default class MessageBubbles extends Component<Props> {
                         (nextMessage.sender_name !== message.sender_name) &&            // make message group if sender is different
                         (messageGroup.length)                                           // and we have messages in the group
                     ) || (                                                              // or
-                        (nextMessage.timestamp_ms - message.timestamp_ms > 21600000)    // difference in timestamps is more than 6 hours
+                        (nextMessage.timestamp_ms - message.timestamp_ms > 3600000)    // difference in timestamps is more than 1 hour
                     )
                 )
             ) {
@@ -104,7 +104,7 @@ export default class MessageBubbles extends Component<Props> {
                         dataDir={dataDir}
                     />
                 )
-                if (nextMessage.timestamp_ms - message.timestamp_ms > 21600000) {
+                if (nextMessage.timestamp_ms - message.timestamp_ms > 3600000) {
                     bubbles.push(
                         <Announcement key={uuid()} content={moment(nextMessage.timestamp_ms).format("MMM D, YYYY, h:mm A")} />
                     )
