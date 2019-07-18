@@ -14,7 +14,8 @@ import styles from './css/ChatPage.css';
 
 type Props = {
     history: object,
-    api: defaultFacebookType
+    api: defaultFacebookType,
+    messages: array
 };
 
 class ChatPage extends Component<Props> {
@@ -57,7 +58,7 @@ class ChatPage extends Component<Props> {
         }
 
         const isPrivateChat = (chat.participants.length === 2)
-    
+
         return (
             <React.Fragment>
                 <Menu className={menuStyles.topMenu}>
@@ -103,7 +104,7 @@ class ChatPage extends Component<Props> {
                         </div>
                     </Sidebar>
                     <Sidebar.Pusher>
-                        <PageContainer>
+                        <PageContainer withMenu>
                             <Header as='h1'>
                                 <Icon name='envelope' />
                                 <Header.Content>

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames'
 import uuid from 'uuid/v4';
 import moment from 'moment';
+import { Popup } from 'semantic-ui-react'
 
 import Identicon from './Identicon';
 import SettingsFile from '../SettingsFile';

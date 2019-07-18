@@ -2,5 +2,9 @@
     padding: var(--containerPadding);
     width: var(--mainWidth);
     overflow-y: scroll;
-    height: 100vh
+    height: 100vh;
+}
+
+.withMenu {
+    height: calc(100vh - 42px)
 }

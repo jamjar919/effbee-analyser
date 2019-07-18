@@ -7,6 +7,7 @@ import ChatNamesHistory from '../components/ChatNamesHistory';
 import TalkedAbout from '../components/TalkedAbout';
 import TextAnalysisTimeline from '../components/TextAnalysisTimeline';
 import FriendBreakdownPie from '../components/FriendBreakdownPie';
+import ButtonToMessages from '../components/ButtonToMessages';
 
 import styles from './css/ChatPage.css';
 
@@ -14,11 +15,13 @@ export default class ChatPageContent extends Component<Props> {
 
     shouldComponentUpdate(nextProps, nextState) {
         const {
-            api,
             chat,
-            isPrivateChat,
             selectMessages
         } = this.props;
+
+        if (chat.messages !== nextProps.chat.messages) {
+            selectMessages(chat.messages, "")
+        }
 
         if (chat !== nextProps.chat) {
             return true;
@@ -124,6 +127,7 @@ export default class ChatPageContent extends Component<Props> {
                                 messages={firstMessages}
                                 root={root}
                             />
+                            <ButtonToMessages index={chat.messages.length - 1} text="Go to conversation" />
                         </Segment>
                     </Grid.Column>
                     <Grid.Column width={8}>

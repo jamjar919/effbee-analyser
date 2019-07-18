@@ -15,5 +15,5 @@
 }
 
 .messagesSidebarContent {
-    padding: 1em
+    padding: 0 1em calc(1em + 42px) 1em
 }

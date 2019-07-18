@@ -66,7 +66,7 @@ class Friend extends Component<Props> {
                         <Icon name="chevron left" />
                     </Menu.Item>
                 </Menu>
-                <PageContainer>
+                <PageContainer withMenu>
                     <Header as='h1'>
                         <Identicon size={100} value={name} className="ui circular image"/>
                         <Header.Content>

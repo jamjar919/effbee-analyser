@@ -60,6 +60,10 @@ export default class HighlightedMessages extends Component<Props> {
             tokenisedMessages
         } = this.state;
 
+        if (!tokenisedMessages || selectedWord === "") {
+            return 'Failed to find any messages';
+        }
+
         const previewSize = 5;
 
         const bubbles = tokenisedMessages.filter(message => (

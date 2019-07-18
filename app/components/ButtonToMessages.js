@@ -24,7 +24,7 @@ class ButtonToMessages extends Component<Props> {
         } = this.props;
 
         return (
-            <Button onClick={() => { this.goToMessages() }}>
+            <Button onClick={() => { this.goToMessages() }} primary>
                 {text}
             </Button>
         )
