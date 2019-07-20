@@ -69,10 +69,13 @@ export default class HighlightedMessages extends Component<Props> {
         const previewSize = 5;
 
         console.log(messageDateRange)
-        const applyDateFilter = (messageDateRange[0] !== -1) && (messageDateRange[1] !== -1)
+        let dateFilteredMessages = tokenisedMessages
+        if (messageDateRange) {
+            dateFilteredMessages = tokenisedMessages
+                .filter(message => ((message.timestamp_ms > messageDateRange[0] * 1000) && (message.timestamp_ms < messageDateRange[1] * 1000)))
+        }
 
-        const bubbles = tokenisedMessages
-        .filter(message => (message.timestamp_ms > messageDateRange[0]) && (message.timestamp_ms < messageDateRange[1]))
+        const bubbles = dateFilteredMessages
         .filter(message => (
             message.tokens.indexOf(selectedWord.word.toLowerCase()) > -1
         )).map(message => {
@@ -80,7 +83,7 @@ export default class HighlightedMessages extends Component<Props> {
             if (message.index - previewSize > 0) {
                 startIndex = message.index - previewSize;
             }
-            let endIndex = tokenisedMessages.length - 1;
+            let endIndex = tokenisedMessages.length;
             if (message.index + previewSize < tokenisedMessages.length) {
                 endIndex = message.index + previewSize
             }

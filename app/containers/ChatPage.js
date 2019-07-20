@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Header, Icon, Segment, Menu, Sidebar } from 'semantic-ui-react'
+import { Header, Icon, Segment, Menu, Sidebar, Checkbox } from 'semantic-ui-react'
+import moment from 'moment';
 
 import PageContainer from './PageContainer';
 import ChatPageContent from './ChatPageContent';
@@ -25,8 +26,13 @@ class ChatPage extends Component<Props> {
         super(props);
         this.state = {
             visibleSidebar: false,
-            timeRangeMessages: []
+            timeRangeMessages: [],
+            filterByDates: true
         }
+    }
+
+    componentDidMount() {
+        this.setState({ visibleSidebar: false })
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -50,13 +56,14 @@ class ChatPage extends Component<Props> {
         } = this.props;
         
         const {
-            visibleSidebar
+            visibleSidebar,
+            filterByDates
         } = this.state;
 
         const {
             allMessages,
             selectedWord,
-            messageDateRange
+            dateRange
         } = messages;
 
         if (chat === false) {
@@ -87,7 +94,7 @@ class ChatPage extends Component<Props> {
                         width="very wide"
                     >
                         <Menu className={menuStyles.topSidebarMenu}>
-                            <Menu.Item 
+                            <Menu.Item
                                 onClick={() => {
                                     this.setState({ visibleSidebar: false })
                                 }}
@@ -99,14 +106,32 @@ class ChatPage extends Component<Props> {
                             <Header as='h2'>
                                 <Icon name='searchengin' />
                                 <Header.Content>
-                                    Conversations containing the word {selectedWord.word}
+                                    Conversations with the word {selectedWord.word}
                                 </Header.Content>
-                                <Header.Subheader>{selectedWord.word}</Header.Subheader>
+                                <Header.Subheader>
+                                    { filterByDates ? `${moment(dateRange[0] * 1000).format('MMMM Do YYYY')} - ${moment(dateRange[1]* 1000).format('MMMM Do YYYY')}`
+                                        : 'No date filter' }
+                                </Header.Subheader>
                             </Header>
+                            <Menu secondary>
+                                <Menu.Item>
+                                    Filter to date range
+                                </Menu.Item>
+                                <Menu.Menu position="right">
+                                    <Menu.Item> 
+                                        <Checkbox 
+                                            toggle 
+                                            checked={filterByDates}
+                                            onChange={() => {
+                                                this.setState({ filterByDates: !filterByDates })
+                                            }} />
+                                    </Menu.Item>
+                                </Menu.Menu>
+                            </Menu>
                             <HighlightedMessages
                                 messages={allMessages}
                                 selectedWord={selectedWord}
-                                messageDateRange={messageDateRange}
+                                messageDateRange={filterByDates ? dateRange : false}
                             />
                         </div>
                     </Sidebar>
@@ -123,7 +148,11 @@ class ChatPage extends Component<Props> {
                                 api={api}
                                 chat={chat}
                                 isPrivateChat={isPrivateChat}
-                                selectMessages={(allMessages, highlightedMessages, dateRange) => { selectMessages(allMessages, highlightedMessages, dateRange) }}
+                                selectMessages={(allMessages, highlightedMessages, dateRange) => {
+                                    this.setState({ filterByDates: true }, () => {
+                                        selectMessages(allMessages, highlightedMessages, dateRange)
+                                    })
+                                }}
                             />
                         </PageContainer>
                     </Sidebar.Pusher>
