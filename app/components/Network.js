@@ -55,7 +55,7 @@ export default class Network extends Component<Props> {
         this.renderGraph()
     }
 
-    shouldComponentUpdate(nextProps) {
+    shouldComponentUpdate(nextProps, nextState) {
         const {
             showRoot,
             rootName,
@@ -68,6 +68,14 @@ export default class Network extends Component<Props> {
             networkNodes,
             networkEdges
         } = this.state
+
+        if (networkNodes !== nextState.networkNodes) {
+            console.log("nodes update")
+        }
+
+        if (networkEdges !== nextState.networkEdges) {
+            console.log("edges update")
+        }
 
         if (showRoot !== nextProps.showRoot) {            
             if (nextProps.showRoot) {
