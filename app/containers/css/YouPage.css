@@ -10,3 +10,8 @@
 .youPageContainer {
     display: flex;
 }
+
+
+.labelHeader {
+    float: right;
+}
