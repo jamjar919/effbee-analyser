@@ -1,0 +1,12 @@
+.youGroup {
+    width: 300px;
+    margin: auto !important;
+}
+
+.centeredContent {
+    margin: auto;
+}
+
+.youPageContainer {
+    display: flex;
+}

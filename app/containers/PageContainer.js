@@ -8,11 +8,12 @@ export default class PageContainer extends React.Component<Props> {
     render() {
         const {
             children,
-            withMenu
+            withMenu,
+            className
         } = this.props
 
         return (
-            <div className={classNames(styles.container, withMenu ? styles.withMenu : '')}>
+            <div className={classNames(styles.container, withMenu ? styles.withMenu : '', className)}>
                 {children}
             </div>
         );
@@ -21,9 +22,11 @@ export default class PageContainer extends React.Component<Props> {
 
 PageContainer.propTypes = {
     children: PropTypes.node.isRequired,
-    withMenu: PropTypes.bool
+    withMenu: PropTypes.bool,
+    className: PropTypes.string
 }
 
 PageContainer.defaultProps = {
-    withMenu: false
+    withMenu: false,
+    className: ""
 }

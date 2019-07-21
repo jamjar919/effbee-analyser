@@ -13,6 +13,7 @@ import FriendsTimelinePage from './containers/FriendTimelinePage';
 import ChatPage from './containers/ChatPage';
 import ChatsPage from './containers/ChatsPage';
 import MessagesPage from './containers/MessagesPage';
+import YouPage from './containers/YouPage';
 import Friend from './components/Friend';
 import Menu from './components/Menu';
 
@@ -51,6 +52,7 @@ export default props => {
                         <Route path={routes.FRIENDS} component={FriendsPage} />
                         <Route path={routes.FRIENDSTIMELINE} component={FriendsTimelinePage} />
                         <Route path={routes.SETTINGS} component={SettingsPage} />
+                        <Route path={routes.YOU} component={YouPage} />
                     </Switch>
                 </div>
             </App>
