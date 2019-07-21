@@ -3,7 +3,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Menu, Icon, Loader, Header, Segment, Placeholder, Dropdown, Label } from 'semantic-ui-react'
 import { bindActionCreators } from 'redux';
+import uuid from 'uuid/v4';
+import moment from 'moment';
 
+import { getNetworkData } from '../facebookapi/network';
 import Network from '../components/Network';
 import FriendPreview from '../components/FriendPreview';
 import RightPanel from './RightPanel';
@@ -31,6 +34,53 @@ type Props = {
 class NetworkPage extends Component<Props> {
     props: Props;
 
+    constructor(props) {
+        super(props)
+        this.state = {
+            enableTimeline: false,
+            currentTimelineStep: 0,
+            timelineSteps: [],
+            numTimelineSteps: 10
+        }
+    }
+
+    computeTimelineSteps() {
+        const {
+            api
+        } = this.props
+
+        const {
+            profileApi,
+            messageApi,
+            friendsApi
+        } = api
+
+        const {
+            numTimelineSteps
+        } = this.state
+
+        const {
+            firstTimestamp,
+            lastTimestamp
+        } = messageApi
+
+        const timelineSteps = []
+        const rootName = profileApi.getFullName();
+        const friends = friendsApi.get();
+        const messages = messageApi.getMessages();
+        const timeInterval = Math.ceil((lastTimestamp - firstTimestamp)/numTimelineSteps)
+
+        for (let i = 0; i <= numTimelineSteps; i += 1) {
+            console.log(firstTimestamp + (timeInterval * i), timeInterval)
+            timelineSteps.push({
+                time: firstTimestamp + (timeInterval * i),
+                networkData: getNetworkData(rootName, friends, messages, firstTimestamp + (timeInterval * i))
+            })
+        }
+
+        this.setState({ timelineSteps, currentTimelineStep: 0 })
+    }
+
     render() {
         const {
             api,
@@ -43,6 +93,12 @@ class NetworkPage extends Component<Props> {
             fitGroups,
             groups
         } = this.props
+
+        const {
+            enableTimeline,
+            currentTimelineStep,
+            timelineSteps
+        } = this.state;
 
         const rootName = api.profileApi.getFullName();
 
@@ -74,6 +130,20 @@ class NetworkPage extends Component<Props> {
             );
         }
 
+        /* compute timeline data if it's enabled */
+        if (enableTimeline && timelineSteps.length === 0) {
+            setTimeout(() => {
+                this.computeTimelineSteps()
+            }, 100)
+        }
+
+        let nodesToShow = networkData.nodes
+        let edgesToShow = networkData.edges
+        if (enableTimeline && timelineSteps.length > 0) {
+            nodesToShow = timelineSteps[currentTimelineStep].networkData.nodes
+            edgesToShow = timelineSteps[currentTimelineStep].networkData.edges
+        }
+
         return (
             <div className={styles.container}>
                 <Menu className={styles.menuContainer}>
@@ -86,6 +156,9 @@ class NetworkPage extends Component<Props> {
                         </Header>
                     </Menu.Item>
                     <Menu.Menu position="right">
+                        <Menu.Item onClick={() => { this.setState({ enableTimeline: !enableTimeline }) }}>
+                            Network Timeline
+                        </Menu.Item>
                         <Menu.Item onClick={() => { fitGroups(api) }}>
                             Group
                         </Menu.Item>
@@ -108,13 +181,25 @@ class NetworkPage extends Component<Props> {
                     rootName={rootName}
                     showRoot={this.props.showRoot}
                     selectFriend={(name) => this.props.selectFriend(name)}
-                    nodes={networkData.nodes}
-                    edges={networkData.edges}
+                    nodes={nodesToShow}
+                    edges={edgesToShow}
                     groups={groups}
                     edgeType={edgeType}
                 />
                 <RightPanel>
-                    <FriendPreview />
+                    { enableTimeline ? (
+                            <Menu pointing secondary vertical>
+                                { timelineSteps.map((step, i) => (
+                                    <Menu.Item
+                                        active={i === currentTimelineStep}
+                                        key={uuid()}
+                                        onClick={() => { this.setState({ currentTimelineStep: i }) }}
+                                    >
+                                        {moment.unix(step.time).format("MMMM Do YYYY")}
+                                    </Menu.Item>
+                                )) }
+                            </Menu>
+                    ) : <FriendPreview /> }
                 </RightPanel>
             </div>
         );

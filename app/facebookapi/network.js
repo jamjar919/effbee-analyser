@@ -37,8 +37,6 @@ export function getNetworkData(rootName, friends, messages, beforeTime = Math.ro
             })
         })
 
-    console.log(adjacency)
-
     /** compute network data */
     const friendNodes = friends
         .map(friend => ({
