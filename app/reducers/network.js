@@ -42,33 +42,66 @@ export default function toggleShowRoot(state: networkType = defaultNetworkType, 
                 friendsApi
             } = api
             console.log("computing network data...")
-
-            /** compute network data */
             const rootName = profileApi.getFullName();
 
+            // compute adjacency array
+            const adjacency = {}
+            messageApi.getMessages().forEach(chat => {
+                // count messages in chat
+                const chatMessageCount = {}
+                chat.participants.forEach(p => { chatMessageCount[p.name] = 0 })
+                chat.messages.forEach(message => { chatMessageCount[message.sender_name] += 1 })
+                chat.participants.forEach(p1 => {
+                    chat.participants.forEach(p2 => {
+                        if (typeof adjacency[p1.name] === "undefined") {
+                            adjacency[p1.name] = {}
+                        }
+                        if (typeof adjacency[p1.name][p2.name] === "undefined") {
+                            adjacency[p1.name][p2.name] = Object.assign({}, { numChats: 0, numMessages: 0 })
+                        }
+                        adjacency[p1.name][p2.name].numMessages += chatMessageCount[p2.name]
+                        adjacency[p1.name][p2.name].numChats += 1
+                    })
+                })
+            })
+
+            /** compute network data */
             const friendNodes = friendsApi.get()
                 .map(friend => ({
                     label: friend.prettyName,
                     id: friend.name,
+                    name: friend.name,
                     shape: "dot"
                 }))
                 .map(node => {
-                    const chatsBetweenRoot = messageApi.chatsBetween([rootName, node.id])
+                    let value = 0
+                    if (
+                        Object.prototype.hasOwnProperty.call(adjacency, node.id) &&
+                        Object.prototype.hasOwnProperty.call(adjacency[node.id], rootName)
+                    ) {
+                        value = adjacency[node.id][rootName].numMessages
+                    }
                     return {
                         ...node,
-                        value: chatsBetweenRoot.count
+                        value
                     }
                 });
-            friendNodes.push({ label: rootName, id: 'root', physics: false })
+            friendNodes.push({ label: rootName, id: 'root', physics: false, name: rootName })
 
             const friendEdges = []
             for (let i = 0; i < friendNodes.length; i += 1) {
                 for (let j = i + 1; j < friendNodes.length; j += 1) {
                     const f1 = friendNodes[i];
                     const f2 = friendNodes[j];
-                    const chatsBetween = messageApi.chatsBetween([f1.id, f2.id])
-                    const numMessages = chatsBetween.count
-                    const numChats = chatsBetween.chats.length
+                    let numMessages = 0
+                    let numChats = 0
+                    if (
+                        Object.prototype.hasOwnProperty.call(adjacency, f1.name) &&
+                        Object.prototype.hasOwnProperty.call(adjacency[f1.name], f2.name)
+                    ) {
+                        numMessages = adjacency[f1.name][f2.name].numMessages
+                        numChats = adjacency[f1.name][f2.name].numChats
+                    }
                     const isRoot = isConnectedToRoot({from: f1.id, to: f2.id})
                     if (numChats > 0) {
                         friendEdges.push({
