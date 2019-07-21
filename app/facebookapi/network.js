@@ -2,27 +2,42 @@ function isConnectedToRoot(edge) {
     return (edge.from === 'root') || (edge.to === 'root')
 }
 
-export function getNetworkData(rootName, friends, messages) {
+function isSubset(small, large) {
+    if (small.length > large.length) {
+        return false;
+    }
+    return small.reduce((val, current) => val && (large.indexOf(current) > -1), true)
+}
+
+export function getNetworkData(rootName, friends, messages, beforeTime = Math.round((new Date()).getTime() / 1000)) {
     // compute adjacency array
     const adjacency = {}
-    messages.forEach(chat => {
-        // count messages in chat
-        const chatMessageCount = {}
-        chat.participants.forEach(p => { chatMessageCount[p.name] = 0 })
-        chat.messages.forEach(message => { chatMessageCount[message.sender_name] += 1 })
-        chat.participants.forEach(p1 => {
-            chat.participants.forEach(p2 => {
-                if (typeof adjacency[p1.name] === "undefined") {
-                    adjacency[p1.name] = {}
-                }
-                if (typeof adjacency[p1.name][p2.name] === "undefined") {
-                    adjacency[p1.name][p2.name] = Object.assign({}, { numChats: 0, numMessages: 0 })
-                }
-                adjacency[p1.name][p2.name].numMessages += chatMessageCount[p2.name]
-                adjacency[p1.name][p2.name].numChats += 1
+    messages
+        .forEach(chat => {
+            // count messages in chat
+            const chatMessageCount = {}
+            chat.participants.forEach(p => { chatMessageCount[p.name] = 0 })
+            chat.messages
+                .filter(message => (message.timestamp_ms < (beforeTime * 1000)))
+                .forEach(message => { chatMessageCount[message.sender_name] += 1 })
+
+            chat.participants.forEach(p1 => {
+                chat.participants.forEach(p2 => {
+                    if (typeof adjacency[p1.name] === "undefined") {
+                        adjacency[p1.name] = {}
+                    }
+                    if (typeof adjacency[p1.name][p2.name] === "undefined") {
+                        adjacency[p1.name][p2.name] = Object.assign({}, { numChats: 0, numMessages: 0 })
+                    }
+                    adjacency[p1.name][p2.name].numMessages += chatMessageCount[p2.name]
+                    if (chatMessageCount[p2.name] > 0) {
+                        adjacency[p1.name][p2.name].numChats += 1
+                    }
+                })
             })
         })
-    })
+
+    console.log(adjacency)
 
     /** compute network data */
     const friendNodes = friends
@@ -90,6 +105,11 @@ export function group(messages, networkData, GROUP_MAX) {
     let currentGroup = 1;
     const groups = {};
     if (networkData) {
+        const {
+            nodes,
+            edges
+        } = networkData
+
         // groups start at nil
         nodes.forEach(node => {
             groups[node.id] = false

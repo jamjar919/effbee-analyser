@@ -6,13 +6,6 @@ import { defaultNetworkType } from './defaultTypes';
 
 const allEdgeTypes = ['continuous', 'dynamic']
 
-function isSubset(small, large) {
-    if (small.length > large.length) {
-        return false;
-    }
-    return small.reduce((val, current) => val && (large.indexOf(current) > -1), true)
-}
-
 export default function toggleShowRoot(state: networkType = defaultNetworkType, action: Action) {
     switch (action.type) {
         case TOGGLE_SHOWROOT:
@@ -40,7 +33,6 @@ export default function toggleShowRoot(state: networkType = defaultNetworkType, 
             } = api
 
             const networkData = getNetworkData(profileApi.getFullName(), friendsApi.get(), messageApi.getMessages())
-            console.log(networkData)
             return {
                 ...state,
                 networkData
@@ -51,11 +43,6 @@ export default function toggleShowRoot(state: networkType = defaultNetworkType, 
             const {
                 messageApi
             } = api
-
-            const {
-                nodes,
-                edges
-            } = state.networkData
 
             const groups = group(messageApi.getMessages(), state.networkData, action.payload.maxGroupSize)
             return {
