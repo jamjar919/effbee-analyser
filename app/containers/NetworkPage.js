@@ -156,7 +156,7 @@ class NetworkPage extends Component<Props> {
                         </Header>
                     </Menu.Item>
                     <Menu.Menu position="right">
-                        <Menu.Item onClick={() => { this.setState({ enableTimeline: !enableTimeline }) }}>
+                        <Menu.Item onClick={() => { this.setState({ enableTimeline: !enableTimeline }) }} active={enableTimeline}>
                             Network Timeline
                         </Menu.Item>
                         <Menu.Item onClick={() => { fitGroups(api) }}>
@@ -188,17 +188,25 @@ class NetworkPage extends Component<Props> {
                 />
                 <RightPanel>
                     { enableTimeline ? (
-                            <Menu pointing secondary vertical>
-                                { timelineSteps.map((step, i) => (
-                                    <Menu.Item
-                                        active={i === currentTimelineStep}
-                                        key={uuid()}
-                                        onClick={() => { this.setState({ currentTimelineStep: i }) }}
-                                    >
-                                        {moment.unix(step.time).format("MMMM Do YYYY")}
-                                    </Menu.Item>
-                                )) }
-                            </Menu>
+                            <div className={styles.timelineStepsContainer}>
+                                <Header as='h2'>
+                                    <Icon name='clock' />
+                                    <Header.Content>Network Timeline</Header.Content>
+                                    <Header.Subheader>Select a time period to filter the network to that period</Header.Subheader>
+                                </Header>
+                                <Menu fluid vertical borderless className={styles.timelineStepsMenu}>
+                                    { timelineSteps.map((step, i) => (
+                                        <Menu.Item
+                                            active={i === currentTimelineStep}
+                                            key={uuid()}
+                                            onClick={() => { this.setState({ currentTimelineStep: i }) }}
+                                        >
+                                            {moment.unix(step.time).format("MMMM Do YYYY")}
+                                            <Label color="blue">{timelineSteps[i].networkData.edges.length} Connections</Label>
+                                        </Menu.Item>
+                                    )) }
+                                </Menu>
+                            </div>
                     ) : <FriendPreview /> }
                 </RightPanel>
             </div>
