@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Menu, Icon, Loader, Header, Segment, Placeholder, Dropdown, Label } from 'semantic-ui-react'
+import { Menu, Icon, Loader, Header, Segment, Placeholder, Dropdown, Label, Button } from 'semantic-ui-react'
 import { bindActionCreators } from 'redux';
 import uuid from 'uuid/v4';
 import moment from 'moment';
@@ -81,6 +81,15 @@ class NetworkPage extends Component<Props> {
         this.setState({ timelineSteps, currentTimelineStep: 0 })
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        if (this.state.numTimelineSteps !== nextState.numTimelineSteps) {
+            setTimeout(() => {
+                this.computeTimelineSteps()
+            }, 100)
+        }
+        return true;
+    }
+
     render() {
         const {
             api,
@@ -97,8 +106,14 @@ class NetworkPage extends Component<Props> {
         const {
             enableTimeline,
             currentTimelineStep,
-            timelineSteps
+            timelineSteps,
+            numTimelineSteps
         } = this.state;
+
+        const {
+            firstTimestamp,
+            lastTimestamp
+        } = api.messageApi
 
         const rootName = api.profileApi.getFullName();
 
@@ -206,6 +221,22 @@ class NetworkPage extends Component<Props> {
                                         </Menu.Item>
                                     )) }
                                 </Menu>
+                                <Segment textAlign="center">
+                                    <Header as='h3'>
+                                        <Header.Content>
+                                            Current Time Period Size: {moment.duration(Math.ceil((lastTimestamp - firstTimestamp)/numTimelineSteps), "seconds").humanize()}
+                                        </Header.Content>
+                                    </Header>
+                                    <Button.Group>
+                                        <Button secondary onClick={() => {
+                                            this.setState({ numTimelineSteps: Math.max(5, numTimelineSteps - 5) })
+                                        }}>Less Periods</Button>
+                                        <Button.Or text={numTimelineSteps} />
+                                        <Button primary onClick={() => {
+                                            this.setState({ numTimelineSteps: numTimelineSteps + 5 })
+                                        }}>More Periods</Button>
+                                    </Button.Group>
+                                </Segment>
                             </div>
                     ) : <FriendPreview /> }
                 </RightPanel>
