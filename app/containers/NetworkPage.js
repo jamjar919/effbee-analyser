@@ -18,6 +18,15 @@ import type { defaultFacebookType } from '../reducers/defaultTypes'
 
 import styles from './css/NetworkPage.css';
 
+const timelineStepDurations = [
+    { name: "Week", amount: 604800, index: 0 },
+    { name: "Month", amount: 2629800, index: 1 },
+    { name: "6 Months", amount: 2629800 * 6, index: 2 },
+    { name: "Year", amount: 31557600, index: 3 },
+    { name: "2 Years", amount: 31557600 * 2, index: 4 },
+    { name: "5 Years", amount: 31557600 * 5, index: 5 }
+]
+
 type Props = {
     toggleShowRoot: () => void,
     selectFriend: (string) => void,
@@ -40,7 +49,7 @@ class NetworkPage extends Component<Props> {
             enableTimeline: false,
             currentTimelineStep: 0,
             timelineSteps: [],
-            numTimelineSteps: 10,
+            timelineStepDuration: timelineStepDurations[3],
             timelineMode: "RANGE"
         }
     }
@@ -57,7 +66,7 @@ class NetworkPage extends Component<Props> {
         } = api
 
         const {
-            numTimelineSteps,
+            timelineStepDuration,
             timelineMode
         } = this.state
 
@@ -69,10 +78,10 @@ class NetworkPage extends Component<Props> {
         const timelineSteps = []
         const rootName = profileApi.getFullName();
         const messages = messageApi.getMessages();
-        const timeInterval = Math.ceil((lastTimestamp - firstTimestamp)/numTimelineSteps)
+        const timeInterval = timelineStepDuration.amount
 
-        for (let i = 0; i <= numTimelineSteps; i += 1) {
-            console.log(firstTimestamp + (timeInterval * i), timeInterval)
+        let i = 0;
+        while (firstTimestamp + (timeInterval * (i - 1)) < lastTimestamp) {
             timelineSteps.push({
                 time: firstTimestamp + (timeInterval * i),
                 networkData: getNetworkData(
@@ -83,14 +92,16 @@ class NetworkPage extends Component<Props> {
                     (timelineMode === "RANGE") ? (firstTimestamp + (timeInterval * (i - 1))) : false // after timestamp (only apply in range mode)
                 )
             })
+            i += 1;
         }
 
         this.setState({ timelineSteps, currentTimelineStep: 0 })
     }
 
     shouldComponentUpdate(nextProps, nextState) {
+        console.log(this.state.timelineStepDuration, nextState.timelineStepDuration)
         if (
-            (this.state.numTimelineSteps !== nextState.numTimelineSteps) ||
+            (this.state.timelineStepDuration.amount !== nextState.timelineStepDuration.amount) ||
             (this.state.timelineMode !== nextState.timelineMode)
         ) {
             setTimeout(() => {
@@ -117,7 +128,7 @@ class NetworkPage extends Component<Props> {
             enableTimeline,
             currentTimelineStep,
             timelineSteps,
-            numTimelineSteps,
+            timelineStepDuration,
             timelineMode
         } = this.state;
 
@@ -162,7 +173,6 @@ class NetworkPage extends Component<Props> {
                 this.computeTimelineSteps()
             }, 100)
         }
-        const timePeriodDuration = Math.ceil((lastTimestamp - firstTimestamp)/numTimelineSteps);
 
         let nodesToShow = networkData.nodes
         let edgesToShow = networkData.edges
@@ -234,7 +244,7 @@ class NetworkPage extends Component<Props> {
                                                     `Before ${moment.unix(step.time).format("MMMM Do YYYY")}` : ''
                                                 }
                                                 { timelineMode === "RANGE" ?
-                                                    `${moment.unix(step.time - timePeriodDuration).format("MMMM Do YYYY")} - ${moment.unix(step.time).format("MMMM Do YYYY")}` : ''
+                                                    `${moment.unix(step.time - timelineStepDuration.amount).format("MMMM Do YYYY")} - ${moment.unix(step.time).format("MMMM Do YYYY")}` : ''
                                                 }
                                             </div>
                                             <Label.Group size="small" className={styles.timelineStepLabels}>
@@ -247,17 +257,23 @@ class NetworkPage extends Component<Props> {
                                 <Segment textAlign="center">
                                     <Header as='h3'>
                                         <Header.Content>
-                                            Current Time Period Size: {moment.duration(timePeriodDuration, "seconds").humanize()}
+                                            Current Time Period Size: {timelineStepDuration.name}
                                         </Header.Content>
+                                        <Header.Subheader>
+                                            Warning - Making the period too small will require a lot of rendering/computation time.
+                                        </Header.Subheader>
                                     </Header>
                                     <Button.Group>
                                         <Button secondary onClick={() => {
-                                            this.setState({ numTimelineSteps: Math.max(5, numTimelineSteps - 5) })
-                                        }}>Less Periods</Button>
-                                        <Button.Or text={numTimelineSteps} />
+                                            this.setState({
+                                                timelineStepDuration: (timelineStepDuration.index - 1 > -1) ? 
+                                                    timelineStepDurations[timelineStepDuration.index - 1] : timelineStepDuration })
+                                        }} disabled={(timelineStepDuration.index - 1 < 0)}>Smaller Period</Button>
                                         <Button primary onClick={() => {
-                                            this.setState({ numTimelineSteps: numTimelineSteps + 5 })
-                                        }}>More Periods</Button>
+                                            this.setState({
+                                                timelineStepDuration: (timelineStepDuration.index + 1 < timelineStepDurations.length) ? 
+                                                    timelineStepDurations[timelineStepDuration.index + 1] : timelineStepDuration })
+                                        }} disabled={(timelineStepDuration.index + 1 > timelineStepDurations.length - 1)}>Bigger Period</Button>
                                     </Button.Group>
                                 </Segment>
                                 <Segment>
