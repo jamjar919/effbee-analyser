@@ -72,46 +72,45 @@ export default class Network extends Component<Props> {
         } = this.state
 
         if (nodes !== nextProps.nodes) {
-            console.log("nodes update")
+            const toUpdate = []
+            const toRemove = []
+            const currentNodes = networkNodes.get()
+            nextProps.nodes.forEach(newNode => {
+                if (newNode.id !== "root") { toUpdate.push(newNode) }
+            })
+
+            currentNodes.filter(node => node.id !== "root").forEach(currentNode => {
+                // for each existing edge is there a new node matching it
+                const hasMatchingNode = nextProps.nodes.some(node => node.id === currentNode.id)
+
+                // if a corresponding node does not exist, then remove it
+                if (!hasMatchingNode) {
+                    toRemove.push(currentNode)
+                }
+            })
+
+            networkNodes.update(toUpdate)
+            networkNodes.remove(toRemove)
         }
 
         if (edges !== nextProps.edges) {
             // calculate what edges we need to update
             const toUpdate = []
             const toRemove = []
+            const currentEdges = networkEdges.get()
             nextProps.edges.forEach(newEdge => {
-                // is there a corresponding edge already existing in the graph
-                const matchingEdges = networkEdges.get().filter(edge => (
-                    ((newEdge.to === edge.to) && (newEdge.from === edge.from)) ||
-                    ((newEdge.to === edge.from) && (newEdge.from === edge.to))
-                ))
-
-                // if a corresponding edge already exists, just update the values rather than the whole edge
-                if (matchingEdges.length > 0) {
-                    const matchingEdge = matchingEdges[0]
-                    toUpdate.push({
-                        ...matchingEdge,
-                        numChats: newEdge.numChats,
-                        numMessages: newEdge.numMessages,
-                        value: newEdge.value
-                    })
-                }
-
-                // if a corresponding edge doesn't exist, it's a new edge, so add it
-                if (matchingEdges.length === 0) {
-                    toUpdate.push(newEdge)
-                }
+                toUpdate.push(newEdge)
             })
 
-            networkEdges.get().forEach(existingEdge => {
+            currentEdges.forEach(existingEdge => {
                 // for each existing edge is there a new edge matching it
-                const matchingEdges = nextProps.edges.filter(edge => (
+                const hasMatchingEdge = nextProps.edges.some(edge => (
                     ((existingEdge.to === edge.to) && (existingEdge.from === edge.from)) ||
                     ((existingEdge.to === edge.from) && (existingEdge.from === edge.to))
                 ))
 
                 // if a corresponding edge DOES NOT exist, remove it.
-                if (matchingEdges.length === 0) {
+                if (!hasMatchingEdge) {
                     toRemove.push(existingEdge)
                 }
             })

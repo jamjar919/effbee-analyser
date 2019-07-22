@@ -26,8 +26,8 @@ class FriendsApi extends FacebookApi {
         }
     }
 
-    get() {
-        return this.friends;
+    get(beforeTime = Math.round((new Date()).getTime() / 1000)) {
+        return this.friends.filter(f => f.timestamp < beforeTime);
     }
 
     getRanking(root, messageApi, afterTimestamp = false) {

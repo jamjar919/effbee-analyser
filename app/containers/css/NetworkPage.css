@@ -57,3 +57,12 @@
 .timelineStepsContainer {
     padding: 1em;
 }
+
+.timelineStepItem {
+    padding: 0.25em !important;
+    text-align: center;
+}
+
+.timelineStepText {
+    padding: 0.25em 0;
+}

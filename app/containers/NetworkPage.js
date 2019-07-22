@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Menu, Icon, Loader, Header, Segment, Placeholder, Dropdown, Label, Button } from 'semantic-ui-react'
+import { Menu, Icon, Loader, Header, Segment, Placeholder, Dropdown, Label, Button, Form, Checkbox, Popup } from 'semantic-ui-react'
 import { bindActionCreators } from 'redux';
 import uuid from 'uuid/v4';
 import moment from 'moment';
@@ -40,7 +40,8 @@ class NetworkPage extends Component<Props> {
             enableTimeline: false,
             currentTimelineStep: 0,
             timelineSteps: [],
-            numTimelineSteps: 10
+            numTimelineSteps: 10,
+            timelineMode: "RANGE"
         }
     }
 
@@ -56,7 +57,8 @@ class NetworkPage extends Component<Props> {
         } = api
 
         const {
-            numTimelineSteps
+            numTimelineSteps,
+            timelineMode
         } = this.state
 
         const {
@@ -66,7 +68,6 @@ class NetworkPage extends Component<Props> {
 
         const timelineSteps = []
         const rootName = profileApi.getFullName();
-        const friends = friendsApi.get();
         const messages = messageApi.getMessages();
         const timeInterval = Math.ceil((lastTimestamp - firstTimestamp)/numTimelineSteps)
 
@@ -74,7 +75,13 @@ class NetworkPage extends Component<Props> {
             console.log(firstTimestamp + (timeInterval * i), timeInterval)
             timelineSteps.push({
                 time: firstTimestamp + (timeInterval * i),
-                networkData: getNetworkData(rootName, friends, messages, firstTimestamp + (timeInterval * i))
+                networkData: getNetworkData(
+                    rootName,
+                    friendsApi.get(firstTimestamp + (timeInterval * i)),
+                    messages, 
+                    firstTimestamp + (timeInterval * i), // before timestamp
+                    (timelineMode === "RANGE") ? (firstTimestamp + (timeInterval * (i - 1))) : false // after timestamp (only apply in range mode)
+                )
             })
         }
 
@@ -82,7 +89,10 @@ class NetworkPage extends Component<Props> {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        if (this.state.numTimelineSteps !== nextState.numTimelineSteps) {
+        if (
+            (this.state.numTimelineSteps !== nextState.numTimelineSteps) ||
+            (this.state.timelineMode !== nextState.timelineMode)
+        ) {
             setTimeout(() => {
                 this.computeTimelineSteps()
             }, 100)
@@ -107,7 +117,8 @@ class NetworkPage extends Component<Props> {
             enableTimeline,
             currentTimelineStep,
             timelineSteps,
-            numTimelineSteps
+            numTimelineSteps,
+            timelineMode
         } = this.state;
 
         const {
@@ -151,6 +162,7 @@ class NetworkPage extends Component<Props> {
                 this.computeTimelineSteps()
             }, 100)
         }
+        const timePeriodDuration = Math.ceil((lastTimestamp - firstTimestamp)/numTimelineSteps);
 
         let nodesToShow = networkData.nodes
         let edgesToShow = networkData.edges
@@ -215,16 +227,27 @@ class NetworkPage extends Component<Props> {
                                             active={i === currentTimelineStep}
                                             key={uuid()}
                                             onClick={() => { this.setState({ currentTimelineStep: i }) }}
+                                            className={styles.timelineStepItem}
                                         >
-                                            {moment.unix(step.time).format("MMMM Do YYYY")}
-                                            <Label color="blue">{timelineSteps[i].networkData.edges.length} Connections</Label>
+                                            <div className={styles.timelineStepText}>
+                                                { timelineMode === "INCLUSIVE" ?
+                                                    `Before ${moment.unix(step.time).format("MMMM Do YYYY")}` : ''
+                                                }
+                                                { timelineMode === "RANGE" ?
+                                                    `${moment.unix(step.time - timePeriodDuration).format("MMMM Do YYYY")} - ${moment.unix(step.time).format("MMMM Do YYYY")}` : ''
+                                                }
+                                            </div>
+                                            <Label.Group size="small" className={styles.timelineStepLabels}>
+                                                <Label color="red">{timelineSteps[i].networkData.nodes.length} Friends</Label>
+                                                <Label color="blue">{timelineSteps[i].networkData.edges.length} Connections</Label>
+                                            </Label.Group>
                                         </Menu.Item>
                                     )) }
                                 </Menu>
                                 <Segment textAlign="center">
                                     <Header as='h3'>
                                         <Header.Content>
-                                            Current Time Period Size: {moment.duration(Math.ceil((lastTimestamp - firstTimestamp)/numTimelineSteps), "seconds").humanize()}
+                                            Current Time Period Size: {moment.duration(timePeriodDuration, "seconds").humanize()}
                                         </Header.Content>
                                     </Header>
                                     <Button.Group>
@@ -236,6 +259,33 @@ class NetworkPage extends Component<Props> {
                                             this.setState({ numTimelineSteps: numTimelineSteps + 5 })
                                         }}>More Periods</Button>
                                     </Button.Group>
+                                </Segment>
+                                <Segment>
+                                    <Form>
+                                        <Form.Field>
+                                            Change network timeline rendering mode:
+                                        </Form.Field>
+                                        <Form.Field>
+                                            <Form.Field>
+                                                <Popup content="Range mode renders only connections between the start of the period and the end of the period" trigger={<Checkbox
+                                                    radio
+                                                    label="Range Mode"
+                                                    checked={timelineMode === 'RANGE'}
+                                                    value="RANGE"
+                                                    name="networkTimelineTypeControl"
+                                                    onChange={(e, { value }) => { this.setState({ timelineMode: value }) }}
+                                                />} position="left center" />
+                                            </Form.Field>
+                                            <Popup content="Inclusive mode renders all connections made before the end of the period" trigger={<Checkbox
+                                                radio
+                                                label="Inclusive Mode"
+                                                checked={timelineMode === 'INCLUSIVE'}
+                                                value="INCLUSIVE"
+                                                name="networkTimelineTypeControl"
+                                                onChange={(e, { value }) => { this.setState({ timelineMode: value }) }}
+                                            />} position="left center" />
+                                        </Form.Field>
+                                    </Form>
                                 </Segment>
                             </div>
                     ) : <FriendPreview /> }

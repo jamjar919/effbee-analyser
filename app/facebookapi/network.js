@@ -9,7 +9,7 @@ function isSubset(small, large) {
     return small.reduce((val, current) => val && (large.indexOf(current) > -1), true)
 }
 
-export function getNetworkData(rootName, friends, messages, beforeTime = Math.round((new Date()).getTime() / 1000)) {
+export function getNetworkData(rootName, friends, messages, beforeTime = Math.round((new Date()).getTime() / 1000), afterTime = false) {
     // compute adjacency array
     const adjacency = {}
     messages
@@ -19,6 +19,7 @@ export function getNetworkData(rootName, friends, messages, beforeTime = Math.ro
             chat.participants.forEach(p => { chatMessageCount[p.name] = 0 })
             chat.messages
                 .filter(message => (message.timestamp_ms < (beforeTime * 1000)))
+                .filter(message => (afterTime === false) || (message.timestamp_ms > (afterTime * 1000)))
                 .forEach(message => { chatMessageCount[message.sender_name] += 1 })
 
             chat.participants.forEach(p1 => {
