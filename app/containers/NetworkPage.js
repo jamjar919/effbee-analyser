@@ -99,7 +99,6 @@ class NetworkPage extends Component<Props> {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        console.log(this.state.timelineStepDuration, nextState.timelineStepDuration)
         if (
             (this.state.timelineStepDuration.amount !== nextState.timelineStepDuration.amount) ||
             (this.state.timelineMode !== nextState.timelineMode)
