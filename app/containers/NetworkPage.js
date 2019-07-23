@@ -40,6 +40,8 @@ type Props = {
     edgeType: string
 };
 
+const DEFAULT_TIMELINE_ANIMATION_STEP_TIME = 1000
+
 class NetworkPage extends Component<Props> {
     props: Props;
 
@@ -50,8 +52,47 @@ class NetworkPage extends Component<Props> {
             currentTimelineStep: 0,
             timelineSteps: [],
             timelineStepDuration: timelineStepDurations[3],
-            timelineMode: "RANGE"
+            timelineMode: "RANGE",
+            timelineAnimation: {
+                enabled: false,
+                intervalId: -1
+            }
         }
+    }
+
+    animateTimelineStep() {
+        const {
+            currentTimelineStep,
+            timelineSteps
+        } = this.state;
+        const nextStep = currentTimelineStep + 1
+        if (nextStep < timelineSteps.length) {
+            this.setState({ currentTimelineStep: nextStep })
+        } else {
+            this.stopTimelineAnimation()
+        }
+    }
+
+    stopTimelineAnimation() {
+        const intervalId = this.state.timelineAnimation.intervalId
+        clearInterval(intervalId)
+        this.setState({
+            timelineAnimation: {
+                intervalId,
+                enabled: false 
+            }
+        })
+    }
+
+    startTimelineAnimation() {
+        this.setState({
+            timelineAnimation: {
+                enabled: true,
+                intervalId: setInterval(() => {
+                    this.animateTimelineStep()
+                }, DEFAULT_TIMELINE_ANIMATION_STEP_TIME)
+            }
+        })
     }
 
     computeTimelineSteps() {
@@ -110,6 +151,10 @@ class NetworkPage extends Component<Props> {
         return true;
     }
 
+    componentWillUnmount() {
+        clearInterval(this.timelineAnimation.intervalId)
+    }
+
     render() {
         const {
             api,
@@ -128,7 +173,8 @@ class NetworkPage extends Component<Props> {
             currentTimelineStep,
             timelineSteps,
             timelineStepDuration,
-            timelineMode
+            timelineMode,
+            timelineAnimation
         } = this.state;
 
         const {
@@ -230,6 +276,14 @@ class NetworkPage extends Component<Props> {
                                     <Header.Content>Network Timeline</Header.Content>
                                     <Header.Subheader>Select a time period to filter the network to that period</Header.Subheader>
                                 </Header>
+                                <Button.Group fluid>
+                                    <Button icon='play' disabled={timelineAnimation.enabled} onClick={() => {
+                                        this.startTimelineAnimation()
+                                    }} color='green' />
+                                    <Button icon='stop' disabled={!timelineAnimation.enabled} onClick={() => {
+                                        this.stopTimelineAnimation()
+                                    }} color='red' />
+                                </Button.Group>
                                 <Menu fluid vertical borderless className={styles.timelineStepsMenu}>
                                     { timelineSteps.map((step, i) => (
                                         <Menu.Item
