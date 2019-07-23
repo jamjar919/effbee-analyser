@@ -94,29 +94,8 @@ export default class Network extends Component<Props> {
         }
 
         if (edges !== nextProps.edges) {
-            // calculate what edges we need to update
-            const toUpdate = []
-            const toRemove = []
-            const currentEdges = networkEdges.get()
-            nextProps.edges.forEach(newEdge => {
-                toUpdate.push(newEdge)
-            })
-
-            currentEdges.forEach(existingEdge => {
-                // for each existing edge is there a new edge matching it
-                const hasMatchingEdge = nextProps.edges.some(edge => (
-                    ((existingEdge.to === edge.to) && (existingEdge.from === edge.from)) ||
-                    ((existingEdge.to === edge.from) && (existingEdge.from === edge.to))
-                ))
-
-                // if a corresponding edge DOES NOT exist, remove it.
-                if (!hasMatchingEdge) {
-                    toRemove.push(existingEdge)
-                }
-            })
-
-            networkEdges.update(toUpdate)
-            networkEdges.remove(toRemove)
+            networkEdges.clear()
+            networkEdges.update(nextProps.edges)
         }
 
         if (showRoot !== nextProps.showRoot) {            
