@@ -71,7 +71,6 @@ class Friend extends Component<Props> {
                         <Identicon size={100} value={name} className="ui circular image"/>
                         <Header.Content>
                             {name}
-                            <Header.Subheader>Awards here...</Header.Subheader>
                         </Header.Content>
                     </Header>
                     <Grid>
