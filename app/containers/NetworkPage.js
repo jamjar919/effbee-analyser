@@ -152,7 +152,9 @@ class NetworkPage extends Component<Props> {
     }
 
     componentWillUnmount() {
-        clearInterval(this.timelineAnimation.intervalId)
+        if (this.timelineAnimation) {
+            clearInterval(this.timelineAnimation.intervalId)
+        }
     }
 
     render() {
