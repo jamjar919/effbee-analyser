@@ -52,8 +52,8 @@ class ChatItem extends React.Component<Props> {
             isPrivateChat = true
         }
 
-        if (!chat.title) {
-            chat.title = 'Unnamed Chat'
+        if (!chat.prettyTitle) {
+            chat.prettyTitle = 'Unnamed Chat'
         }
 
         chat.participants.sort((a, b) => b.count - a.count)
