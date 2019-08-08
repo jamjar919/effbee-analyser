@@ -1,8 +1,8 @@
-import types from '../reducers/types'
 import natural from 'natural';
 import stopwords from './stopwords'
+import types from '../reducers/types'
 
-function turnMessagesIntoDocuments(messages: types.messagesType, timeperiod = 21600) { // 21600 is 6 hours
+function turnMessagesIntoDocuments(messages: types.messagesType, timeperiod = 3600 * 3) { // 3600 is 1 hour
     messages.reverse();
     const documents = [];
     let document = [];
@@ -10,13 +10,11 @@ function turnMessagesIntoDocuments(messages: types.messagesType, timeperiod = 21
     while (messageIndex < messages.length - 1) {
         const currentMessage = messages[messageIndex];
         const nextMessage = messages[messageIndex + 1];
-        if (nextMessage.timestamp_ms - currentMessage.timestamp_ms < 21600 * 1000) {
+        if (nextMessage.timestamp_ms - currentMessage.timestamp_ms < timeperiod * 1000) {
             document.push(currentMessage)
-        } else {
-            if (document.length !== 0) {
-                documents.push(document)
-                document = []
-            }
+        } else if (document.length !== 0) {
+            documents.push(document)
+            document = []
         }
         messageIndex += 1;
     }

@@ -13,6 +13,18 @@ import styles from './css/MessageBubbles.css'
 
 const BubbleContent = (props) => {
     const { message, dataDir } = props;
+    if (Object.prototype.hasOwnProperty.call(message, "content") && Object.prototype.hasOwnProperty.call(message, "photos")) {
+        return (
+        <div>
+            <PhotoThumbnailGroup dataDir={dataDir}>
+                {message.photos.map(photo => <PhotoThumbnail uri={photo.uri} key={uuid()} />)}
+            </PhotoThumbnailGroup>
+            <div className={styles.message}>
+                {message.content}
+            </div>
+        </div>
+        )
+    }
     if (Object.prototype.hasOwnProperty.call(message, "content")) {
         return <div className={styles.message}>{message.content}</div>
     }

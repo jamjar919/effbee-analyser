@@ -52,7 +52,7 @@ class ChatItem extends React.Component<Props> {
             isPrivateChat = true
         }
 
-        if (chat.title === '') {
+        if (!chat.title) {
             chat.title = 'Unnamed Chat'
         }
 
