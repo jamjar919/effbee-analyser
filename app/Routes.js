@@ -86,6 +86,7 @@ export default props => {
                         <li>Download and unzip the file. Then, select the folder with the folder picker below.</li>
                         <li>There's no more steps! Enjoy!</li>
                     </ol>
+                    <strong>Note: this contains all of your Facebook information. Be careful with the archive and save it to a secure location on your computer where other people cannot access it. (For example, do not save to a removable drive or network share)</strong>
                     {error}
                     <FacebookDataDirectoryControl />
                 </Modal.Description>
