@@ -85,7 +85,7 @@
     "url": "git+https://github.com/jamjar919/effbee-analyser.git"
   },
   "author": {
-    "name": "James Paterson"
+    "name": "James Paterson <james@mjsquare.com>"
   },
   "jest": {
     "testURL": "http://localhost/",
