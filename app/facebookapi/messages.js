@@ -28,6 +28,8 @@ class MessagesApi extends FacebookApi {
                 const messages = getAllMessageFiles(directory).map(fileName => this.readFacebookJson(fileName))
                                         .reduce((result, next) => result.concat(next.messages), []);
 
+                // messages.sort((a, b) => (b.timestamp_ms < a.timestamp_ms) ? 1 : -1);
+
                 const file = `${directory}/message_1.json`;
                 const newestDetails = this.readFacebookJson(file)
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Header, Icon, Segment, Menu, Placeholder, Item, Grid, Statistic, Search, Card } from 'semantic-ui-react'
+import { Header, Icon, Segment, Menu, Grid, Statistic, Card } from 'semantic-ui-react'
 
 import FriendTimeline from '../components/FriendTimeline';
 import MessageBubbles from '../components/MessageBubbles';
@@ -13,7 +13,7 @@ import styles from './css/ChatPage.css';
 
 export default class ChatPageContent extends Component<Props> {
 
-    shouldComponentUpdate(nextProps, nextState) {
+    shouldComponentUpdate(nextProps) {
         const {
             chat,
             selectMessages
@@ -69,7 +69,7 @@ export default class ChatPageContent extends Component<Props> {
 
         return (
             <Grid>
-                { !isPrivateChat ? 
+                { !isPrivateChat ?
                 <Grid.Row>
                     <Grid.Column width={10}>
                         <Segment.Group>
@@ -137,7 +137,7 @@ export default class ChatPageContent extends Component<Props> {
                                 <Header.Content>Group Names</Header.Content>
                                 <Header.Subheader>Group Chat Name History</Header.Subheader>
                             </Header>
-                            <ChatNamesHistory 
+                            <ChatNamesHistory
                                 messages={chat.messages}
                             />
                         </Segment> : '' }
@@ -147,7 +147,7 @@ export default class ChatPageContent extends Component<Props> {
                                 <Header.Content>Talked About</Header.Content>
                                 <Header.Subheader>Who's mentioned most in your chat from your friends list</Header.Subheader>
                             </Header>
-                            <TalkedAbout 
+                            <TalkedAbout
                                 messages={chat.messages}
                                 participants={chat.participants}
                                 api={api}
@@ -182,7 +182,7 @@ export default class ChatPageContent extends Component<Props> {
                                 <Icon name='users' />
                                 <Header.Content>Friends Area Chart</Header.Content>
                             </Header>
-                            <FriendTimeline 
+                            <FriendTimeline
                                 messages={messagesByInterval}
                                 participants={chat.participants}
                                 firstTimestamp={firstTimestamp}
