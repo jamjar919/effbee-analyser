@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Card, Menu, Icon, Button, Input, Label, Search, Popup } from 'semantic-ui-react';
+import { Card, Menu, Icon, Button, Input, Label, Popup } from 'semantic-ui-react';
 import moment from 'moment';
 
 import PageContainer from './PageContainer'
@@ -144,7 +144,7 @@ class MessagesPage extends Component<Props> {
 
         const toShow = messages.slice(startIndex, endIndex);
         toShow.reverse()
-      
+
       return (
             <React.Fragment>
                 <Menu className={menuStyles.topMenu}>

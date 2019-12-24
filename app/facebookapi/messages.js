@@ -25,7 +25,6 @@ class MessagesApi extends FacebookApi {
                 fs.readdirSync(source).map(name => join(source, name)).filter(isDirectory);
             const titleCount = {};
             this.messages = getDirectories(directories).map(directory => {
-              console.log(directory, getAllMessageFiles(directory))
                 const messages = getAllMessageFiles(directory).map(fileName => this.readFacebookJson(fileName))
                                         .reduce((result, next) => result.concat(next.messages), []);
 
