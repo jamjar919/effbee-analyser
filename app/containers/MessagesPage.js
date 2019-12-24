@@ -144,9 +144,7 @@ class MessagesPage extends Component<Props> {
 
         const toShow = messages.slice(startIndex, endIndex);
         toShow.reverse()
-
-      console.log(messages.filter(message => message.index === 864))
-
+      
       return (
             <React.Fragment>
                 <Menu className={menuStyles.topMenu}>
