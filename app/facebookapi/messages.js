@@ -2,45 +2,60 @@
 import fs from 'fs';
 import { join } from 'path';
 import moment from 'moment';
-import iconv from 'iconv-lite';
 import FacebookApi from "./api";
+import SettingsFile from '../SettingsFile';
+
+function getAllMessageFiles(directory) {
+  const store = new SettingsFile();
+  const maxMessageFiles = store.get("maxMessageFiles") || 10000000;
+  return fs.readdirSync(directory)
+    .filter(name => name.match(/message_([0-9])+\.json/))
+    .filter((name, i) => i < maxMessageFiles)
+    .map(name => join(directory, name))
+}
+
 
 class MessagesApi extends FacebookApi {
     constructor() {
         super();
         try {
             const directories = `${super.getRoot()}/messages/inbox/`;
-            const isDirectory = source => fs.lstatSync(source).isDirectory()
+            const isDirectory = source => fs.lstatSync(source).isDirectory();
             const getDirectories = source =>
-                fs.readdirSync(source).map(name => join(source, name)).filter(isDirectory)
-            const titleCount = {}
+                fs.readdirSync(source).map(name => join(source, name)).filter(isDirectory);
+            const titleCount = {};
             this.messages = getDirectories(directories).map(directory => {
+              console.log(directory, getAllMessageFiles(directory))
+                const messages = getAllMessageFiles(directory).map(fileName => this.readFacebookJson(fileName))
+                                        .reduce((result, next) => result.concat(next.messages), []);
+
                 const file = `${directory}/message_1.json`;
-                const details = this.readFacebookJson(file)
+                const newestDetails = this.readFacebookJson(file)
 
                 // duplicate renaming
-                const title = details.title
+                const { title, participants } = newestDetails;
+
                 if (!(title in titleCount)) {
                     titleCount[title] = 0;
                 }
-                titleCount[title] += 1
+                titleCount[title] += 1;
 
-                let modifiedTitle = title
+                let modifiedTitle = title;
                 if (titleCount[title] > 1) {
                     modifiedTitle += ` (${titleCount[title] - 1})`
                 }
 
                 return {
-                    participants: details.participants.map(p => ({
+                    participants: participants.map(p => ({
                         name: p.name,
-                        count: details.messages.filter(message => message.sender_name == p.name).length
+                        count: messages.filter(message => message.sender_name === p.name).length
                     })),
                     title: modifiedTitle,
                     prettyTitle: this.fixEncoding(modifiedTitle),
                     file,
-                    messages: details.messages.map((message, index) => {
+                    messages: messages.map((message, index) => {
                         const toReturn = message;
-                        toReturn.index = index
+                        toReturn.index = index;
                         toReturn.prettySenderName = this.fixEncoding(toReturn.sender_name)
                         if (typeof message.content !== "undefined") {
                             toReturn.content = this.fixEncoding(message.content)
@@ -49,9 +64,9 @@ class MessagesApi extends FacebookApi {
                     }),
                     directory
                 };
-            })
+            });
 
-            // identify first and last message sent, ever... 
+            // identify first and last message sent, ever...
             this.lastTimestamp = this.messages.reduce((currentLastTimestamp, chat) => {
                 if (chat.messages.length < 1) {
                     return currentLastTimestamp
@@ -62,7 +77,7 @@ class MessagesApi extends FacebookApi {
                     }
                     return currentLastTimestampTwo;
                 }, currentLastTimestamp)
-            }, 0)
+            }, 0);
 
             this.firstTimestamp = this.messages.reduce((currentFirstTimestamp, chat) => {
                 if (chat.messages.length < 1) {
@@ -72,13 +87,13 @@ class MessagesApi extends FacebookApi {
                     return Math.floor(chat.messages[chat.messages.length - 1].timestamp_ms/1000)
                 }
                 return currentFirstTimestamp;
-            }, moment().unix())
+            }, moment().unix());
 
             this.loaded = true;
         } catch (e) {
             console.log("couldn't load messages api")
-            console.error(e)
-            this.messages = []
+            console.error(e);
+            this.messages = [];
             this.loaded = false;
         }
     }
@@ -89,7 +104,7 @@ class MessagesApi extends FacebookApi {
 
     chats(name) {
         // filter to chats where this member is present
-        const chats = this.messages.filter(details => 
+        const chats = this.messages.filter(details =>
             (details.participants.map(p => p.name).indexOf(name) >= 0)
         );
 
@@ -108,7 +123,7 @@ class MessagesApi extends FacebookApi {
                 peopleMap[p.name].messages += p.count
                 peopleMap[p.name].groups += 1
             })
-        })
+        });
 
         // remove self reference
         delete peopleMap[name];
@@ -156,7 +171,7 @@ class MessagesApi extends FacebookApi {
         if (afterTimestamp !== false) {
             chats = chats.map(chat => ({
                 ...chat,
-                messages: chat.messages.filter(message => 
+                messages: chat.messages.filter(message =>
                     message.timestamp_ms > (afterTimestamp*1000)
                 )
             }))
@@ -173,7 +188,7 @@ class MessagesApi extends FacebookApi {
             chat.participants
             .forEach(participant => {
                 if (names.indexOf(participant.name) >= 0) {
-                    const toAdd = chat.messages.filter(message => message.sender_name == participant.name).length
+                    const toAdd = chat.messages.filter(message => message.sender_name === participant.name).length
                     count += toAdd
                     countBreakdown[participant.name] += toAdd
                 }
@@ -191,16 +206,16 @@ class MessagesApi extends FacebookApi {
     }
 
     // root is the name of your person
-    // to is the name of the messages 
-    // timeinterval is a number in seconds, the message counts will then be organised in portions this large 
-    // this can be improved performance wise 
+    // to is the name of the messages
+    // timeinterval is a number in seconds, the message counts will then be organised in portions this large
+    // this can be improved performance wise
     chatsPerTimeInterval(root, to, timeInterval) {
         // find chats between names
         const names = [root, to]
         const chats = this.groupsWith(names).sort((a, b) => b.messages.length - a.messages.length);
 
-        // find first message in the group 
-        let firstTimestamp = Math.floor((+ new Date()) / 1000) // current unix time in seconds
+        // find first message in the group
+        let firstTimestamp = Math.floor((+ new Date()) / 1000); // current unix time in seconds
         let lastTimestamp = 0
         chats.forEach(chat => {
             chat.messages.forEach(message => {
@@ -261,7 +276,7 @@ class MessagesApi extends FacebookApi {
 
     // take a object with chats in form
     // [
-    //  { messages: Array(Object), participants: Array(Object), title: string }  
+    //  { messages: Array(Object), participants: Array(Object), title: string }
     // ]
     getTimeDetails(chats, locale = 'en-gb') {
         moment.locale(locale)
@@ -270,7 +285,7 @@ class MessagesApi extends FacebookApi {
         const hourMap = {}
         const hourArray = [...Array(24).keys()]
         hourArray.forEach(hour => {
-            hourMap[hour] = 0 
+            hourMap[hour] = 0
         })
 
         chats.forEach(chat => {
@@ -283,7 +298,7 @@ class MessagesApi extends FacebookApi {
 
     bucketMessagesByTimeInterval(chats, firstTimestamp, lastTimestamp, timeInterval, filterBuckets = true) {
         // bucket messages based on time interval
-        // calculate number of buckets 
+        // calculate number of buckets
         const timespan = lastTimestamp - firstTimestamp;
         const numBuckets = Math.ceil(timespan / timeInterval) + 1
         let buckets = []

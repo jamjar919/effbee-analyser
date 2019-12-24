@@ -1,13 +1,13 @@
-import SettingsFile from '../SettingsFile';
 import iconv from 'iconv-lite';
 import fs from 'fs';
+import SettingsFile from '../SettingsFile';
 
 class FacebookApi {
     constructor() {
         const settings = new SettingsFile();
         this.root = settings.get("facebookDataDir")
     }
-    
+
     getRoot() {
         return this.root;
     }

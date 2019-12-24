@@ -24,7 +24,7 @@ class MessageTimeControl extends Component<Props> {
         } = this.props
 
         return (
-            <Popup 
+            <Popup
                 trigger={
                     <Input
                         action={<Button primary onClick={() => { onSelect(this.state.date) }}>Go</Button>}
@@ -81,7 +81,7 @@ class MessagesPage extends Component<Props> {
         })
     }
 
-    // it feels like we only 
+    // it feels like we only
     goBackwards() {
         const {
             messages
@@ -116,13 +116,12 @@ class MessagesPage extends Component<Props> {
         }
 
         this.setState({ indexRange: getIndexRange(closestIndex, messages.length) })
-        
+
     }
 
     render() {
         const {
             messages,
-            index,
             api,
             history
         } = this.props;
@@ -146,10 +145,12 @@ class MessagesPage extends Component<Props> {
         const toShow = messages.slice(startIndex, endIndex);
         toShow.reverse()
 
-        return (
+      console.log(messages.filter(message => message.index === 864))
+
+      return (
             <React.Fragment>
                 <Menu className={menuStyles.topMenu}>
-                    <Menu.Item 
+                    <Menu.Item
                         onClick={() => {
                             history.goBack()
                         }}
