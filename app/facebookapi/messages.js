@@ -2,16 +2,21 @@
 import fs from 'fs';
 import { join } from 'path';
 import moment from 'moment';
-import FacebookApi from "./api";
+import FacebookApi from './api';
 import SettingsFile from '../SettingsFile';
 
 function getAllMessageFiles(directory) {
+  // Return message files in proper order
   const store = new SettingsFile();
   const maxMessageFiles = store.get("maxMessageFiles") || 10000000;
-  return fs.readdirSync(directory)
-    .filter(name => name.match(/message_([0-9])+\.json/))
+  const messageNumbers = fs.readdirSync(directory)
+    .map(name => name.match(/message_([0-9]+)\.json/))
+    .filter(match => match !== null)
+    .map(match => +match[1]);
+  messageNumbers.sort((a, b) => a - b);
+  return messageNumbers.map(number => `message_${number}.json`)
     .filter((name, i) => i < maxMessageFiles)
-    .map(name => join(directory, name))
+    .map(name => join(directory, name));
 }
 
 
@@ -28,10 +33,8 @@ class MessagesApi extends FacebookApi {
                 const messages = getAllMessageFiles(directory).map(fileName => this.readFacebookJson(fileName))
                                         .reduce((result, next) => result.concat(next.messages), []);
 
-                // messages.sort((a, b) => (b.timestamp_ms < a.timestamp_ms) ? 1 : -1);
-
                 const file = `${directory}/message_1.json`;
-                const newestDetails = this.readFacebookJson(file)
+                const newestDetails = this.readFacebookJson(file);
 
                 // duplicate renaming
                 const { title, participants } = newestDetails;
