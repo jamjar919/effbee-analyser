@@ -60,7 +60,7 @@ class MessagesApi extends FacebookApi {
                     messages: messages.map((message, index) => {
                         const toReturn = message;
                         toReturn.index = index;
-                        toReturn.prettySenderName = this.fixEncoding(toReturn.sender_name)
+                        toReturn.prettySenderName = this.fixEncoding(toReturn.sender_name);
                         if (typeof message.content !== "undefined") {
                             toReturn.content = this.fixEncoding(message.content)
                         }
