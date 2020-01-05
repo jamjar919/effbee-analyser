@@ -207,6 +207,7 @@
     "electron-updater": "^4.0.0",
     "font-awesome": "^4.7.0",
     "font-awesome-webpack": "^0.0.5-beta.2",
+    "handlebars": "^4.5.3",
     "history": "^4.7.2",
     "iconv-lite": "^0.5.0",
     "jdenticon": "^2.1.1",
