@@ -1,8 +1,7 @@
 // @flow
 import React, { Component } from 'react';
-import { Provider } from 'react-redux';
+import { Provider , connect } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
-import { connect } from 'react-redux';
 
 import type { Store } from '../reducers/types';
 import Routes from '../Routes';
@@ -36,7 +35,7 @@ function mapStateToProps(state) {
     };
 }
 
-function mapDispatchToProps() { 
+function mapDispatchToProps() {
     return { }
 }
 
