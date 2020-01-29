@@ -54,7 +54,7 @@ class ChatPage extends Component<Props> {
             messages,
             selectMessages
         } = this.props;
-        
+
         const {
             visibleSidebar,
             filterByDates
@@ -75,7 +75,7 @@ class ChatPage extends Component<Props> {
         return (
             <React.Fragment>
                 <Menu className={menuStyles.topMenu}>
-                    <Menu.Item 
+                    <Menu.Item
                         onClick={() => {
                             history.goBack()
                         }}
@@ -118,9 +118,9 @@ class ChatPage extends Component<Props> {
                                     Filter to date range
                                 </Menu.Item>
                                 <Menu.Menu position="right">
-                                    <Menu.Item> 
-                                        <Checkbox 
-                                            toggle 
+                                    <Menu.Item>
+                                        <Checkbox
+                                            toggle
                                             checked={filterByDates}
                                             onChange={() => {
                                                 this.setState({ filterByDates: !filterByDates })
@@ -164,22 +164,21 @@ class ChatPage extends Component<Props> {
 }
 
 function mapStateToProps(state) {
-    const api = state.facebook
+    const api = state.facebook;
     return {
         api,
         chat: state.selection.chat,
         messages: state.selection.messages,
     };
 }
-  
+
 function mapDispatchToProps(dispatch) {
     return {
         selectMessages: SelectionActions.selectMessagesAction(dispatch)
     }
 }
-  
+
 export default withRouter(connect(
     mapStateToProps,
     mapDispatchToProps
 )(ChatPage));
-  

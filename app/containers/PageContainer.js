@@ -1,8 +1,8 @@
 // @flow
-import React, { Component } from 'react';
-import styles from './css/PageContainer.css'
+import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import styles from './css/PageContainer.css'
 
 export default class PageContainer extends React.Component<Props> {
     render() {
@@ -10,7 +10,7 @@ export default class PageContainer extends React.Component<Props> {
             children,
             withMenu,
             className
-        } = this.props
+        } = this.props;
 
         return (
             <div className={classNames(styles.container, withMenu ? styles.withMenu : '', className)}>

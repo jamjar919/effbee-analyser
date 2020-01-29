@@ -32,33 +32,32 @@ class Friend extends Component<Props> {
 
         if (name === false) {
             return (
-                <div>
+                <>
                     Nothing selected!
-                </div>
+                </>
             )
         }
 
-        const messageApi = api.messageApi;
-        const profileApi = api.profileApi;
-        const root = profileApi.getFullName(); 
+        const { messageApi, profileApi } = api;
+        const root = profileApi.getFullName();
 
         const chatsInterval = messageApi.chatsPerTimeInterval(root, name, 1209600);
-        const chatsWithRoot = messageApi.chatsBetween([root, name], true)
+        const chatsWithRoot = messageApi.chatsBetween([root, name], true);
         const chats = messageApi.chats(name);
 
         const timeDetails = messageApi.getTimeDetails(chatsWithRoot.chats);
-        const numGroupsWithRoot = chatsWithRoot.chats.length
-        const numMessagesWithRoot = chatsWithRoot.count
-        const numYouSent = chatsWithRoot.countBreakdown[root]
-        const numTheySent = chatsWithRoot.countBreakdown[name]
+        const numGroupsWithRoot = chatsWithRoot.chats.length;
+        const numMessagesWithRoot = chatsWithRoot.count;
+        const numYouSent = chatsWithRoot.countBreakdown[root];
+        const numTheySent = chatsWithRoot.countBreakdown[name];
         const numYouSentPercent = Math.floor(
                 (numYouSent/numMessagesWithRoot) * 100
-            )
-        
+            );
+
         return (
             <React.Fragment>
                 <Menu className={menuStyles.topMenu}>
-                    <Menu.Item 
+                    <Menu.Item
                         onClick={() => {
                             history.goBack()
                         }}
@@ -143,7 +142,7 @@ class Friend extends Component<Props> {
                             <Icon name='facebook messenger' />
                             <Header.Content>Message Frequency</Header.Content>
                         </Header>
-                        <MessageTimeline 
+                        <MessageTimeline
                             chats={chatsInterval}
                             people={[ root, name ]}
                         />
@@ -173,7 +172,7 @@ class Friend extends Component<Props> {
 
 function mapStateToProps(state) {
     const api = state.facebook;
-    return { 
+    return {
         name: state.selection.friend,
         api
     };
