@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Switch, Route } from 'react-router';
 import { Modal, Header, Icon, Message } from 'semantic-ui-react';
 
-import routes from './constants/routes';
+import routes from './constants/routes.json';
 import App from './containers/App';
 import NetworkPage from './containers/NetworkPage';
 import CounterPage from './containers/CounterPage';
@@ -14,15 +14,11 @@ import ChatPage from './containers/ChatPage';
 import ChatsPage from './containers/ChatsPage';
 import MessagesPage from './containers/MessagesPage';
 import YouPage from './containers/YouPage';
+import OffFacebookActivityPage from './containers/OffFacebookActivityPage';
 import Friend from './components/Friend';
 import Menu from './components/Menu';
 
 import styles from './app.global.css';
-import type { facebookType } from './reducers/types';
-
-type Props = {
-    api: facebookType
-}
 
 function isApiLoaded(api) {
     return (
@@ -43,6 +39,7 @@ export default props => {
                 <Menu />
                 <div className={styles.container}>
                     <Switch>
+                        <Route path={routes.OFF_FACEBOOK} component={OffFacebookActivityPage} />
                         <Route path={routes.MESSAGES} component={MessagesPage} />
                         <Route path={routes.CHATS} component={ChatsPage} />
                         <Route path={routes.CHAT} component={ChatPage} />
@@ -57,7 +54,7 @@ export default props => {
                 </div>
             </App>
         )
-    } 
+    }
 
     let error = ''
     if (error !== false) {
@@ -73,7 +70,7 @@ export default props => {
             <Modal.Content>
                 <Modal.Description>
                     <Header>Here's how to get started...</Header>
-                    You'll need to first download your Facebook data. 
+                    You'll need to first download your Facebook data.
                     <ol>
                         <li>First, visit the <a
                             onClick={e => {
@@ -93,5 +90,5 @@ export default props => {
             </Modal.Content>
         </Modal>
     )
-    
+
 }

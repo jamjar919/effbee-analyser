@@ -8,5 +8,6 @@
   "FRIENDSTIMELINE": "/friendstimeline",
   "CHAT": "/chat",
   "CHATS": "/chats",
-  "MESSAGES": "/messages"
+  "MESSAGES": "/messages",
+  "OFF_FACEBOOK": "/offfacebook"
 }

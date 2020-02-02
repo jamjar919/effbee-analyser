@@ -1,11 +1,9 @@
-import fs from 'fs';
 import FacebookApi from "./api";
-import moment from 'moment';
 
 class FriendsApi extends FacebookApi {
     constructor() {
-        try {
-            super()
+      super();
+      try {
             const file = `${super.getRoot()}/friends/friends.json`;
             this.friends = this.readFacebookJson(file).friends
                 .map(friend => ({ ...friend, prettyName: this.fixEncoding(friend.name) }))
@@ -13,7 +11,7 @@ class FriendsApi extends FacebookApi {
                     (friend, i, arr) => arr.filter(
                         friend2 => friend2.name === friend.name
                     ).length < 2
-                )
+                );
             this.loaded = true;
         } catch (e) {
             console.log("couldn't load friends api")
@@ -31,7 +29,7 @@ class FriendsApi extends FacebookApi {
     }
 
     getRanking(root, messageApi, afterTimestamp = false) {
-        // ranking doesn't change, so return local 
+        // ranking doesn't change, so return local
         if ((this.ranking.cached) && (this.ranking.afterTimestamp === afterTimestamp)) {
             return this.ranking.ranking
         }
@@ -42,14 +40,14 @@ class FriendsApi extends FacebookApi {
         }
 
         const friends = this.get()
-        
+
         const ranking = friends.map(friend => {
             const chats = messageApi.chatsBetween([root, friend.name], true, afterTimestamp)
             return {
                 name: friend.name,
                 messages: chats.count,
                 groups: chats.chats.length,
-                ...chats 
+                ...chats
             }
         })
 
@@ -73,9 +71,9 @@ class FriendsApi extends FacebookApi {
         const friends = this.get();
         const messages = messageApi.getMessages();
 
-        const firstTimestamp = messageApi.firstTimestamp 
+        const firstTimestamp = messageApi.firstTimestamp
         const lastTimestamp = messageApi.lastTimestamp
-        
+
         const buckets = messageApi.bucketMessagesByTimeInterval(messages, firstTimestamp, lastTimestamp, timeInterval)
 
         return buckets.map(bucket => {

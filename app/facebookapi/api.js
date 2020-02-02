@@ -13,9 +13,7 @@ class FacebookApi {
     }
 
     readFacebookJson(filename) {
-        var content = fs.readFileSync(filename, "utf8");
-        const json = JSON.parse(content)
-        return json
+        return JSON.parse(fs.readFileSync(filename, "utf8"))
     }
 
     fixEncoding(string) {

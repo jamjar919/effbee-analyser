@@ -1,8 +1,6 @@
-// @flow
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
-import { Header, Icon, Segment, Menu, Placeholder, Item } from 'semantic-ui-react'
-import moment from 'moment';
+import { Header, Icon, Segment, Menu, Placeholder } from 'semantic-ui-react'
 import PageContainer from './PageContainer';
 import type { defaultFacebookType } from '../reducers/defaultTypes'
 
@@ -33,10 +31,8 @@ class FriendsPage extends React.Component<Props> {
     constructor(props) {
         super(props);
         this.state = {
-            ranking: false,
             loading: false,
             filterMode: "NONE", // can be NONE, 5YEAR, YEAR, 6MONTH, MONTH, WEEK
-            timeperiod: [],
             content: ''
         }
     }
@@ -57,8 +53,6 @@ class FriendsPage extends React.Component<Props> {
         } = this.props
 
         const {
-            ranking,
-            loading,
             filterMode
         } = this.state
 
@@ -66,7 +60,7 @@ class FriendsPage extends React.Component<Props> {
         const root = profileApi.getFullName()
         const messageApi = api.messageApi;
 
-        // infer correct timestamp 
+        // infer correct timestamp
         const lastTimestamp = messageApi.lastTimestamp
         let afterTimestamp;
         switch (filterMode) {
@@ -90,21 +84,14 @@ class FriendsPage extends React.Component<Props> {
                 break;
         }
 
-        let timePeriod = false
-        if (afterTimestamp) {
-            timePeriod = [afterTimestamp, lastTimestamp]
-        }
-
         this.setState({
-            timePeriod,
             loading: true,
             content: PlaceholderFriends
         }, () => {
             setTimeout(() => {
                 const newRanking = api.friendsApi.getRanking(root, messageApi, afterTimestamp)
                 this.setState({
-                    ranking: newRanking,
-                    content: <FriendList friends={newRanking} horizontal={true}/>,
+                    content: <FriendList friends={newRanking} horizontal/>,
                     loading: false
                 })
             }, 100)
@@ -113,15 +100,10 @@ class FriendsPage extends React.Component<Props> {
 
     render() {
         const {
-            api
-        } = this.props
-
-        const {
-            ranking,
             loading,
             filterMode,
             content
-        } = this.state
+        } = this.state;
 
         return (
             <PageContainer>
@@ -138,7 +120,7 @@ class FriendsPage extends React.Component<Props> {
                         active={filterMode === '5YEAR'}
                         onClick={() => this.setState({ filterMode: "5YEAR" })}
                     >
-                        Last 5 Years                    
+                        Last 5 Years
                     </Menu.Item>
                     <Menu.Item
                         active={filterMode === 'YEAR'}
@@ -183,18 +165,17 @@ class FriendsPage extends React.Component<Props> {
 
 
 function mapStateToProps(state) {
-    const api = state.facebook
+    const api = state.facebook;
     return {
         api
     };
 }
-  
-function mapDispatchToProps(dispatch) {
+
+function mapDispatchToProps() {
     return {}
 }
-  
+
 export default connect(
     mapStateToProps,
     mapDispatchToProps
 )(FriendsPage);
-  

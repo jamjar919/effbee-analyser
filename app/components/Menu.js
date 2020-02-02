@@ -43,7 +43,7 @@ class MainMenu extends Component<Props> {
                             >
                                 List
                             </Menu.Item>
-                            <Menu.Item 
+                            <Menu.Item
                                 name="Friends"
                                 active={history.location.pathname === routes.FRIENDSTIMELINE}
                                 onClick={() => { history.push(routes.FRIENDSTIMELINE) }}
@@ -58,6 +58,18 @@ class MainMenu extends Component<Props> {
                     </Menu.Item>
                     <Menu.Item name="Network" active={history.location.pathname === routes.NETWORK} onClick={() => { history.push(routes.NETWORK) }}>
                         Network
+                    </Menu.Item>
+                    <Menu.Item>
+                      Ads and Businesses
+                      <Menu.Menu>
+                        <Menu.Item
+                          name="Off Facebook Activity"
+                          active={history.location.pathname === routes.OFF_FACEBOOK}
+                          onClick={() => { history.push(routes.OFF_FACEBOOK) }}
+                        >
+                          Off Facebook Activity
+                        </Menu.Item>
+                      </Menu.Menu>
                     </Menu.Item>
                     <Menu.Item name="Settings" active={history.location.pathname === routes.SETTINGS} onClick={() => { history.push(routes.SETTINGS) }}>
                         Settings

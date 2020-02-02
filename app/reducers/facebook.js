@@ -4,6 +4,7 @@ import ProfileApi from '../facebookapi/profile'
 import FriendsApi from '../facebookapi/friends'
 import MessagesApi from '../facebookapi/messages'
 import { REFRESH_API } from '../actions/facebook';
+import AdsAndBusinessesApi from '../facebookapi/adsbusinesses';
 
 export default function facebook(state: facebookType = defaultFacebookType, action: Action) {
     switch (action.type) {
@@ -11,8 +12,9 @@ export default function facebook(state: facebookType = defaultFacebookType, acti
             return {
                 profileApi: new ProfileApi(),
                 friendsApi: new FriendsApi(),
-                messageApi: new MessagesApi()            
-            }
+                messageApi: new MessagesApi(),
+                adsAndBusinessesApi: new AdsAndBusinessesApi()
+            };
         default:
             return state;
     }
