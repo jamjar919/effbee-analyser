@@ -1,17 +1,17 @@
 // @flow
 import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
-import { Menu, Input, Header, Icon, Search } from 'semantic-ui-react';
+import { withRouter } from 'react-router-dom';
+import { Menu, Header, Icon } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 
 import FriendSearchForm from './FriendSearchForm';
-import routes from '../constants/routes';
+import routes from '../constants/routes.json';
 import * as SelectionActions from '../actions/selection';
 import styles from './css/Menu.css';
 
 type Props = {
     history: object,
-    selectFriend: (string) => void,
+    selectFriend: (string) => void
 };
 
 class MainMenu extends Component<Props> {

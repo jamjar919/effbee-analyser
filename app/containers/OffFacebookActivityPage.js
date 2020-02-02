@@ -1,9 +1,10 @@
 import React from 'react';
-import { Header, Icon } from 'semantic-ui-react';
+import { Header, Icon, Segment } from 'semantic-ui-react';
 import { connect } from "react-redux";
 
 import type { defaultFacebookType } from '../reducers/defaultTypes';
 import PageContainer from './PageContainer';
+import BusinessList from '../components/BusinessList';
 
 type Props = {
   api: defaultFacebookType
@@ -23,12 +24,17 @@ class OffFacebookActivityPage extends React.Component<Props> {
           <Header as='h1'>
             <Icon name='users' />
             <Header.Content>
-              Off Faceebook Activity
+              Off Facebook Activity
             </Header.Content>
             <Header.Subheader>Advertisers and other companies send data to Facebook about your activity whilst using those apps. This page displays that activity.</Header.Subheader>
           </Header>
           <>
-            {JSON.stringify(adsAndBusinessesApi.offFacebook)}
+            <Segment>
+              <BusinessList businesses={adsAndBusinessesApi.offFacebook.businesses} onClick={(name, events) => { console.log(name, events) }}/>
+            </Segment>
+            <Segment>
+              {JSON.stringify(adsAndBusinessesApi.offFacebook.types)}
+            </Segment>
           </>
         </PageContainer>
       );
