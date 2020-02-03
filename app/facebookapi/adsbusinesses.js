@@ -1,4 +1,4 @@
-import FacebookApi from "./api";
+import FacebookApi, { quickSelect } from './api';
 
 class AdsAndBusinessesApi extends FacebookApi {
   constructor() {
@@ -26,9 +26,19 @@ class AdsAndBusinessesApi extends FacebookApi {
         });
         return toReturn;
       }, {});
+
+      const allTimestamps = this.offFacebook.businesses.flatMap(
+        business => business.events
+      ).map(event => event.timestamp);
+      allTimestamps.sort((a,b) => a-b);
+      this.offFacebook.timestampRange = {
+        start: allTimestamps[0],
+        end: allTimestamps[allTimestamps.length - 1]
+      };
+
       this.loaded = true;
 
-      console.log(this.offFacebook)
+      console.log(this)
     } catch (e) {
       console.log("couldn't load ads and businesses api", e);
       this.loaded = false;

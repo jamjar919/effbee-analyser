@@ -2,7 +2,7 @@
 import fs from 'fs';
 import { join } from 'path';
 import moment from 'moment';
-import FacebookApi from './api';
+import FacebookApi, { bucketByTimeInterval } from './api';
 import SettingsFile from '../SettingsFile';
 
 function getAllMessageFiles(directory) {
@@ -300,39 +300,17 @@ class MessagesApi extends FacebookApi {
         return hourMap;
     }
 
-    bucketMessagesByTimeInterval(chats, firstTimestamp, lastTimestamp, timeInterval, filterBuckets = true) {
-        // bucket messages based on time interval
-        // calculate number of buckets
-        const timespan = lastTimestamp - firstTimestamp;
-        const numBuckets = Math.ceil(timespan / timeInterval) + 1
-        let buckets = []
-        for (let i = 0; i < numBuckets; i += 1) {
-            buckets.push({
-                start: firstTimestamp + (timeInterval * i),
-                end: firstTimestamp + (timeInterval * (i + 1)),
-                messages: []
-            })
-        }
-
-        chats.forEach(chat => {
-            chat.messages.forEach(message => {
-                const messageTimestamp = Math.floor(message.timestamp_ms/1000);
-                let b = 0;
-                while (
-                    buckets[b].end < messageTimestamp
-                ) {
-                    b += 1;
-                }
-                buckets[b].messages.push(message)
-            });
-        });
-
-        // for each bucket, if there's no messages, remove it
-        if (filterBuckets) {
-            buckets = buckets.filter(bucket => bucket.messages.length > 0)
-        }
-
-        return buckets;
+    bucketMessagesByTimeInterval(chats, firstTimestamp, lastTimestamp, timeInterval) {
+      return bucketByTimeInterval(
+        chats.map(chat => chat.messages),
+        firstTimestamp,
+        lastTimestamp,
+        timeInterval,
+        (message) => Math.floor(message.timestamp_ms/1000)
+      ).map(bucket => ({
+        messages: bucket.items,
+        ...bucket
+      }))
     }
 }
 

@@ -92,7 +92,7 @@ export default class TextAnalysisTimeline extends Component<Props> {
             messages,
             api
         } = this.props;
-        
+
         const {
             messageApi
         } = api
@@ -105,7 +105,7 @@ export default class TextAnalysisTimeline extends Component<Props> {
         const firstTimestamp = Math.floor(messages[messages.length - 1].timestamp_ms / 1000)
         const lastTimestamp = Math.floor(messages[0].timestamp_ms / 1000)
         const bucketedMessages = messageApi
-            .bucketMessagesByTimeInterval([chat], firstTimestamp, lastTimestamp, 2629746, false)
+            .bucketMessagesByTimeInterval([chat], firstTimestamp, lastTimestamp, 2629746)
             .map(bucket => ({
                 ...bucket,
                 frequency: analyseWordFrequency(bucket.messages).map(w => {
@@ -166,7 +166,7 @@ export default class TextAnalysisTimeline extends Component<Props> {
             highlight,
             sortMode
         } = this.state;
-        
+
         if (loading) {
             return (<Loader active />)
         }
@@ -312,7 +312,7 @@ TextAnalysisTimeline.propTypes = {
     messages: PropTypes.arrayOf(PropTypes.shape({
         sender_name: PropTypes.string,
         content: PropTypes.string,
-        timestamp_ms: PropTypes.number, 
+        timestamp_ms: PropTypes.number,
         type: PropTypes.string
     })),
     api: PropTypes.shape({

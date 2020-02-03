@@ -5,6 +5,8 @@ import { connect } from "react-redux";
 import type { defaultFacebookType } from '../reducers/defaultTypes';
 import PageContainer from './PageContainer';
 import BusinessList from '../components/BusinessList';
+import BusinessEventTypeChart from '../components/BusinessEventTypeChart';
+import BusinessEventScatter from '../components/BusinessEventScatter';
 
 type Props = {
   api: defaultFacebookType
@@ -30,10 +32,17 @@ class OffFacebookActivityPage extends React.Component<Props> {
           </Header>
           <>
             <Segment>
+              <BusinessEventScatter
+                data={adsAndBusinessesApi.offFacebook.businesses}
+                start={adsAndBusinessesApi.offFacebook.timestampRange.start}
+                end={adsAndBusinessesApi.offFacebook.timestampRange.end}
+              />
+            </Segment>
+            <Segment>
               <BusinessList businesses={adsAndBusinessesApi.offFacebook.businesses} onClick={(name, events) => { console.log(name, events) }}/>
             </Segment>
             <Segment>
-              {JSON.stringify(adsAndBusinessesApi.offFacebook.types)}
+              <BusinessEventTypeChart data={adsAndBusinessesApi.offFacebook.types} />
             </Segment>
           </>
         </PageContainer>
