@@ -194,6 +194,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.5.0",
+    "acorn": "^7.3.1",
     "array.prototype.flatmap": "^1.2.1",
     "async": "^2.6.2",
     "braces": "^3.0.2",
@@ -209,14 +210,18 @@
     "font-awesome-webpack": "^0.0.5-beta.2",
     "handlebars": "^4.5.3",
     "history": "^4.7.2",
+    "https-proxy-agent": "^5.0.0",
     "iconv-lite": "^0.5.0",
     "jdenticon": "^2.1.1",
+    "jquery": "^3.5.1",
     "js-yaml": "^3.13.1",
+    "kind-of": "^6.0.3",
     "less": "^3.9.0",
     "less-loader": "^5.0.0",
     "lodash": "^4.17.15",
     "map-parallel": "^0.0.3",
     "memoize-one": "^5.0.4",
+    "minimist": "^1.2.5",
     "moment": "^2.24.0",
     "natural": "^0.6.3",
     "react": "^16.6.3",
@@ -233,7 +238,8 @@
     "source-map-support": "^0.5.9",
     "taucharts": "^2.7.2",
     "uuid": "^3.3.2",
-    "vis": "^4.21.0"
+    "vis": "^4.21.0",
+    "websocket-extensions": "^0.1.4"
   },
   "devEngines": {
     "node": ">=7.x",
