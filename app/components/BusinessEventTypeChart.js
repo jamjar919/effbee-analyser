@@ -4,7 +4,7 @@ import c3 from 'c3'
 
 type Props = {
   friends: array
-}
+};
 
 export default class BusinessEventTypeChart extends Component<Props> {
   props: Props;

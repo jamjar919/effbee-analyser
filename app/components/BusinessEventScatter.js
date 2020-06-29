@@ -18,22 +18,34 @@ export default class BusinessEventTypeChart extends React.Component {
     this.renderChart()
   }
 
-  componentDidUpdate(nextProps) {
-    if (nextProps.data !== this.props.data) {
+  componentDidUpdate(prevProps) {
+    if (
+      (prevProps.data !== this.props.data) ||
+      (prevProps.filterNames !== this.props.filterNames)
+    ) {
       this.renderChart()
     }
   }
 
   renderChart() {
-    const { data, start, end } = this.props;
+    const { data, start, end, filterNames } = this.props;
     const { id } = this.state;
 
-    data.sort((a, b) => b.events.length - a.events.length);
+    console.log(data);
 
-    const bucketed = data.map(business => ({
+    data.sort((a, b) => {
+      const d = b.events.length - a.events.length;
+      return d === 0 ? a.name.localeCompare(b.name) : d;
+    });
+
+    let bucketed = data.map(business => ({
       name: business.name,
       buckets: bucketByTimeInterval([business.events], start, end, 86400*7, a => a.timestamp)
     }));
+
+    if (filterNames.length > 0) {
+      bucketed = bucketed.filter(({ name }) => (filterNames.includes(name)));
+    }
 
     const scale = ['x', ...bucketed[0].buckets.map(bucket =>
       moment.unix(Math.floor((bucket.start + bucket.end)/2)).format("YYYY-MM-DD")
@@ -42,12 +54,19 @@ export default class BusinessEventTypeChart extends React.Component {
     const columns = bucketed
       .map(column => [column.name, ...column.buckets.map(bucket => bucket.items.length === 0 ? null : bucket.items.length)]);
 
+    const colorNames = {};
+    bucketed
+      .map(column => column.name)
+      .forEach(name => {
+        colorNames[name] = `#${((parseInt(name.replace(/[^\w\d]/g, ""), 36)) % 16777215).toString(16)}`;
+      });
+
     const chart = c3.generate({
       bindto: '#' + id,
       data: {
         x: 'x',
         columns: [scale, ...columns.slice(0, 20)],
-        type : 'scatter',
+        colors: colorNames
       },
       axis: {
         x: {
@@ -80,5 +99,10 @@ BusinessEventTypeChart.propTypes = {
     events: PropTypes.arrayOf(Object)
   })).isRequired,
   start: PropTypes.number.isRequired,
-  end: PropTypes.number.isRequired
+  end: PropTypes.number.isRequired,
+  filterNames: PropTypes.arrayOf(PropTypes.string)
+};
+
+BusinessEventTypeChart.defaultProps = {
+  filterNames: []
 };

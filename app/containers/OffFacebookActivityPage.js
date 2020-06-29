@@ -13,9 +13,29 @@ type Props = {
 };
 
 class OffFacebookActivityPage extends React.Component<Props> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      names: []
+    };
+  }
+
+  handleSelectName = (selectedName) => {
+    const { names } = this.state;
+
+    let newNames;
+    if (names.includes(selectedName)) {
+      newNames = names.filter((name) => (name !== selectedName));
+    } else {
+      newNames = Object.assign([], names);
+      newNames.push(selectedName);
+    }
+    this.setState({ names: newNames });
+  };
 
   render() {
     const { api } = this.props;
+    const { names } = this.state;
     const { adsAndBusinessesApi } = api;
     if (!adsAndBusinessesApi.loaded) {
       return "Looks like you don't have any ads or business data";
@@ -36,10 +56,15 @@ class OffFacebookActivityPage extends React.Component<Props> {
                 data={adsAndBusinessesApi.offFacebook.businesses}
                 start={adsAndBusinessesApi.offFacebook.timestampRange.start}
                 end={adsAndBusinessesApi.offFacebook.timestampRange.end}
+                filterNames={names}
               />
             </Segment>
             <Segment>
-              <BusinessList businesses={adsAndBusinessesApi.offFacebook.businesses} onClick={(name, events) => { console.log(name, events) }}/>
+              <BusinessList
+                filterNames={names}
+                businesses={adsAndBusinessesApi.offFacebook.businesses}
+                onClick={this.handleSelectName}
+              />
             </Segment>
             <Segment>
               <BusinessEventTypeChart data={adsAndBusinessesApi.offFacebook.types} />
