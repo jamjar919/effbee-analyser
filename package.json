@@ -218,7 +218,7 @@
     "kind-of": "^6.0.3",
     "less": "^3.9.0",
     "less-loader": "^5.0.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "map-parallel": "^0.0.3",
     "memoize-one": "^5.0.4",
     "minimist": "^1.2.5",
