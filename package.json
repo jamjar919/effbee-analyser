@@ -221,7 +221,7 @@
     "lodash": "^4.17.15",
     "map-parallel": "^0.0.3",
     "memoize-one": "^5.0.4",
-    "minimist": "^1.2.5",
+    "minimist": "^1.2.6",
     "moment": "^2.24.0",
     "natural": "^0.6.3",
     "react": "^16.6.3",
